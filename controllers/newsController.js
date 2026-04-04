@@ -3,17 +3,17 @@
 // Sources : BBC · Le Monde · NewsAPI · The Guardian · Al Jazeera · TechCrunch · HackerNews
 // ============================================================
 
-const bbcService       = require('../services/bbcRss');
-const lemondeService   = require('../services/lemondeRss');
-const newsApiService   = require('../services/newsApi');
-const guardianService  = require('../services/guardianRss');
-const alJazeeraService = require('../services/alJazeeraRss');
-const techCrunchService = require('../services/techCrunchRss');
-const hackerNewsService = require('../services/hackerNewsService');
+const bbcService          = require('../services/bbcRss');
+const lemondeService      = require('../services/lemondeRss');
+const newsApiService      = require('../services/newsApi');
+const guardianService     = require('../services/guardianRss');
+const alJazeeraService    = require('../services/alJazeeraRss');
+const techCrunchService   = require('../services/techCrunchRss');
+const hackerNewsService   = require('../services/hackerNewsService');
+const independentService  = require('../services/independentRss');
 
-// Mapping de catégories normalisées
-const VALID_CATEGORIES = ['monde', 'techno', 'eco', 'science', 'sport', 'culture'];
-const VALID_SOURCES    = ['bbc', 'lemonde', 'newsapi', 'guardian', 'aljazeera', 'techcrunch', 'hackernews'];
+const VALID_CATEGORIES = ['monde', 'techno', 'eco', 'science', 'sport', 'culture', 'independent'];
+const VALID_SOURCES    = ['bbc', 'lemonde', 'newsapi', 'guardian', 'aljazeera', 'techcrunch', 'hackernews', 'independent'];
 
 /**
  * Dédoublonne par URL (plus fiable que le titre).
@@ -41,13 +41,14 @@ exports.getAllNews = async (req, res) => {
 
   // Sélectionner les fetchers selon filtres
   const fetcherMap = {
-    bbc:        () => bbcService.fetchBBCNews('top'),
-    lemonde:    () => lemondeService.fetchLemondeNews(),
-    newsapi:    () => newsApiService.fetchNewsAPI({ pageSize: 15 }),
-    guardian:   () => guardianService.fetchGuardianNews(VALID_CATEGORIES.includes(category) ? category : null),
-    aljazeera:  () => alJazeeraService.fetchAlJazeeraNews(12),
-    techcrunch: () => techCrunchService.fetchTechCrunchNews(8),
-    hackernews: () => hackerNewsService.fetchHackerNews(10)
+    bbc:         () => bbcService.fetchBBCNews('top'),
+    lemonde:     () => lemondeService.fetchLemondeNews(),
+    newsapi:     () => newsApiService.fetchNewsAPI({ pageSize: 15 }),
+    guardian:    () => guardianService.fetchGuardianNews(VALID_CATEGORIES.includes(category) ? category : null),
+    aljazeera:   () => alJazeeraService.fetchAlJazeeraNews(12),
+    techcrunch:  () => techCrunchService.fetchTechCrunchNews(8),
+    hackernews:  () => hackerNewsService.fetchHackerNews(10),
+    independent: () => independentService.fetchIndependentNews()
   };
 
   const fetchersToRun = source && VALID_SOURCES.includes(source)

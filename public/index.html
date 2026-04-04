@@ -369,7 +369,10 @@
       <button class="filter-btn active" onclick="filterNews('all',this)">Toutes</button>
       <button class="filter-btn" onclick="filterNews('BBC',this)">BBC</button>
       <button class="filter-btn" onclick="filterNews('Le Monde',this)">Le Monde</button>
-      <button class="filter-btn" onclick="filterNews('NewsAPI',this)">NewsAPI</button>
+      <button class="filter-btn" onclick="filterNews('The Guardian',this)">Guardian</button>
+      <button class="filter-btn" onclick="filterNews('Al Jazeera',this)">Al Jazeera</button>
+      <button class="filter-btn" onclick="filterNews('TechCrunch',this)">Tech</button>
+      <button class="filter-btn" onclick="filterNews('independent',this)">🌍 Indépendants</button>
     </div>
     <div id="news-grid" class="news-grid">
       <div class="loader"><div class="spinner"></div><p>Chargement des actualités...</p></div>
@@ -661,7 +664,9 @@ function renderNews(articles) {
 function filterNews(source, btn) {
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  renderNews(source === 'all' ? allNews : allNews.filter(a => a.source === source));
+  if (source === 'all') renderNews(allNews);
+  else if (source === 'independent') renderNews(allNews.filter(a => a.category === 'independent'));
+  else renderNews(allNews.filter(a => a.source === source));
 }
 
 async function loadNews() {
