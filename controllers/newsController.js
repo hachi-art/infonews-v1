@@ -1,19 +1,27 @@
 // ============================================================
-// controllers/newsController.js — Logique métier des routes
+// controllers/newsController.js — Logique métier des routes news
+// Sources : BBC · Le Monde · NewsAPI · The Guardian · Al Jazeera · TechCrunch · HackerNews
 // ============================================================
 
-const bbcService = require('../services/bbcRss');
-const lemondeService = require('../services/lemondeRss');
-const newsApiService = require('../services/newsApi');
+const bbcService       = require('../services/bbcRss');
+const lemondeService   = require('../services/lemondeRss');
+const newsApiService   = require('../services/newsApi');
+const guardianService  = require('../services/guardianRss');
+const alJazeeraService = require('../services/alJazeeraRss');
+const techCrunchService = require('../services/techCrunchRss');
+const hackerNewsService = require('../services/hackerNewsService');
+
+// Mapping de catégories normalisées
+const VALID_CATEGORIES = ['monde', 'techno', 'eco', 'science', 'sport', 'culture'];
+const VALID_SOURCES    = ['bbc', 'lemonde', 'newsapi', 'guardian', 'aljazeera', 'techcrunch', 'hackernews'];
 
 /**
- * Agrège et dédoublonne un tableau d'articles.
- * Critère de déduplication : même titre (insensible à la casse).
+ * Dédoublonne par URL (plus fiable que le titre).
  */
 function deduplicateArticles(articles) {
   const seen = new Set();
-  return articles.filter(article => {
-    const key = article.title.toLowerCase().trim();
+  return articles.filter(a => {
+    const key = a.url || a.id;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -22,40 +30,54 @@ function deduplicateArticles(articles) {
 
 /**
  * GET /api/news
- * Retourne toutes les sources fusionnées, dédoublonnées et triées par date décroissante.
+ * Query params :
+ *   ?category=monde|techno|eco|science|sport|culture
+ *   ?source=bbc|lemonde|newsapi|guardian|aljazeera|techcrunch|hackernews
+ *   ?limit=50
  */
 exports.getAllNews = async (req, res) => {
-  try {
-    const [bbc, lemonde, newsapi] = await Promise.allSettled([
-      bbcService.fetchBBCNews(),
-      lemondeService.fetchLemondeNews(),
-      newsApiService.fetchNewsAPI()
-    ]);
+  const { category, source, limit = 80 } = req.query;
+  const maxLimit = Math.min(parseInt(limit) || 80, 200);
 
-    let articles = [];
+  // Sélectionner les fetchers selon filtres
+  const fetcherMap = {
+    bbc:        () => bbcService.fetchBBCNews('top'),
+    lemonde:    () => lemondeService.fetchLemondeNews(),
+    newsapi:    () => newsApiService.fetchNewsAPI({ pageSize: 15 }),
+    guardian:   () => guardianService.fetchGuardianNews(VALID_CATEGORIES.includes(category) ? category : null),
+    aljazeera:  () => alJazeeraService.fetchAlJazeeraNews(12),
+    techcrunch: () => techCrunchService.fetchTechCrunchNews(8),
+    hackernews: () => hackerNewsService.fetchHackerNews(10)
+  };
 
-    if (bbc.status === 'fulfilled') articles.push(...bbc.value);
-    else console.error('[BBC] Erreur fetch:', bbc.reason?.message);
+  const fetchersToRun = source && VALID_SOURCES.includes(source)
+    ? { [source]: fetcherMap[source] }
+    : fetcherMap;
 
-    if (lemonde.status === 'fulfilled') articles.push(...lemonde.value);
-    else console.error('[Le Monde] Erreur fetch:', lemonde.reason?.message);
+  const keys = Object.keys(fetchersToRun);
+  const results = await Promise.allSettled(keys.map(k => fetchersToRun[k]()));
 
-    if (newsapi.status === 'fulfilled') articles.push(...newsapi.value);
-    else console.error('[NewsAPI] Erreur fetch:', newsapi.reason?.message);
+  let articles = [];
+  results.forEach((r, i) => {
+    if (r.status === 'fulfilled') articles.push(...r.value);
+    else console.error(`[NewsController] Erreur ${keys[i]}: ${r.reason?.message}`);
+  });
 
-    // Déduplication et tri chronologique inversé
-    const unique = deduplicateArticles(articles);
-    unique.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
-
-    res.json({
-      total: unique.length,
-      fetchedAt: new Date().toISOString(),
-      articles: unique
-    });
-  } catch (err) {
-    console.error('[getAllNews] Erreur critique:', err.message);
-    res.status(500).json({ error: 'Impossible de récupérer les news', detail: err.message });
+  // Filtrage par catégorie si demandé
+  if (category && VALID_CATEGORIES.includes(category)) {
+    articles = articles.filter(a => a.category === category);
   }
+
+  // Déduplication + tri chronologique
+  const unique = deduplicateArticles(articles);
+  unique.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+
+  res.json({
+    total: unique.length,
+    fetchedAt: new Date().toISOString(),
+    filters: { category: category || null, source: source || null },
+    articles: unique.slice(0, maxLimit)
+  });
 };
 
 /**
@@ -92,5 +114,54 @@ exports.getNewsAPI = async (req, res) => {
     res.json({ total: articles.length, source: 'NewsAPI', articles });
   } catch (err) {
     res.status(500).json({ error: 'Erreur NewsAPI', detail: err.message });
+  }
+};
+
+/**
+ * GET /api/news/guardian?feed=techno
+ */
+exports.getGuardianNews = async (req, res) => {
+  try {
+    const { feed } = req.query;
+    const articles = await guardianService.fetchGuardianNews(feed || null);
+    res.json({ total: articles.length, source: 'The Guardian', articles });
+  } catch (err) {
+    res.status(500).json({ error: 'Erreur Guardian RSS', detail: err.message });
+  }
+};
+
+/**
+ * GET /api/news/aljazeera
+ */
+exports.getAlJazeeraNews = async (req, res) => {
+  try {
+    const articles = await alJazeeraService.fetchAlJazeeraNews();
+    res.json({ total: articles.length, source: 'Al Jazeera', articles });
+  } catch (err) {
+    res.status(500).json({ error: 'Erreur Al Jazeera RSS', detail: err.message });
+  }
+};
+
+/**
+ * GET /api/news/techcrunch
+ */
+exports.getTechCrunchNews = async (req, res) => {
+  try {
+    const articles = await techCrunchService.fetchTechCrunchNews();
+    res.json({ total: articles.length, source: 'TechCrunch', articles });
+  } catch (err) {
+    res.status(500).json({ error: 'Erreur TechCrunch RSS', detail: err.message });
+  }
+};
+
+/**
+ * GET /api/news/hackernews
+ */
+exports.getHackerNews = async (req, res) => {
+  try {
+    const articles = await hackerNewsService.fetchHackerNews();
+    res.json({ total: articles.length, source: 'HackerNews', articles });
+  } catch (err) {
+    res.status(500).json({ error: 'Erreur HackerNews API', detail: err.message });
   }
 };

@@ -1,26 +1,22 @@
 // ============================================================
-// routes/news.js — Routes API pour les news
+// routes/news.js — Routes API actualités
+// GET /api/news?category=techno&source=guardian&limit=50
 // ============================================================
 
 const express = require('express');
 const router = express.Router();
 const newsController = require('../controllers/newsController');
 
-// GET /api/news
-// Retourne toutes les news agrégées (BBC + Le Monde + NewsAPI)
-router.get('/', newsController.getAllNews);
+// GET /api/news — toutes sources, filtrage possible par category & source
+router.get('/',            newsController.getAllNews);
 
-// GET /api/news/bbc
-// Retourne uniquement les news BBC
-router.get('/bbc', newsController.getBBCNews);
-
-// GET /api/news/lemonde
-// Retourne uniquement les news Le Monde
-router.get('/lemonde', newsController.getLemondeNews);
-
-// GET /api/news/newsapi
-// Retourne uniquement les news NewsAPI
-// Query params : ?q=<terme>&lang=fr|en&pageSize=10
-router.get('/newsapi', newsController.getNewsAPI);
+// Routes par source individuelle
+router.get('/bbc',         newsController.getBBCNews);
+router.get('/lemonde',     newsController.getLemondeNews);
+router.get('/newsapi',     newsController.getNewsAPI);
+router.get('/guardian',    newsController.getGuardianNews);
+router.get('/aljazeera',   newsController.getAlJazeeraNews);
+router.get('/techcrunch',  newsController.getTechCrunchNews);
+router.get('/hackernews',  newsController.getHackerNews);
 
 module.exports = router;

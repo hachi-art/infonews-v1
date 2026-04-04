@@ -103,32 +103,54 @@
     /* WEATHER + FINANCE TOP ROW */
     .top-row { display: grid; grid-template-columns: 340px 1fr; gap: 1rem; }
 
-    /* WEATHER */
-    .weather-card {
-      background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
-      color: #fff;
-      border-radius: 12px;
-      padding: 1.2rem;
-      box-shadow: var(--shadow);
+    /* GLOBE */
+    .weather-world-layout { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
+    .globe-container { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+    .globe {
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #4fc3f7, #0277bd 60%, #01579b);
+      box-shadow: inset -20px -20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(26,115,232,0.3);
+      position: relative;
+      overflow: hidden;
+      animation: globe-rotate 12s linear infinite;
     }
-    .weather-city { font-size: 0.8rem; opacity: 0.8; margin-bottom: 0.3rem; }
-    .weather-main { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
-    .weather-icon { font-size: 2.5rem; }
-    .weather-temp { font-size: 2.8rem; font-weight: 800; }
-    .weather-desc { font-size: 0.9rem; opacity: 0.9; }
-    .weather-details { display: flex; gap: 1rem; font-size: 0.78rem; opacity: 0.85; margin-bottom: 1rem; }
-    .weather-forecast { display: flex; gap: 0.5rem; }
-    .forecast-day {
+    .globe-inner { position: absolute; inset: 0; }
+    .globe-inner canvas { width: 100%; height: 100%; }
+    .globe-shine {
+      position: absolute; top: 10%; left: 15%;
+      width: 35%; height: 35%;
+      background: radial-gradient(circle, rgba(255,255,255,0.35), transparent);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    @keyframes globe-rotate { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(20deg); } }
+    .globe-label { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
+
+    /* MÉTÉO VILLES */
+    .weather-cities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 0.6rem;
       flex: 1;
-      background: rgba(255,255,255,0.15);
-      border-radius: 8px;
-      padding: 0.5rem;
-      text-align: center;
-      font-size: 0.72rem;
     }
-    .forecast-day .ficon { font-size: 1rem; }
-    .forecast-day .fmax { font-weight: 700; }
-    .forecast-day .fdate { opacity: 0.75; }
+    .city-weather-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.8rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .city-icon { font-size: 1.6rem; }
+    .city-info { flex: 1; min-width: 0; }
+    .city-name { font-size: 0.78rem; font-weight: 600; color: var(--text); }
+    .city-flag { font-size: 0.7rem; }
+    .city-temp { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+    .city-desc { font-size: 0.68rem; color: var(--muted); }
+    .city-extra { font-size: 0.65rem; color: var(--muted); margin-top: 0.1rem; }
 
     /* MARKETS */
     .markets-grid {
@@ -288,26 +310,34 @@
     </div>
   </section>
 
-  <!-- MÉTÉO + MARCHÉS -->
-  <div class="top-row">
-
-    <!-- MÉTÉO -->
-    <section id="meteo">
-      <div class="section-title">Météo — Barcelone</div>
-      <div id="weather-widget">
+  <!-- MÉTÉO MONDIALE -->
+  <section id="meteo">
+    <div class="section-title">Météo mondiale</div>
+    <div class="weather-world-layout">
+      <!-- Globe animé -->
+      <div class="globe-container">
+        <div class="globe">
+          <div class="globe-inner">
+            <canvas id="globe-canvas" width="220" height="220"></canvas>
+          </div>
+          <div class="globe-shine"></div>
+        </div>
+        <div class="globe-label">Terre en temps réel</div>
+      </div>
+      <!-- Cartes météo villes -->
+      <div id="weather-cities" class="weather-cities-grid">
         <div class="loader"><div class="spinner"></div></div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- MARCHÉS -->
-    <section id="marches">
-      <div class="section-title">Indices boursiers</div>
-      <div id="markets-grid" class="markets-grid">
-        <div class="loader"><div class="spinner"></div></div>
-      </div>
-    </section>
-
-  </div>
+  <!-- MARCHÉS -->
+  <section id="marches">
+    <div class="section-title">Indices boursiers</div>
+    <div id="markets-grid" class="markets-grid">
+      <div class="loader"><div class="spinner"></div></div>
+    </div>
+  </section>
 
   <!-- CRYPTO -->
   <section id="crypto">
@@ -416,42 +446,111 @@ updateCounters();
 setInterval(updateCounters, 1000);
 
 // ============================================================
-// MÉTÉO
+// GLOBE ANIMÉ (Canvas)
+// ============================================================
+function drawGlobe() {
+  const canvas = document.getElementById('globe-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height, R = W / 2;
+  let angle = 0;
+
+  const continents = [
+    // Amérique du Nord
+    [[0.3,0.2],[0.45,0.15],[0.5,0.25],[0.48,0.4],[0.35,0.45],[0.25,0.35]],
+    // Amérique du Sud
+    [[0.38,0.48],[0.5,0.45],[0.52,0.65],[0.42,0.75],[0.35,0.65]],
+    // Europe
+    [[0.55,0.18],[0.65,0.15],[0.68,0.25],[0.6,0.32],[0.52,0.28]],
+    // Afrique
+    [[0.55,0.33],[0.65,0.30],[0.7,0.5],[0.65,0.68],[0.55,0.65],[0.5,0.5]],
+    // Asie
+    [[0.65,0.15],[0.9,0.12],[0.92,0.35],[0.78,0.42],[0.65,0.38],[0.6,0.28]],
+    // Australie
+    [[0.78,0.58],[0.9,0.55],[0.92,0.68],[0.82,0.72],[0.75,0.65]],
+  ];
+
+  function project(lon, lat, rotation) {
+    const lam = (lon + rotation) % (2 * Math.PI);
+    const x = R + R * 0.85 * Math.cos(lat) * Math.sin(lam);
+    const y = R - R * 0.85 * Math.sin(lat);
+    const visible = Math.cos(lat) * Math.cos(lam) > 0;
+    return { x, y, visible };
+  }
+
+  function drawFrame() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Grille latitude/longitude
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.lineWidth = 0.5;
+    for (let lat = -80; lat <= 80; lat += 20) {
+      ctx.beginPath();
+      const latR = lat * Math.PI / 180;
+      for (let lon = 0; lon <= 360; lon += 2) {
+        const p = project(lon * Math.PI / 180, latR, angle);
+        if (p.visible) { lon === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); }
+      }
+      ctx.stroke();
+    }
+    for (let lon = 0; lon < 360; lon += 30) {
+      ctx.beginPath();
+      for (let lat = -90; lat <= 90; lat += 2) {
+        const p = project((lon + angle * 180 / Math.PI) * Math.PI / 180, lat * Math.PI / 180, 0);
+        const x = R + R * 0.85 * Math.cos(lat * Math.PI/180) * Math.sin((lon * Math.PI/180 + angle) % (2*Math.PI));
+        const y = R - R * 0.85 * Math.sin(lat * Math.PI/180);
+        const vis = Math.cos(lat * Math.PI/180) * Math.cos((lon * Math.PI/180 + angle) % (2*Math.PI)) > 0;
+        if (vis) { lat === -90 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+      }
+      ctx.stroke();
+    }
+
+    // Continents simplifiés
+    continents.forEach(pts => {
+      ctx.beginPath();
+      let first = true;
+      pts.forEach(([u, v]) => {
+        const lon = (u * 2 * Math.PI);
+        const lat = ((0.5 - v) * Math.PI);
+        const x = R + R * 0.85 * Math.cos(lat) * Math.sin((lon + angle) % (2 * Math.PI));
+        const y = R - R * 0.85 * Math.sin(lat);
+        const vis = Math.cos(lat) * Math.cos((lon + angle) % (2 * Math.PI)) > 0;
+        if (vis) { first ? ctx.moveTo(x, y) : ctx.lineTo(x, y); first = false; }
+      });
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(76,175,80,0.7)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    });
+
+    angle += 0.005;
+    requestAnimationFrame(drawFrame);
+  }
+  drawFrame();
+}
+drawGlobe();
+
+// ============================================================
+// MÉTÉO MONDIALE
 // ============================================================
 async function loadWeather() {
   try {
-    const d = await fetch('/api/weather').then(r => r.json());
-    const c = d.current;
-    const days = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-    const forecastHtml = d.forecast.map(f => {
-      const day = days[new Date(f.date).getDay()];
-      return `<div class="forecast-day">
-        <div class="fdate">${day}</div>
-        <div class="ficon">${f.icon}</div>
-        <div class="fmax">${f.max}°</div>
-        <div style="opacity:0.7">${f.min}°</div>
-      </div>`;
-    }).join('');
-
-    document.getElementById('weather-widget').innerHTML = `
-      <div class="weather-card">
-        <div class="weather-city">${d.city}</div>
-        <div class="weather-main">
-          <div class="weather-icon">${c.icon}</div>
-          <div>
-            <div class="weather-temp">${c.temp}°C</div>
-            <div class="weather-desc">${c.label}</div>
-          </div>
+    const cities = await fetch('/api/weather').then(r => r.json());
+    const html = cities.map(d => `
+      <div class="city-weather-card">
+        <div class="city-icon">${d.current.icon}</div>
+        <div class="city-info">
+          <div class="city-name">${d.flag} ${d.city}</div>
+          <div class="city-temp">${d.current.temp}°C</div>
+          <div class="city-desc">${d.current.label}</div>
+          <div class="city-extra">💧${d.current.humidity}% · 💨${d.current.wind}km/h</div>
         </div>
-        <div class="weather-details">
-          <span>💧 ${c.humidity}%</span>
-          <span>💨 ${c.wind} km/h</span>
-          <span>🌡️ Ressenti ${c.feelsLike}°C</span>
-        </div>
-        <div class="weather-forecast">${forecastHtml}</div>
-      </div>`;
+      </div>`).join('');
+    document.getElementById('weather-cities').innerHTML = html;
   } catch(e) {
-    document.getElementById('weather-widget').innerHTML = '<p style="color:#999">Météo indisponible</p>';
+    document.getElementById('weather-cities').innerHTML = '<p style="color:#999">Météo indisponible</p>';
   }
 }
 loadWeather();
