@@ -10,6 +10,8 @@ const cors = require('cors');
 const path = require('path');
 
 const newsRouter = require('./routes/news');
+const weatherRouter = require('./routes/weather');
+const financeRouter = require('./routes/finance');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +26,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Routes ---
 app.use('/api/news', newsRouter);
+app.use('/api/weather', weatherRouter);
+app.use('/api/finance', financeRouter);
 
 // Route de santé (health check pour Render / Railway / Vercel)
 app.get('/health', (req, res) => {

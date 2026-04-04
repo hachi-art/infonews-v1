@@ -3,327 +3,583 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>infonews.day — Actualités du monde</title>
+  <title>infonews.day — Le monde en temps réel</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #0f0f0f;
-      color: #e8e8e8;
-      min-height: 100vh;
+    :root {
+      --primary: #1a73e8;
+      --green: #0f9d58;
+      --red: #d93025;
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --border: #e0e0e0;
+      --text: #202124;
+      --muted: #5f6368;
+      --shadow: 0 1px 6px rgba(0,0,0,0.08);
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); }
 
+    /* HEADER */
     header {
-      background: #1a1a1a;
-      border-bottom: 1px solid #333;
-      padding: 1rem 2rem;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 2rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 100;
+      box-shadow: var(--shadow);
     }
+    .logo { font-size: 1.4rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+    .logo span { color: var(--primary); }
+    .header-right { display: flex; align-items: center; gap: 1.5rem; }
+    #clock { font-size: 0.85rem; color: var(--muted); font-weight: 500; }
+    #live-dot { display: inline-block; width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-    header h1 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: #fff;
-    }
-
-    header h1 span { color: #4ade80; }
-
-    #status {
-      font-size: 0.75rem;
-      color: #888;
-    }
-
-    #status.loading { color: #facc15; }
-    #status.ok { color: #4ade80; }
-    #status.error { color: #f87171; }
-
+    /* NAV */
     nav {
-      background: #161616;
-      padding: 0.6rem 2rem;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
       display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      border-bottom: 1px solid #2a2a2a;
+      gap: 0;
+      overflow-x: auto;
+    }
+    nav a {
+      padding: 0.8rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    nav a:hover, nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    /* LAYOUT */
+    main { max-width: 1300px; margin: 0 auto; padding: 1.5rem 1rem; }
+    section { margin-bottom: 2rem; }
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--primary);
+      display: inline-block;
     }
 
-    nav button {
-      background: #2a2a2a;
-      border: 1px solid #3a3a3a;
-      color: #ccc;
+    /* WORLD COUNTERS */
+    .counters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+    .counter-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .counter-card .icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+    .counter-card .value {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+    .counter-card .label { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; }
+    .counter-card.red .value { color: var(--red); }
+    .counter-card.green .value { color: var(--green); }
+
+    /* WEATHER + FINANCE TOP ROW */
+    .top-row { display: grid; grid-template-columns: 340px 1fr; gap: 1rem; }
+
+    /* WEATHER */
+    .weather-card {
+      background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+      color: #fff;
+      border-radius: 12px;
+      padding: 1.2rem;
+      box-shadow: var(--shadow);
+    }
+    .weather-city { font-size: 0.8rem; opacity: 0.8; margin-bottom: 0.3rem; }
+    .weather-main { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .weather-icon { font-size: 2.5rem; }
+    .weather-temp { font-size: 2.8rem; font-weight: 800; }
+    .weather-desc { font-size: 0.9rem; opacity: 0.9; }
+    .weather-details { display: flex; gap: 1rem; font-size: 0.78rem; opacity: 0.85; margin-bottom: 1rem; }
+    .weather-forecast { display: flex; gap: 0.5rem; }
+    .forecast-day {
+      flex: 1;
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 0.5rem;
+      text-align: center;
+      font-size: 0.72rem;
+    }
+    .forecast-day .ficon { font-size: 1rem; }
+    .forecast-day .fmax { font-weight: 700; }
+    .forecast-day .fdate { opacity: 0.75; }
+
+    /* MARKETS */
+    .markets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.75rem;
+    }
+    .market-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem;
+      box-shadow: var(--shadow);
+    }
+    .market-name { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.3rem; }
+    .market-price { font-size: 1.05rem; font-weight: 700; }
+    .market-change { font-size: 0.78rem; font-weight: 600; margin-top: 0.2rem; }
+    .market-change.up { color: var(--green); }
+    .market-change.down { color: var(--red); }
+
+    /* CRYPTO */
+    .crypto-table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+    .crypto-table th { background: #f1f3f4; font-size: 0.75rem; color: var(--muted); padding: 0.7rem 1rem; text-align: left; font-weight: 600; }
+    .crypto-table td { padding: 0.8rem 1rem; border-top: 1px solid var(--border); font-size: 0.85rem; }
+    .crypto-table tr:hover td { background: #f8f9fa; }
+    .crypto-name { display: flex; align-items: center; gap: 0.6rem; }
+    .crypto-img { width: 24px; height: 24px; border-radius: 50%; }
+    .crypto-symbol { font-size: 0.72rem; color: var(--muted); }
+    .up { color: var(--green); }
+    .down { color: var(--red); }
+    .sparkline-cell { width: 100px; }
+    .sparkline-cell canvas { display: block; }
+
+    /* NEWS */
+    .news-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .filter-btn {
+      background: #fff;
+      border: 1px solid var(--border);
+      color: var(--muted);
       padding: 0.35rem 0.9rem;
       border-radius: 20px;
       cursor: pointer;
       font-size: 0.8rem;
       transition: all 0.2s;
     }
-
-    nav button:hover, nav button.active {
-      background: #4ade80;
-      color: #000;
-      border-color: #4ade80;
-      font-weight: 600;
-    }
-
-    main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem;
-    }
-
-    #stats {
-      font-size: 0.8rem;
-      color: #666;
-      margin-bottom: 1.2rem;
-    }
-
-    #articles-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1rem;
-    }
-
-    .card {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
+    .filter-btn:hover, .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 600; }
+    .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+    .news-card {
+      background: var(--card);
+      border: 1px solid var(--border);
       border-radius: 10px;
       overflow: hidden;
-      transition: transform 0.2s, border-color 0.2s;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
       cursor: pointer;
     }
-
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: #444;
-    }
-
-    .card img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-      background: #222;
-    }
-
-    .card-img-placeholder {
-      width: 100%;
-      height: 160px;
-      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .news-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+    .news-card img { width: 100%; height: 150px; object-fit: cover; }
+    .news-img-placeholder {
+      width: 100%; height: 150px;
+      background: linear-gradient(135deg, #e8f0fe, #f1f3f4);
+      display: flex; align-items: center; justify-content: center;
       font-size: 2rem;
     }
+    .news-body { padding: 1rem; }
+    .news-meta { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .badge { font-size: 0.65rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase; }
+    .badge.bbc { background: #d93025; color: #fff; }
+    .badge.lemonde { background: #1a73e8; color: #fff; }
+    .badge.newsapi { background: #7c4dff; color: #fff; }
+    .badge.other { background: #e0e0e0; color: #5f6368; }
+    .news-date { font-size: 0.7rem; color: var(--muted); }
+    .news-title { font-size: 0.9rem; font-weight: 600; line-height: 1.4; margin-bottom: 0.4rem; }
+    .news-summary { font-size: 0.78rem; color: var(--muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-    .card-body {
-      padding: 1rem;
-    }
-
-    .card-meta {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .badge-source {
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .badge-source.bbc { background: #ef4444; color: #fff; }
-    .badge-source.lemonde { background: #3b82f6; color: #fff; }
-    .badge-source.newsapi { background: #8b5cf6; color: #fff; }
-    .badge-source.other { background: #374151; color: #ccc; }
-
-    .card-date {
-      font-size: 0.7rem;
-      color: #666;
-    }
-
-    .card-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      line-height: 1.4;
-      color: #f0f0f0;
-      margin-bottom: 0.5rem;
-    }
-
-    .card-summary {
-      font-size: 0.8rem;
-      color: #999;
-      line-height: 1.5;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .card-link {
-      display: block;
-      margin-top: 0.8rem;
-      font-size: 0.75rem;
-      color: #4ade80;
-      text-decoration: none;
-    }
-
-    .card-link:hover { text-decoration: underline; }
-
-    #loader {
-      text-align: center;
-      padding: 3rem;
-      color: #666;
-    }
-
-    #loader .spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid #333;
-      border-top-color: #4ade80;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 1rem;
-    }
-
+    /* LOADER */
+    .loader { text-align: center; padding: 2rem; color: var(--muted); }
+    .spinner { width: 36px; height: 36px; border: 3px solid #e0e0e0; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 0.8rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: #444;
-      font-size: 0.75rem;
-      border-top: 1px solid #1f1f1f;
-      margin-top: 3rem;
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .top-row { grid-template-columns: 1fr; }
+      header { padding: 0.75rem 1rem; }
+      main { padding: 1rem 0.75rem; }
+      .counters-grid { grid-template-columns: repeat(2, 1fr); }
     }
+
+    /* FOOTER */
+    footer { text-align: center; padding: 1.5rem; color: var(--muted); font-size: 0.75rem; border-top: 1px solid var(--border); margin-top: 2rem; background: #fff; }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>info<span>news</span>.day</h1>
-  <span id="status" class="loading">Chargement...</span>
+  <div class="logo">info<span>news</span>.day</div>
+  <div class="header-right">
+    <span id="live-dot"></span>
+    <span id="clock"></span>
+  </div>
 </header>
 
 <nav>
-  <button class="active" onclick="filterSource('all', this)">Toutes les sources</button>
-  <button onclick="filterSource('BBC', this)">BBC</button>
-  <button onclick="filterSource('Le Monde', this)">Le Monde</button>
-  <button onclick="filterSource('NewsAPI', this)">NewsAPI</button>
+  <a href="#monde" class="active">Monde</a>
+  <a href="#meteo">Météo</a>
+  <a href="#marches">Marchés</a>
+  <a href="#crypto">Crypto</a>
+  <a href="#actualites">Actualités</a>
 </nav>
 
 <main>
-  <p id="stats"></p>
-  <div id="loader">
-    <div class="spinner"></div>
-    <p>Récupération des actualités en cours...</p>
+
+  <!-- COMPTEURS MONDE -->
+  <section id="monde">
+    <div class="section-title">Monde en temps réel</div>
+    <div class="counters-grid">
+      <div class="counter-card">
+        <div class="icon">🌍</div>
+        <div class="value" id="c-population">–</div>
+        <div class="label">Population mondiale</div>
+      </div>
+      <div class="counter-card green">
+        <div class="icon">👶</div>
+        <div class="value" id="c-births">–</div>
+        <div class="label">Naissances aujourd'hui</div>
+      </div>
+      <div class="counter-card red">
+        <div class="icon">💀</div>
+        <div class="value" id="c-deaths">–</div>
+        <div class="label">Décès aujourd'hui</div>
+      </div>
+      <div class="counter-card red">
+        <div class="icon">🌡️</div>
+        <div class="value" id="c-co2">–</div>
+        <div class="label">CO₂ émis aujourd'hui (t)</div>
+      </div>
+      <div class="counter-card green">
+        <div class="icon">🌳</div>
+        <div class="value" id="c-trees">–</div>
+        <div class="label">Arbres plantés aujourd'hui</div>
+      </div>
+      <div class="counter-card">
+        <div class="icon">📱</div>
+        <div class="value" id="c-tweets">–</div>
+        <div class="label">Tweets envoyés aujourd'hui</div>
+      </div>
+      <div class="counter-card green">
+        <div class="icon">🍔</div>
+        <div class="value" id="c-food">–</div>
+        <div class="label">Repas servis aujourd'hui</div>
+      </div>
+      <div class="counter-card red">
+        <div class="icon">🦠</div>
+        <div class="value" id="c-obese">–</div>
+        <div class="label">Personnes obèses</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MÉTÉO + MARCHÉS -->
+  <div class="top-row">
+
+    <!-- MÉTÉO -->
+    <section id="meteo">
+      <div class="section-title">Météo — Barcelone</div>
+      <div id="weather-widget">
+        <div class="loader"><div class="spinner"></div></div>
+      </div>
+    </section>
+
+    <!-- MARCHÉS -->
+    <section id="marches">
+      <div class="section-title">Indices boursiers</div>
+      <div id="markets-grid" class="markets-grid">
+        <div class="loader"><div class="spinner"></div></div>
+      </div>
+    </section>
+
   </div>
-  <div id="articles-grid" style="display:none;"></div>
+
+  <!-- CRYPTO -->
+  <section id="crypto">
+    <div class="section-title">Cryptomonnaies</div>
+    <div style="overflow-x:auto;">
+      <table class="crypto-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nom</th>
+            <th>Prix (€)</th>
+            <th>24h</th>
+            <th>7j</th>
+            <th>Volume 24h</th>
+            <th>7 jours</th>
+          </tr>
+        </thead>
+        <tbody id="crypto-body">
+          <tr><td colspan="7" style="text-align:center;padding:2rem;color:#5f6368"><div class="spinner" style="margin:auto"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ACTUALITÉS -->
+  <section id="actualites">
+    <div class="section-title">Actualités</div>
+    <div class="news-filters">
+      <button class="filter-btn active" onclick="filterNews('all',this)">Toutes</button>
+      <button class="filter-btn" onclick="filterNews('BBC',this)">BBC</button>
+      <button class="filter-btn" onclick="filterNews('Le Monde',this)">Le Monde</button>
+      <button class="filter-btn" onclick="filterNews('NewsAPI',this)">NewsAPI</button>
+    </div>
+    <div id="news-grid" class="news-grid">
+      <div class="loader"><div class="spinner"></div><p>Chargement des actualités...</p></div>
+    </div>
+  </section>
+
 </main>
 
 <footer>
-  infonews.day &mdash; Agrégateur automatisé &mdash; Sources : BBC, Le Monde, NewsAPI
+  infonews.day &mdash; Sources : BBC · Le Monde · NewsAPI · Open-Meteo · CoinGecko · Yahoo Finance &mdash; Mise à jour automatique
 </footer>
 
 <script>
-  let allArticles = [];
-  let currentSource = 'all';
+// ============================================================
+// HORLOGE
+// ============================================================
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleString('fr-FR', {
+    weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
+}
+updateClock();
+setInterval(updateClock, 1000);
 
-  function getSourceClass(source) {
-    if (source === 'BBC') return 'bbc';
-    if (source === 'Le Monde') return 'lemonde';
-    if (source && source.toLowerCase().includes('newsapi')) return 'newsapi';
-    return 'other';
-  }
+// ============================================================
+// NAVIGATION SMOOTH
+// ============================================================
+document.querySelectorAll('nav a').forEach(a => {
+  a.addEventListener('click', e => {
+    document.querySelectorAll('nav a').forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+  });
+});
 
-  function formatDate(isoString) {
-    try {
-      return new Intl.DateTimeFormat('fr-FR', {
-        day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
-      }).format(new Date(isoString));
-    } catch { return ''; }
-  }
+// ============================================================
+// COMPTEURS MONDE (statistiques réelles annuelles → /seconde)
+// ============================================================
+const START = new Date();
+const secsSinceMidnight = () => {
+  const n = new Date();
+  return (n - new Date(n.getFullYear(), n.getMonth(), n.getDate())) / 1000;
+};
 
-  function renderArticles(articles) {
-    const grid = document.getElementById('articles-grid');
-    if (!articles.length) {
-      grid.innerHTML = '<p style="color:#666;grid-column:1/-1;text-align:center;padding:2rem;">Aucun article disponible.</p>';
-      return;
-    }
-    grid.innerHTML = articles.map(a => `
-      <div class="card" onclick="window.open('${a.url}','_blank')">
-        ${a.imageUrl
-          ? `<img src="${a.imageUrl}" alt="" loading="lazy" onerror="this.parentNode.querySelector('.card-img-placeholder').style.display='flex';this.style.display='none'">`
-          : ''}
-        <div class="card-img-placeholder" style="display:${a.imageUrl ? 'none' : 'flex'}">&#x1F4F0;</div>
-        <div class="card-body">
-          <div class="card-meta">
-            <span class="badge-source ${getSourceClass(a.source)}">${a.source}</span>
-            <span class="card-date">${formatDate(a.publishedAt)}</span>
+// Taux / seconde basés sur données ONU / Worldometers 2024
+const RATES = {
+  births:  4.5,       // ~385 000/jour
+  deaths:  1.9,       // ~163 000/jour
+  co2:     1300,      // ~112M tonnes/jour
+  trees:   1.5,       // ~130 000/jour (reforestation)
+  tweets:  6000,      // ~500M/jour
+  food:    90000,     // ~7.8Md repas/jour
+};
+const BASE_POP = 8219000000;
+const NET_GROWTH = 2.6; // naissances - décès /seconde
+
+function fmt(n) {
+  if (n >= 1e9) return (n/1e9).toFixed(2) + ' Md';
+  if (n >= 1e6) return (n/1e6).toFixed(2) + ' M';
+  return Math.round(n).toLocaleString('fr-FR');
+}
+
+function updateCounters() {
+  const s = secsSinceMidnight();
+  document.getElementById('c-population').textContent = fmt(BASE_POP + s * NET_GROWTH);
+  document.getElementById('c-births').textContent    = fmt(s * RATES.births);
+  document.getElementById('c-deaths').textContent    = fmt(s * RATES.deaths);
+  document.getElementById('c-co2').textContent       = fmt(s * RATES.co2);
+  document.getElementById('c-trees').textContent     = fmt(s * RATES.trees);
+  document.getElementById('c-tweets').textContent    = fmt(s * RATES.tweets);
+  document.getElementById('c-food').textContent      = fmt(s * RATES.food);
+  document.getElementById('c-obese').textContent     = '890 M';
+}
+updateCounters();
+setInterval(updateCounters, 1000);
+
+// ============================================================
+// MÉTÉO
+// ============================================================
+async function loadWeather() {
+  try {
+    const d = await fetch('/api/weather').then(r => r.json());
+    const c = d.current;
+    const days = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+    const forecastHtml = d.forecast.map(f => {
+      const day = days[new Date(f.date).getDay()];
+      return `<div class="forecast-day">
+        <div class="fdate">${day}</div>
+        <div class="ficon">${f.icon}</div>
+        <div class="fmax">${f.max}°</div>
+        <div style="opacity:0.7">${f.min}°</div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('weather-widget').innerHTML = `
+      <div class="weather-card">
+        <div class="weather-city">${d.city}</div>
+        <div class="weather-main">
+          <div class="weather-icon">${c.icon}</div>
+          <div>
+            <div class="weather-temp">${c.temp}°C</div>
+            <div class="weather-desc">${c.label}</div>
           </div>
-          <div class="card-title">${a.title}</div>
-          ${a.summary ? `<div class="card-summary">${a.summary}</div>` : ''}
-          <a class="card-link" href="${a.url}" target="_blank" onclick="event.stopPropagation()">Lire l'article &rarr;</a>
         </div>
+        <div class="weather-details">
+          <span>💧 ${c.humidity}%</span>
+          <span>💨 ${c.wind} km/h</span>
+          <span>🌡️ Ressenti ${c.feelsLike}°C</span>
+        </div>
+        <div class="weather-forecast">${forecastHtml}</div>
+      </div>`;
+  } catch(e) {
+    document.getElementById('weather-widget').innerHTML = '<p style="color:#999">Météo indisponible</p>';
+  }
+}
+loadWeather();
+
+// ============================================================
+// MARCHÉS & CRYPTO
+// ============================================================
+async function loadFinance() {
+  try {
+    const d = await fetch('/api/finance').then(r => r.json());
+
+    // Marchés
+    const marketsHtml = d.markets.map(m => {
+      const up = m.changePct >= 0;
+      return `<div class="market-card">
+        <div class="market-name">${m.name}</div>
+        <div class="market-price">${m.price.toLocaleString('fr-FR', {maximumFractionDigits:2})}</div>
+        <div class="market-change ${up?'up':'down'}">${up?'▲':'▼'} ${Math.abs(m.changePct).toFixed(2)}%</div>
+      </div>`;
+    }).join('');
+    document.getElementById('markets-grid').innerHTML = marketsHtml || '<p style="color:#999">Marchés indisponibles</p>';
+
+    // Crypto
+    const cryptoRows = d.crypto.map((c, i) => {
+      const up24 = c.change24h >= 0;
+      const up7  = c.change7d  >= 0;
+      const canvasId = `spark-${c.id}`;
+      return `<tr>
+        <td>${i+1}</td>
+        <td>
+          <div class="crypto-name">
+            <img class="crypto-img" src="${c.image}" alt="${c.name}">
+            <div>
+              <div style="font-weight:600">${c.name}</div>
+              <div class="crypto-symbol">${c.symbol}</div>
+            </div>
+          </div>
+        </td>
+        <td style="font-weight:600">${c.price.toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2})} €</td>
+        <td class="${up24?'up':'down'}">${up24?'▲':'▼'} ${Math.abs(c.change24h).toFixed(2)}%</td>
+        <td class="${up7?'up':'down'}">${up7?'▲':'▼'} ${Math.abs(c.change7d||0).toFixed(2)}%</td>
+        <td style="color:#5f6368">${(c.volume/1e6).toFixed(0)} M€</td>
+        <td class="sparkline-cell"><canvas id="${canvasId}" width="100" height="36"></canvas></td>
+      </tr>`;
+    }).join('');
+    document.getElementById('crypto-body').innerHTML = cryptoRows;
+
+    // Sparklines
+    d.crypto.forEach(c => {
+      const canvas = document.getElementById(`spark-${c.id}`);
+      if (!canvas || !c.sparkline.length) return;
+      const prices = c.sparkline;
+      const isUp = prices[prices.length-1] >= prices[0];
+      new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: prices.map((_,i)=>i),
+          datasets: [{ data: prices, borderColor: isUp ? '#0f9d58' : '#d93025', borderWidth: 1.5, fill: false, pointRadius: 0, tension: 0.3 }]
+        },
+        options: { responsive: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } }, animation: false }
+      });
+    });
+  } catch(e) {
+    console.error('Finance error:', e);
+    document.getElementById('markets-grid').innerHTML = '<p style="color:#999">Marchés indisponibles</p>';
+    document.getElementById('crypto-body').innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;padding:1rem">Crypto indisponible</td></tr>';
+  }
+}
+loadFinance();
+
+// ============================================================
+// NEWS
+// ============================================================
+let allNews = [];
+
+function sourceClass(s) {
+  if (s === 'BBC') return 'bbc';
+  if (s === 'Le Monde') return 'lemonde';
+  if (s && s.toLowerCase().includes('newsapi')) return 'newsapi';
+  return 'other';
+}
+
+function fmtDate(iso) {
+  try { return new Intl.DateTimeFormat('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(iso)); }
+  catch { return ''; }
+}
+
+function renderNews(articles) {
+  const grid = document.getElementById('news-grid');
+  if (!articles.length) { grid.innerHTML = '<p style="color:#999;text-align:center;padding:2rem">Aucun article.</p>'; return; }
+  grid.innerHTML = articles.map(a => `
+    <div class="news-card" onclick="window.open('${a.url}','_blank')">
+      ${a.imageUrl
+        ? `<img src="${a.imageUrl}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        : ''}
+      <div class="news-img-placeholder" style="display:${a.imageUrl?'none':'flex'}">📰</div>
+      <div class="news-body">
+        <div class="news-meta">
+          <span class="badge ${sourceClass(a.source)}">${a.source}</span>
+          <span class="news-date">${fmtDate(a.publishedAt)}</span>
+        </div>
+        <div class="news-title">${a.title}</div>
+        ${a.summary ? `<div class="news-summary">${a.summary}</div>` : ''}
       </div>
-    `).join('');
+    </div>`).join('');
+}
+
+function filterNews(source, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderNews(source === 'all' ? allNews : allNews.filter(a => a.source === source));
+}
+
+async function loadNews() {
+  try {
+    const d = await fetch('/api/news').then(r => r.json());
+    allNews = d.articles || [];
+    renderNews(allNews);
+  } catch(e) {
+    document.getElementById('news-grid').innerHTML = '<p style="color:#999;text-align:center;padding:2rem">Actualités indisponibles.</p>';
   }
+}
+loadNews();
 
-  function filterSource(source, btn) {
-    currentSource = source;
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const filtered = source === 'all' ? allArticles : allArticles.filter(a => a.source === source);
-    document.getElementById('stats').textContent = `${filtered.length} article(s) affiché(s)`;
-    renderArticles(filtered);
-  }
-
-  async function loadNews() {
-    const statusEl = document.getElementById('status');
-    const loader = document.getElementById('loader');
-    const grid = document.getElementById('articles-grid');
-
-    try {
-      const resp = await fetch('/api/news');
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      const data = await resp.json();
-
-      allArticles = data.articles || [];
-      loader.style.display = 'none';
-      grid.style.display = 'grid';
-
-      statusEl.className = 'ok';
-      statusEl.textContent = `${allArticles.length} articles — ${new Date(data.fetchedAt).toLocaleTimeString('fr-FR')}`;
-      document.getElementById('stats').textContent = `${allArticles.length} article(s) au total`;
-
-      renderArticles(allArticles);
-    } catch (err) {
-      loader.style.display = 'none';
-      grid.style.display = 'grid';
-      statusEl.className = 'error';
-      statusEl.textContent = 'Erreur de chargement';
-      grid.innerHTML = `<p style="color:#f87171;grid-column:1/-1;text-align:center;padding:2rem;">
-        Impossible de charger les news : ${err.message}<br>
-        <small style="color:#666">Vérifie que le serveur tourne sur le port 3000</small>
-      </p>`;
-      console.error('[infonews] Erreur:', err);
-    }
-  }
-
-  // Chargement initial
-  loadNews();
-
-  // Rafraîchissement toutes les 10 minutes
-  setInterval(loadNews, 10 * 60 * 1000);
+// Rafraîchissement
+setInterval(loadNews, 10 * 60 * 1000);
+setInterval(loadFinance, 5 * 60 * 1000);
+setInterval(loadWeather, 30 * 60 * 1000);
 </script>
-
 </body>
 </html>
