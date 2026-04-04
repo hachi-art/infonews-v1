@@ -1068,6 +1068,8 @@
             <option value="aljazeera">Al Jazeera</option>
             <option value="techcrunch">TechCrunch</option>
             <option value="hackernews">HackerNews</option>
+            <option value="dw">Deutsche Welle</option>
+            <option value="euronews">Euronews</option>
             <option value="independent">Indépendants</option>
           </select>
         </div>
@@ -1146,9 +1148,7 @@
         </div>
 
         <!-- Market tiles -->
-        <div class="market-tiles" id="marketTiles">
-          <div class="loading-msg" data-i18n="loading">Chargement marchés…</div>
-        </div>
+        <div class="market-tiles" id="marketTiles"></div>
 
         <!-- TradingView chart -->
         <div class="tv-widget-wrap" style="height:350px;margin-bottom:1.2rem;">
@@ -1196,7 +1196,66 @@
         <!-- Commodities -->
         <h3 class="section-title" style="font-size:1rem;margin-bottom:0.8rem">🪨 <span data-i18n="commodities">Matières premières</span></h3>
         <div class="commodities-grid" id="commoditiesGrid">
-          <div class="loading-msg" data-i18n="loading">Chargement…</div>
+          <!-- Commodités : données live via backend Yahoo Finance -->
+        </div>
+        <!-- TradingView mini-widgets statiques (intégrés au chargement de page) -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.7rem;margin-bottom:1.2rem" id="tvCommodities">
+          <div class="commodity-card">
+            <div class="commodity-name">🥇 Or (XAU/USD)</div>
+            <div class="tradingview-widget-container" style="height:60px">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"TVC:GOLD","width":"100%","colorTheme":"light","isTransparent":true,"locale":"fr"}</script>
+            </div>
+          </div>
+          <div class="commodity-card">
+            <div class="commodity-name">🥈 Argent (XAG/USD)</div>
+            <div class="tradingview-widget-container" style="height:60px">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"TVC:SILVER","width":"100%","colorTheme":"light","isTransparent":true,"locale":"fr"}</script>
+            </div>
+          </div>
+          <div class="commodity-card">
+            <div class="commodity-name">🛢️ Pétrole Brent</div>
+            <div class="tradingview-widget-container" style="height:60px">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"TVC:UKOIL","width":"100%","colorTheme":"light","isTransparent":true,"locale":"fr"}</script>
+            </div>
+          </div>
+          <div class="commodity-card">
+            <div class="commodity-name">⛽ WTI</div>
+            <div class="tradingview-widget-container" style="height:60px">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"TVC:USOIL","width":"100%","colorTheme":"light","isTransparent":true,"locale":"fr"}</script>
+            </div>
+          </div>
+          <div class="commodity-card">
+            <div class="commodity-name">🔥 Gaz Naturel</div>
+            <div class="tradingview-widget-container" style="height:60px">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"TVC:NATURALGAS","width":"100%","colorTheme":"light","isTransparent":true,"locale":"fr"}</script>
+            </div>
+          </div>
+          <div class="commodity-card">
+            <div class="commodity-name">🌾 Blé</div>
+            <div class="tradingview-widget-container" style="height:60px">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"CBOT:ZW1!","width":"100%","colorTheme":"light","isTransparent":true,"locale":"fr"}</script>
+            </div>
+          </div>
+          <div class="commodity-card">
+            <div class="commodity-name">🌽 Maïs</div>
+            <div class="tradingview-widget-container" style="height:60px">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"CBOT:ZC1!","width":"100%","colorTheme":"light","isTransparent":true,"locale":"fr"}</script>
+            </div>
+          </div>
+          <div class="commodity-card">
+            <div class="commodity-name">☕ Café</div>
+            <div class="tradingview-widget-container" style="height:60px">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"ICEUS:KC1!","width":"100%","colorTheme":"light","isTransparent":true,"locale":"fr"}</script>
+            </div>
+          </div>
         </div>
 
         <!-- TradingView Economic Calendar -->
@@ -1749,7 +1808,7 @@
     CLOCK_ZONES.forEach(z => {
       const div = document.createElement('div');
       div.className = 'clock-item';
-      div.innerHTML = `<div class="clock-city">${z.city}</div><div class="clock-time" id="clk-${z.city.replace('.','')}"</div>`;
+      div.innerHTML = `<div class="clock-city">${z.city}</div><div class="clock-time" id="clk-${z.city.replace('.','')}" ></div>`;
       row.appendChild(div);
     });
   }
@@ -1927,7 +1986,7 @@
           <div class="news-title">${a.title}</div>
           <div class="news-meta">
             <span class="news-cat">${a.category || ''}</span>
-            ${a.description ? `· ${a.description.slice(0, 80)}…` : ''}
+            ${(a.description || a.summary) ? `· ${(a.description || a.summary).slice(0, 90)}…` : ''}
           </div>
         </a>
       `;
@@ -2027,7 +2086,7 @@
   // FINANCE
   // ────────────────────────────────────────────────
   async function loadFinance() {
-    await Promise.allSettled([loadMarkets(), loadCrypto(), loadCommodities()]);
+    await Promise.allSettled([loadMarkets(), loadCrypto()]);
   }
 
   async function loadMarkets() {
@@ -2101,31 +2160,7 @@
     }
   }
 
-  async function loadCommodities() {
-    const grid = document.getElementById('commoditiesGrid');
-    const COMMODITIES = [
-      { name: 'Or (XAU/USD)', symbol: 'GOLD', icon: '🥇' },
-      { name: 'Argent (XAG/USD)', symbol: 'SILVER', icon: '🥈' },
-      { name: 'Pétrole Brent', symbol: 'BRENT', icon: '🛢️' },
-      { name: 'WTI', symbol: 'WTI', icon: '⛽' },
-      { name: 'Gaz naturel', symbol: 'GAS', icon: '🔥' },
-      { name: 'Blé', symbol: 'WHEAT', icon: '🌾' },
-    ];
-    // Display static placeholder with TradingView mini widgets
-    grid.innerHTML = COMMODITIES.map(c => `
-      <div class="commodity-card">
-        <div class="commodity-name">${c.icon} ${c.name}</div>
-        <div class="commodity-val">
-          <div class="tradingview-widget-container">
-            <div class="tradingview-widget-container__widget"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-            { "symbol": "TVC:${c.symbol}", "width": "100%", "colorTheme": "light", "isTransparent": true, "locale": "fr" }
-            <\/script>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  }
+  // loadCommodities: remplacé par widgets TradingView statiques dans le HTML
 
   // ────────────────────────────────────────────────
   // SPACE — ISS + APOD

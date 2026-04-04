@@ -12,37 +12,21 @@ router.get('/', async (req, res) => {
   });
 });
 
-// GET /api/finance/crypto
+// GET /api/finance/crypto — CoinGecko native format
 router.get('/crypto', async (req, res) => {
   try {
     const data = await fetchCrypto();
-    // Map to CoinGecko-style keys expected by the frontend
-    res.json({ crypto: data.map(c => ({
-      name: c.name,
-      symbol: c.symbol,
-      current_price: c.price,
-      price_change_percentage_24h: c.change24h,
-      price_change_percentage_7d_in_currency: c.change7d,
-      market_cap: c.marketCap,
-      sparkline_in_7d: { price: c.sparkline }
-    })) });
+    res.json({ crypto: data });
   } catch(err) {
     res.status(500).json({ error: 'Erreur CoinGecko', detail: err.message });
   }
 });
 
-// GET /api/finance/markets
+// GET /api/finance/markets — Yahoo Finance
 router.get('/markets', async (req, res) => {
   try {
     const data = await fetchMarkets();
-    res.json({ markets: data.map(m => ({
-      name: m.name,
-      symbol: m.symbol,
-      price: m.price,
-      change: m.change,
-      changePercent: m.changePct,
-      currency: m.currency
-    })) });
+    res.json({ markets: data });
   } catch(err) {
     res.status(500).json({ error: 'Erreur Yahoo Finance', detail: err.message });
   }
