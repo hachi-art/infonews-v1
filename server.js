@@ -14,6 +14,7 @@ const weatherRouter  = require('./routes/weather');
 const financeRouter  = require('./routes/finance');
 const exchangeRouter = require('./routes/exchange');
 const alertsRouter   = require('./routes/alerts');
+const spaceRouter    = require('./routes/space');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +31,7 @@ app.use('/api/weather',  weatherRouter);
 app.use('/api/finance',  financeRouter);
 app.use('/api/exchange', exchangeRouter);
 app.use('/api/alerts',   alertsRouter);
+app.use('/api/space',    spaceRouter);
 
 // Health check
 app.get('/health', (req, res) => {

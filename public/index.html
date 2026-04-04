@@ -3,687 +3,2254 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>infonews.day — Le monde en temps réel</title>
+  <title>infonews.day — Invent the day</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <style>
-    :root {
-      --primary: #1a73e8;
-      --green: #0f9d58;
-      --red: #d93025;
-      --bg: #f8f9fa;
-      --card: #ffffff;
-      --border: #e0e0e0;
-      --text: #202124;
-      --muted: #5f6368;
-      --shadow: 0 1px 6px rgba(0,0,0,0.08);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    /* HEADER */
+  <style>
+    /* ═══════════════════════════════════════════════════
+       VARIABLES & RESET
+    ═══════════════════════════════════════════════════ */
+    :root {
+      --primary:   #1a73e8;
+      --primary-d: #1557b0;
+      --green:     #1a8a52;
+      --red:       #d93025;
+      --orange:    #f29900;
+      --bg:        #f8f9fc;
+      --card:      #ffffff;
+      --border:    #e4e6ea;
+      --text:      #1a1a2e;
+      --muted:     #6b7280;
+      --shadow:    0 2px 12px rgba(0,0,0,0.07);
+      --radius:    14px;
+      --header-h:  58px;
+      --nav-h:     44px;
+      --slide-gap: calc(var(--header-h) + var(--nav-h));
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ═══════════════════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════════════════ */
     header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
       background: #fff;
       border-bottom: 1px solid var(--border);
-      padding: 0.75rem 2rem;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: var(--shadow);
+      padding: 0 1.5rem;
+      gap: 1rem;
+      z-index: 500;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
     }
-    .logo { font-size: 1.4rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
-    .logo span { color: var(--primary); }
-    .header-right { display: flex; align-items: center; gap: 1.5rem; }
-    #clock { font-size: 0.85rem; color: var(--muted); font-weight: 500; }
-    #live-dot { display: inline-block; width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-    /* NAV */
-    nav {
-      background: #fff;
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
+    .brand {
       display: flex;
-      gap: 0;
-      overflow-x: auto;
+      flex-direction: column;
+      line-height: 1;
+      flex-shrink: 0;
     }
-    nav a {
-      padding: 0.8rem 1.2rem;
+    .brand-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .brand-logo span { color: var(--primary); }
+    .brand-tagline {
+      font-size: 0.65rem;
+      font-style: italic;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+
+    /* Clocks */
+    .clocks {
+      display: flex;
+      gap: 0.75rem;
+      flex: 1;
+      overflow: hidden;
+    }
+    .clock-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 64px;
+      font-family: 'DM Mono', monospace;
+    }
+    .clock-city {
+      font-size: 0.6rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .clock-time {
       font-size: 0.85rem;
       font-weight: 500;
-      color: var(--muted);
-      text-decoration: none;
-      border-bottom: 2px solid transparent;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-    nav a:hover, nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
-
-    /* LAYOUT */
-    main { max-width: 1300px; margin: 0 auto; padding: 1.5rem 1rem; }
-    section { margin-bottom: 2rem; }
-    .section-title {
-      font-size: 1rem;
-      font-weight: 700;
       color: var(--text);
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--primary);
-      display: inline-block;
     }
 
-    /* WORLD COUNTERS */
+    /* Live badge */
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--red);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border: 1px solid currentColor;
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+    .live-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      animation: pulse-dot 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    /* Lang selector */
+    .lang-sel {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .lang-btn {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+    .lang-btn.active { background: var(--primary); color: #fff; }
+    .lang-btn:hover:not(.active) { background: var(--bg); color: var(--text); }
+
+    /* ═══════════════════════════════════════════════════
+       NAV TABS
+    ═══════════════════════════════════════════════════ */
+    .slide-nav {
+      position: fixed;
+      top: var(--header-h);
+      left: 0; right: 0;
+      height: var(--nav-h);
+      background: #fff;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: stretch;
+      overflow-x: auto;
+      z-index: 490;
+      scrollbar-width: none;
+    }
+    .slide-nav::-webkit-scrollbar { display: none; }
+    .nav-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 1.1rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      white-space: nowrap;
+      position: relative;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+    .nav-tab::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 2px;
+      background: var(--primary);
+      transform: scaleX(0);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nav-tab.active { color: var(--primary); }
+    .nav-tab.active::after { transform: scaleX(1); }
+    .nav-tab:hover { color: var(--text); }
+
+    /* ═══════════════════════════════════════════════════
+       SLIDES ENGINE
+    ═══════════════════════════════════════════════════ */
+    .slides-viewport {
+      position: fixed;
+      top: var(--slide-gap);
+      left: 0; right: 0;
+      bottom: 0;
+      overflow: hidden;
+    }
+    .slides-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+    .slide {
+      min-width: 100vw;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 1.5rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .slide::-webkit-scrollbar { width: 4px; }
+    .slide::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* ═══════════════════════════════════════════════════
+       COMMONS
+    ═══════════════════════════════════════════════════ */
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      color: var(--text);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-blue  { background: #e8f0fe; color: var(--primary); }
+    .badge-green { background: #e6f4ea; color: var(--green); }
+    .badge-red   { background: #fce8e6; color: var(--red); }
+    .badge-warn  { background: #fef3cd; color: #a56900; }
+    .badge-gray  { background: #f1f3f4; color: var(--muted); }
+
+    /* ═══════════════════════════════════════════════════
+       SLIDE 0 — HOME
+    ═══════════════════════════════════════════════════ */
+    /* Breaking news ticker */
+    .ticker-bar {
+      background: var(--primary);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .ticker-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      border-right: 1px solid rgba(255,255,255,0.3);
+      padding-right: 1rem;
+      flex-shrink: 0;
+    }
+    .ticker-track {
+      overflow: hidden;
+      flex: 1;
+    }
+    .ticker-inner {
+      display: flex;
+      gap: 3rem;
+      animation: ticker-scroll 40s linear infinite;
+      white-space: nowrap;
+    }
+    .ticker-inner:hover { animation-play-state: paused; }
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-item { font-size: 0.82rem; flex-shrink: 0; }
+
+    /* Counters grid */
+    .counters-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
     .counters-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 0.75rem;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
     }
     .counter-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1rem;
-      box-shadow: var(--shadow);
-      text-align: center;
-    }
-    .counter-card .icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
-    .counter-card .value {
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: var(--primary);
-      font-variant-numeric: tabular-nums;
-      letter-spacing: -0.02em;
-    }
-    .counter-card .label { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; }
-    .counter-card.red .value { color: var(--red); }
-    .counter-card.green .value { color: var(--green); }
-
-    /* WEATHER + FINANCE TOP ROW */
-    .top-row { display: grid; grid-template-columns: 340px 1fr; gap: 1rem; }
-
-    /* GLOBE */
-    .weather-world-layout { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
-    .globe-container { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; flex-shrink: 0; }
-    .globe {
-      width: 220px; height: 220px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #4fc3f7, #0277bd 60%, #01579b);
-      box-shadow: inset -20px -20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(26,115,232,0.3);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
       position: relative;
       overflow: hidden;
-      animation: globe-rotate 12s linear infinite;
     }
-    .globe-inner { position: absolute; inset: 0; }
-    .globe-inner canvas { width: 100%; height: 100%; }
-    .globe-shine {
-      position: absolute; top: 10%; left: 15%;
-      width: 35%; height: 35%;
-      background: radial-gradient(circle, rgba(255,255,255,0.35), transparent);
-      border-radius: 50%;
-      pointer-events: none;
+    .counter-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--primary);
     }
-    @keyframes globe-rotate { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(20deg); } }
-    .globe-label { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
+    .counter-card.red::before   { background: var(--red); }
+    .counter-card.green::before { background: var(--green); }
+    .counter-card.orange::before{ background: var(--orange); }
+    .counter-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 4px;
+    }
+    .counter-emoji { font-size: 1rem; margin-bottom: 2px; }
+    .counter-value {
+      font-family: 'DM Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .counter-sub {
+      font-size: 0.62rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
 
-    /* MÉTÉO VILLES */
-    .weather-cities-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-      gap: 0.6rem;
-      flex: 1;
-    }
-    .city-weather-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.8rem;
-      box-shadow: var(--shadow);
+    /* Globe canvas */
+    .globe-wrap {
       display: flex;
+      justify-content: center;
+      padding: 0.5rem 0 1.5rem;
+    }
+    #globeCanvas {
+      border-radius: 50%;
+      box-shadow: 0 0 40px rgba(26,115,232,0.15), 0 0 0 1px var(--border);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SLIDE 1 — NEWS
+    ═══════════════════════════════════════════════════ */
+    .filters-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.2rem;
       align-items: center;
-      gap: 0.8rem;
     }
-    .city-icon { font-size: 1.6rem; }
-    .city-info { flex: 1; min-width: 0; }
-    .city-name { font-size: 0.78rem; font-weight: 600; color: var(--text); }
-    .city-flag { font-size: 0.7rem; }
-    .city-temp { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
-    .city-desc { font-size: 0.68rem; color: var(--muted); }
-    .city-extra { font-size: 0.65rem; color: var(--muted); margin-top: 0.1rem; }
-
-    /* MARKETS */
-    .markets-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 0.75rem;
-    }
-    .market-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.9rem;
-      box-shadow: var(--shadow);
-    }
-    .market-name { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.3rem; }
-    .market-price { font-size: 1.05rem; font-weight: 700; }
-    .market-change { font-size: 0.78rem; font-weight: 600; margin-top: 0.2rem; }
-    .market-change.up { color: var(--green); }
-    .market-change.down { color: var(--red); }
-
-    /* CRYPTO */
-    .crypto-table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
-    .crypto-table th { background: #f1f3f4; font-size: 0.75rem; color: var(--muted); padding: 0.7rem 1rem; text-align: left; font-weight: 600; }
-    .crypto-table td { padding: 0.8rem 1rem; border-top: 1px solid var(--border); font-size: 0.85rem; }
-    .crypto-table tr:hover td { background: #f8f9fa; }
-    .crypto-name { display: flex; align-items: center; gap: 0.6rem; }
-    .crypto-img { width: 24px; height: 24px; border-radius: 50%; }
-    .crypto-symbol { font-size: 0.72rem; color: var(--muted); }
-    .up { color: var(--green); }
-    .down { color: var(--red); }
-    .sparkline-cell { width: 100px; }
-    .sparkline-cell canvas { display: block; }
-
-    /* NEWS */
-    .news-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
-    .filter-btn {
-      background: #fff;
+    .filter-chip {
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 20px;
       border: 1px solid var(--border);
       color: var(--muted);
-      padding: 0.35rem 0.9rem;
-      border-radius: 20px;
+      background: var(--card);
+      transition: all 0.15s;
       cursor: pointer;
-      font-size: 0.8rem;
-      transition: all 0.2s;
     }
-    .filter-btn:hover, .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 600; }
-    .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+    .filter-chip.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .filter-chip:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
     .news-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      transition: transform 0.2s, box-shadow 0.2s;
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
       cursor: pointer;
+      transition: box-shadow 0.2s, transform 0.2s;
     }
-    .news-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
-    .news-card img { width: 100%; height: 150px; object-fit: cover; }
-    .news-img-placeholder {
-      width: 100%; height: 150px;
-      background: linear-gradient(135deg, #e8f0fe, #f1f3f4);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 2rem;
+    .news-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); transform: translateY(-2px); }
+    .news-card-top { display: flex; align-items: center; justify-content: space-between; }
+    .source-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
-    .news-body { padding: 1rem; }
-    .news-meta { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
-    .badge { font-size: 0.65rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase; }
-    .badge.bbc { background: #d93025; color: #fff; }
-    .badge.lemonde { background: #1a73e8; color: #fff; }
-    .badge.newsapi { background: #7c4dff; color: #fff; }
-    .badge.other { background: #e0e0e0; color: #5f6368; }
-    .news-date { font-size: 0.7rem; color: var(--muted); }
-    .news-title { font-size: 0.9rem; font-weight: 600; line-height: 1.4; margin-bottom: 0.4rem; }
-    .news-summary { font-size: 0.78rem; color: var(--muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .src-bbc       { background: #bb1919; color: #fff; }
+    .src-lemonde   { background: #003189; color: #fff; }
+    .src-guardian  { background: #052962; color: #fff; }
+    .src-aljazeera { background: #c8102e; color: #fff; }
+    .src-nhk       { background: #000; color: #fff; }
+    .src-dw        { background: #005b96; color: #fff; }
+    .src-euronews  { background: #0051a5; color: #fff; }
+    .src-cgtn      { background: #c0392b; color: #fff; }
+    .src-rt        { background: #1a1a1a; color: #f5c518; }
+    .src-ndtv      { background: #e63012; color: #fff; }
+    .src-techcrunch { background: #0a7;  color: #fff; }
+    .src-hackernews { background: #f60; color: #fff; }
+    .src-intercept { background: #000; color: #e74c3c; }
+    .src-independent { background: #e74c3c; color: #fff; }
+    .src-mrm       { background: #2ecc71; color: #fff; }
+    .src-globalvoices { background: #3498db; color: #fff; }
 
-    /* LOADER */
-    .loader { text-align: center; padding: 2rem; color: var(--muted); }
-    .spinner { width: 36px; height: 36px; border: 3px solid #e0e0e0; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 0.8rem; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* RESPONSIVE */
-    @media (max-width: 768px) {
-      .top-row { grid-template-columns: 1fr; }
-      header { padding: 0.75rem 1rem; }
-      main { padding: 1rem 0.75rem; }
-      .counters-grid { grid-template-columns: repeat(2, 1fr); }
+    .state-warn {
+      font-size: 0.58rem;
+      color: var(--orange);
+      font-weight: 600;
+    }
+    .news-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text);
+    }
+    .news-meta {
+      font-size: 0.68rem;
+      color: var(--muted);
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .news-cat {
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+    .loading-msg {
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 2rem 0;
+      text-align: center;
     }
 
-    /* FOOTER */
-    footer { text-align: center; padding: 1.5rem; color: var(--muted); font-size: 0.75rem; border-top: 1px solid var(--border); margin-top: 2rem; background: #fff; }
+    /* ═══════════════════════════════════════════════════
+       SLIDE 2 — WEATHER
+    ═══════════════════════════════════════════════════ */
+    .windy-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .windy-wrap {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      height: 300px;
+    }
+    .windy-wrap iframe {
+      width: 100%; height: 100%;
+      border: none;
+    }
+    .windy-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+    }
+
+    .city-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.8rem;
+    }
+    .city-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      cursor: pointer;
+      transition: box-shadow 0.2s, transform 0.2s;
+      text-align: center;
+    }
+    .city-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); transform: translateY(-2px); }
+    .city-flag { font-size: 1.6rem; margin-bottom: 4px; }
+    .city-name { font-size: 0.78rem; font-weight: 600; margin-bottom: 6px; }
+    .city-icon { font-size: 1.4rem; margin-bottom: 2px; }
+    .city-temp {
+      font-family: 'DM Mono', monospace;
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .city-desc { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
+
+    /* Weather modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+      z-index: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-box {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 1.5rem;
+      max-width: 480px;
+      width: calc(100% - 2rem);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      transform: scale(0.95);
+      transition: transform 0.2s;
+    }
+    .modal-overlay.open .modal-box { transform: scale(1); }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .modal-city { font-family: 'DM Serif Display', serif; font-size: 1.4rem; }
+    .modal-close {
+      font-size: 1.2rem;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+    .modal-close:hover { background: var(--bg); }
+    .modal-current {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .modal-icon { font-size: 3rem; }
+    .modal-temp {
+      font-family: 'DM Mono', monospace;
+      font-size: 2.5rem;
+      font-weight: 500;
+    }
+    .modal-detail { font-size: 0.78rem; color: var(--muted); line-height: 1.8; }
+    .forecast-row { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; }
+    .forecast-day {
+      min-width: 80px;
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 0.7rem 0.5rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .forecast-date { font-size: 0.62rem; color: var(--muted); margin-bottom: 4px; }
+    .forecast-icon { font-size: 1.3rem; margin-bottom: 4px; }
+    .forecast-temps { font-family: 'DM Mono', monospace; font-size: 0.78rem; }
+
+    /* ═══════════════════════════════════════════════════
+       SLIDE 3 — FINANCE
+    ═══════════════════════════════════════════════════ */
+    .tv-widget-wrap {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    .market-tiles {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.7rem;
+      margin-bottom: 1.2rem;
+    }
+    .market-tile {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.8rem 1rem;
+    }
+    .market-name { font-size: 0.68rem; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+    .market-val  { font-family: 'DM Mono', monospace; font-size: 1.1rem; font-weight: 500; margin: 2px 0; }
+    .market-chg  { font-size: 0.75rem; font-weight: 600; }
+    .up   { color: var(--green); }
+    .down { color: var(--red); }
+
+    .crypto-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-bottom: 1.2rem;
+    }
+    .crypto-table th {
+      text-align: left;
+      padding: 0.5rem 0.8rem;
+      border-bottom: 2px solid var(--border);
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .crypto-table td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .crypto-name { font-weight: 600; }
+    .crypto-sym  { font-size: 0.7rem; color: var(--muted); }
+    .sparkline-canvas { width: 80px; height: 30px; }
+
+    .commodities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 0.7rem;
+      margin-bottom: 1.2rem;
+    }
+    .commodity-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.8rem;
+    }
+    .commodity-name { font-size: 0.68rem; color: var(--muted); font-weight: 600; margin-bottom: 2px; }
+    .commodity-val  { font-family: 'DM Mono', monospace; font-size: 1rem; font-weight: 500; }
+
+    /* ═══════════════════════════════════════════════════
+       SLIDE 4 — EVENTS
+    ═══════════════════════════════════════════════════ */
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .event-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .event-date-box {
+      min-width: 52px;
+      height: 52px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .event-date-day   { font-family: 'DM Mono', monospace; font-size: 1.3rem; font-weight: 500; line-height: 1; }
+    .event-date-month { font-size: 0.58rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+    .event-info { flex: 1; min-width: 0; }
+    .event-name { font-size: 0.88rem; font-weight: 600; margin-bottom: 4px; }
+    .event-venue { font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; }
+    .event-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .event-tag {
+      font-size: 0.6rem;
+      font-weight: 600;
+      padding: 2px 6px;
+      background: var(--bg);
+      border-radius: 4px;
+      color: var(--muted);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SLIDE 5 — CULTURE
+    ═══════════════════════════════════════════════════ */
+    .culture-tabs {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+      background: var(--card);
+      width: fit-content;
+    }
+    .culture-tab {
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 8px 18px;
+      color: var(--muted);
+      transition: all 0.15s;
+      border-right: 1px solid var(--border);
+    }
+    .culture-tab:last-child { border-right: none; }
+    .culture-tab.active { background: var(--primary); color: #fff; }
+    .culture-tab:hover:not(.active) { background: var(--bg); color: var(--text); }
+
+    .culture-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .culture-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .culture-cover {
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      background: linear-gradient(135deg, #667eea20, #764ba220);
+    }
+    .culture-body { padding: 0.8rem; }
+    .culture-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; }
+    .culture-meta  { font-size: 0.68rem; color: var(--muted); }
+
+    /* ═══════════════════════════════════════════════════
+       SLIDE 6 — SPACE
+    ═══════════════════════════════════════════════════ */
+    #slide-space { background: #0a0f1e; color: #e0e8ff; }
+    #slide-space .section-title { color: #c8d8ff; }
+    .space-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .space-stat {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .space-stat-label { font-size: 0.65rem; color: #8899bb; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .space-stat-val   { font-family: 'DM Mono', monospace; font-size: 1.1rem; color: #c8d8ff; }
+
+    #issMap {
+      height: 300px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 1.5rem;
+    }
+    .apod-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      padding: 1.2rem;
+    }
+    .apod-title { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: #c8d8ff; margin-bottom: 0.5rem; }
+    .apod-date  { font-size: 0.68rem; color: #8899bb; margin-bottom: 0.8rem; }
+    .apod-body  { font-size: 0.8rem; color: #a0b0cc; line-height: 1.6; }
+    #apodImg {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SLIDE 7 — WORLD ORGS
+    ═══════════════════════════════════════════════════ */
+    .orgs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .org-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem;
+    }
+    .org-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .org-logo { font-size: 2rem; }
+    .org-name { font-size: 0.88rem; font-weight: 700; }
+    .org-type { font-size: 0.65rem; color: var(--muted); }
+    .org-news  { display: flex; flex-direction: column; gap: 0.5rem; }
+    .org-item  { font-size: 0.78rem; color: var(--muted); padding: 0.5rem; background: var(--bg); border-radius: 8px; line-height: 1.4; }
+
+    /* ═══════════════════════════════════════════════════
+       SLIDE 8 — SUPPORT
+    ═══════════════════════════════════════════════════ */
+    .support-hero {
+      text-align: center;
+      padding: 2rem 1rem 1.5rem;
+    }
+    .support-hero-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+    .support-hero-logo span { color: var(--primary); }
+    .support-tagline {
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+    .manifesto {
+      background: linear-gradient(135deg, #1a73e8, #0d47a1);
+      color: #fff;
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .manifesto h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+    .manifesto p {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      opacity: 0.9;
+    }
+    .tipeee-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      background: #f7b731;
+      color: #333;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.9rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(247,183,49,0.4);
+      transition: all 0.2s;
+    }
+    .tipeee-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(247,183,49,0.5); }
+    .support-footer {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .gdpr-note {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.8rem 1.2rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════════ */
+    @media (max-width: 700px) {
+      .clocks { display: none; }
+      .windy-row { grid-template-columns: 1fr; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .slide { padding: 1rem; }
+    }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">info<span>news</span>.day</div>
-  <div class="header-right">
-    <span id="live-dot"></span>
-    <span id="clock"></span>
-  </div>
-</header>
-
-<nav>
-  <a href="#monde" class="active">Monde</a>
-  <a href="#meteo">Météo</a>
-  <a href="#marches">Marchés</a>
-  <a href="#crypto">Crypto</a>
-  <a href="#actualites">Actualités</a>
-</nav>
-
-<main>
-
-  <!-- COMPTEURS MONDE -->
-  <section id="monde">
-    <div class="section-title">Monde en temps réel</div>
-    <div class="counters-grid">
-      <div class="counter-card">
-        <div class="icon">🌍</div>
-        <div class="value" id="c-population">–</div>
-        <div class="label">Population mondiale</div>
-      </div>
-      <div class="counter-card green">
-        <div class="icon">👶</div>
-        <div class="value" id="c-births">–</div>
-        <div class="label">Naissances aujourd'hui</div>
-      </div>
-      <div class="counter-card red">
-        <div class="icon">💀</div>
-        <div class="value" id="c-deaths">–</div>
-        <div class="label">Décès aujourd'hui</div>
-      </div>
-      <div class="counter-card red">
-        <div class="icon">🌡️</div>
-        <div class="value" id="c-co2">–</div>
-        <div class="label">CO₂ émis aujourd'hui (t)</div>
-      </div>
-      <div class="counter-card green">
-        <div class="icon">🌳</div>
-        <div class="value" id="c-trees">–</div>
-        <div class="label">Arbres plantés aujourd'hui</div>
-      </div>
-      <div class="counter-card">
-        <div class="icon">📱</div>
-        <div class="value" id="c-tweets">–</div>
-        <div class="label">Tweets envoyés aujourd'hui</div>
-      </div>
-      <div class="counter-card green">
-        <div class="icon">🍔</div>
-        <div class="value" id="c-food">–</div>
-        <div class="label">Repas servis aujourd'hui</div>
-      </div>
-      <div class="counter-card red">
-        <div class="icon">🦠</div>
-        <div class="value" id="c-obese">–</div>
-        <div class="label">Personnes obèses</div>
-      </div>
+  <!-- ═══════════════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════════════ -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">infonews<span>.day</span></div>
+      <div class="brand-tagline">Invent the day</div>
     </div>
-  </section>
 
-  <!-- MÉTÉO MONDIALE -->
-  <section id="meteo">
-    <div class="section-title">Météo mondiale</div>
-    <div class="weather-world-layout">
-      <!-- Globe animé -->
-      <div class="globe-container">
-        <div class="globe">
-          <div class="globe-inner">
-            <canvas id="globe-canvas" width="220" height="220"></canvas>
-          </div>
-          <div class="globe-shine"></div>
-        </div>
-        <div class="globe-label">Terre en temps réel</div>
-      </div>
-      <!-- Cartes météo villes -->
-      <div id="weather-cities" class="weather-cities-grid">
-        <div class="loader"><div class="spinner"></div></div>
-      </div>
+    <div class="clocks" id="clocksRow"></div>
+
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      LIVE
     </div>
-  </section>
 
-  <!-- MARCHÉS -->
-  <section id="marches">
-    <div class="section-title">Indices boursiers</div>
-    <div id="markets-grid" class="markets-grid">
-      <div class="loader"><div class="spinner"></div></div>
+    <div class="lang-sel">
+      <button class="lang-btn active" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('es')">ES</button>
     </div>
-  </section>
+  </header>
 
-  <!-- CRYPTO -->
-  <section id="crypto">
-    <div class="section-title">Cryptomonnaies</div>
-    <div style="overflow-x:auto;">
-      <table class="crypto-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nom</th>
-            <th>Prix (€)</th>
-            <th>24h</th>
-            <th>7j</th>
-            <th>Volume 24h</th>
-            <th>7 jours</th>
-          </tr>
-        </thead>
-        <tbody id="crypto-body">
-          <tr><td colspan="7" style="text-align:center;padding:2rem;color:#5f6368"><div class="spinner" style="margin:auto"></div></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+  <!-- ═══════════════════════════════════════════════
+       NAV TABS
+  ═══════════════════════════════════════════════ -->
+  <nav class="slide-nav" id="slideNav">
+    <button class="nav-tab active" onclick="goTo(0)">🌍 <span data-i18n="nav_home">Accueil</span></button>
+    <button class="nav-tab" onclick="goTo(1)">📰 <span data-i18n="nav_news">Actualités</span></button>
+    <button class="nav-tab" onclick="goTo(2)">🌤️ <span data-i18n="nav_weather">Météo</span></button>
+    <button class="nav-tab" onclick="goTo(3)">💹 <span data-i18n="nav_finance">Finance</span></button>
+    <button class="nav-tab" onclick="goTo(4)">🎵 <span data-i18n="nav_events">Événements</span></button>
+    <button class="nav-tab" onclick="goTo(5)">📚 <span data-i18n="nav_culture">Culture</span></button>
+    <button class="nav-tab" onclick="goTo(6)">🛸 <span data-i18n="nav_space">Espace</span></button>
+    <button class="nav-tab" onclick="goTo(7)">🌐 <span data-i18n="nav_orgs">Organisations</span></button>
+    <button class="nav-tab" onclick="goTo(8)">💰 <span data-i18n="nav_support">Soutenir</span></button>
+  </nav>
 
-  <!-- ACTUALITÉS -->
-  <section id="actualites">
-    <div class="section-title">Actualités</div>
-    <div class="news-filters">
-      <button class="filter-btn active" onclick="filterNews('all',this)">Toutes</button>
-      <button class="filter-btn" onclick="filterNews('BBC',this)">BBC</button>
-      <button class="filter-btn" onclick="filterNews('Le Monde',this)">Le Monde</button>
-      <button class="filter-btn" onclick="filterNews('The Guardian',this)">Guardian</button>
-      <button class="filter-btn" onclick="filterNews('Al Jazeera',this)">Al Jazeera</button>
-      <button class="filter-btn" onclick="filterNews('TechCrunch',this)">Tech</button>
-      <button class="filter-btn" onclick="filterNews('independent',this)">🌍 Indépendants</button>
-    </div>
-    <div id="news-grid" class="news-grid">
-      <div class="loader"><div class="spinner"></div><p>Chargement des actualités...</p></div>
-    </div>
-  </section>
+  <!-- ═══════════════════════════════════════════════
+       SLIDES
+  ═══════════════════════════════════════════════ -->
+  <div class="slides-viewport">
+    <div class="slides-track" id="slidesTrack">
 
-</main>
-
-<footer>
-  infonews.day &mdash; Sources : BBC · Le Monde · NewsAPI · Open-Meteo · CoinGecko · Yahoo Finance &mdash; Mise à jour automatique
-</footer>
-
-<script>
-// ============================================================
-// HORLOGE
-// ============================================================
-function updateClock() {
-  document.getElementById('clock').textContent = new Date().toLocaleString('fr-FR', {
-    weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit'
-  });
-}
-updateClock();
-setInterval(updateClock, 1000);
-
-// ============================================================
-// NAVIGATION SMOOTH
-// ============================================================
-document.querySelectorAll('nav a').forEach(a => {
-  a.addEventListener('click', e => {
-    document.querySelectorAll('nav a').forEach(x => x.classList.remove('active'));
-    a.classList.add('active');
-  });
-});
-
-// ============================================================
-// COMPTEURS MONDE (statistiques réelles annuelles → /seconde)
-// ============================================================
-const START = new Date();
-const secsSinceMidnight = () => {
-  const n = new Date();
-  return (n - new Date(n.getFullYear(), n.getMonth(), n.getDate())) / 1000;
-};
-
-// Taux / seconde basés sur données ONU / Worldometers 2024
-const RATES = {
-  births:  4.5,       // ~385 000/jour
-  deaths:  1.9,       // ~163 000/jour
-  co2:     1300,      // ~112M tonnes/jour
-  trees:   1.5,       // ~130 000/jour (reforestation)
-  tweets:  6000,      // ~500M/jour
-  food:    90000,     // ~7.8Md repas/jour
-};
-const BASE_POP = 8219000000;
-const NET_GROWTH = 2.6; // naissances - décès /seconde
-
-function fmt(n) {
-  if (n >= 1e9) return (n/1e9).toFixed(2) + ' Md';
-  if (n >= 1e6) return (n/1e6).toFixed(2) + ' M';
-  return Math.round(n).toLocaleString('fr-FR');
-}
-
-function updateCounters() {
-  const s = secsSinceMidnight();
-  document.getElementById('c-population').textContent = fmt(BASE_POP + s * NET_GROWTH);
-  document.getElementById('c-births').textContent    = fmt(s * RATES.births);
-  document.getElementById('c-deaths').textContent    = fmt(s * RATES.deaths);
-  document.getElementById('c-co2').textContent       = fmt(s * RATES.co2);
-  document.getElementById('c-trees').textContent     = fmt(s * RATES.trees);
-  document.getElementById('c-tweets').textContent    = fmt(s * RATES.tweets);
-  document.getElementById('c-food').textContent      = fmt(s * RATES.food);
-  document.getElementById('c-obese').textContent     = '890 M';
-}
-updateCounters();
-setInterval(updateCounters, 1000);
-
-// ============================================================
-// GLOBE ANIMÉ (Canvas)
-// ============================================================
-function drawGlobe() {
-  const canvas = document.getElementById('globe-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height, R = W / 2;
-  let angle = 0;
-
-  const continents = [
-    // Amérique du Nord
-    [[0.3,0.2],[0.45,0.15],[0.5,0.25],[0.48,0.4],[0.35,0.45],[0.25,0.35]],
-    // Amérique du Sud
-    [[0.38,0.48],[0.5,0.45],[0.52,0.65],[0.42,0.75],[0.35,0.65]],
-    // Europe
-    [[0.55,0.18],[0.65,0.15],[0.68,0.25],[0.6,0.32],[0.52,0.28]],
-    // Afrique
-    [[0.55,0.33],[0.65,0.30],[0.7,0.5],[0.65,0.68],[0.55,0.65],[0.5,0.5]],
-    // Asie
-    [[0.65,0.15],[0.9,0.12],[0.92,0.35],[0.78,0.42],[0.65,0.38],[0.6,0.28]],
-    // Australie
-    [[0.78,0.58],[0.9,0.55],[0.92,0.68],[0.82,0.72],[0.75,0.65]],
-  ];
-
-  function project(lon, lat, rotation) {
-    const lam = (lon + rotation) % (2 * Math.PI);
-    const x = R + R * 0.85 * Math.cos(lat) * Math.sin(lam);
-    const y = R - R * 0.85 * Math.sin(lat);
-    const visible = Math.cos(lat) * Math.cos(lam) > 0;
-    return { x, y, visible };
-  }
-
-  function drawFrame() {
-    ctx.clearRect(0, 0, W, H);
-
-    // Grille latitude/longitude
-    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-    ctx.lineWidth = 0.5;
-    for (let lat = -80; lat <= 80; lat += 20) {
-      ctx.beginPath();
-      const latR = lat * Math.PI / 180;
-      for (let lon = 0; lon <= 360; lon += 2) {
-        const p = project(lon * Math.PI / 180, latR, angle);
-        if (p.visible) { lon === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); }
-      }
-      ctx.stroke();
-    }
-    for (let lon = 0; lon < 360; lon += 30) {
-      ctx.beginPath();
-      for (let lat = -90; lat <= 90; lat += 2) {
-        const p = project((lon + angle * 180 / Math.PI) * Math.PI / 180, lat * Math.PI / 180, 0);
-        const x = R + R * 0.85 * Math.cos(lat * Math.PI/180) * Math.sin((lon * Math.PI/180 + angle) % (2*Math.PI));
-        const y = R - R * 0.85 * Math.sin(lat * Math.PI/180);
-        const vis = Math.cos(lat * Math.PI/180) * Math.cos((lon * Math.PI/180 + angle) % (2*Math.PI)) > 0;
-        if (vis) { lat === -90 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
-      }
-      ctx.stroke();
-    }
-
-    // Continents simplifiés
-    continents.forEach(pts => {
-      ctx.beginPath();
-      let first = true;
-      pts.forEach(([u, v]) => {
-        const lon = (u * 2 * Math.PI);
-        const lat = ((0.5 - v) * Math.PI);
-        const x = R + R * 0.85 * Math.cos(lat) * Math.sin((lon + angle) % (2 * Math.PI));
-        const y = R - R * 0.85 * Math.sin(lat);
-        const vis = Math.cos(lat) * Math.cos((lon + angle) % (2 * Math.PI)) > 0;
-        if (vis) { first ? ctx.moveTo(x, y) : ctx.lineTo(x, y); first = false; }
-      });
-      ctx.closePath();
-      ctx.fillStyle = 'rgba(76,175,80,0.7)';
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-    });
-
-    angle += 0.005;
-    requestAnimationFrame(drawFrame);
-  }
-  drawFrame();
-}
-drawGlobe();
-
-// ============================================================
-// MÉTÉO MONDIALE
-// ============================================================
-async function loadWeather() {
-  try {
-    const cities = await fetch('/api/weather').then(r => r.json());
-    const html = cities.map(d => `
-      <div class="city-weather-card">
-        <div class="city-icon">${d.current.icon}</div>
-        <div class="city-info">
-          <div class="city-name">${d.flag} ${d.city}</div>
-          <div class="city-temp">${d.current.temp}°C</div>
-          <div class="city-desc">${d.current.label}</div>
-          <div class="city-extra">💧${d.current.humidity}% · 💨${d.current.wind}km/h</div>
-        </div>
-      </div>`).join('');
-    document.getElementById('weather-cities').innerHTML = html;
-  } catch(e) {
-    document.getElementById('weather-cities').innerHTML = '<p style="color:#999">Météo indisponible</p>';
-  }
-}
-loadWeather();
-
-// ============================================================
-// MARCHÉS & CRYPTO
-// ============================================================
-async function loadFinance() {
-  try {
-    const d = await fetch('/api/finance').then(r => r.json());
-
-    // Marchés
-    const marketsHtml = d.markets.map(m => {
-      const up = m.changePct >= 0;
-      return `<div class="market-card">
-        <div class="market-name">${m.name}</div>
-        <div class="market-price">${m.price.toLocaleString('fr-FR', {maximumFractionDigits:2})}</div>
-        <div class="market-change ${up?'up':'down'}">${up?'▲':'▼'} ${Math.abs(m.changePct).toFixed(2)}%</div>
-      </div>`;
-    }).join('');
-    document.getElementById('markets-grid').innerHTML = marketsHtml || '<p style="color:#999">Marchés indisponibles</p>';
-
-    // Crypto
-    const cryptoRows = d.crypto.map((c, i) => {
-      const up24 = c.change24h >= 0;
-      const up7  = c.change7d  >= 0;
-      const canvasId = `spark-${c.id}`;
-      return `<tr>
-        <td>${i+1}</td>
-        <td>
-          <div class="crypto-name">
-            <img class="crypto-img" src="${c.image}" alt="${c.name}">
-            <div>
-              <div style="font-weight:600">${c.name}</div>
-              <div class="crypto-symbol">${c.symbol}</div>
+      <!-- ─────────────────────────────────────────
+           SLIDE 0 — HOME
+      ───────────────────────────────────────── -->
+      <div class="slide" id="slide-home">
+        <!-- Ticker -->
+        <div class="ticker-bar">
+          <div class="ticker-label">🔴 <span data-i18n="breaking">Actualité</span></div>
+          <div class="ticker-track">
+            <div class="ticker-inner" id="tickerInner">
+              <span class="ticker-item">Chargement des dernières actualités…</span>
+              <span class="ticker-item">⋯</span>
+              <span class="ticker-item">Chargement des dernières actualités…</span>
+              <span class="ticker-item">⋯</span>
             </div>
           </div>
-        </td>
-        <td style="font-weight:600">${c.price.toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2})} €</td>
-        <td class="${up24?'up':'down'}">${up24?'▲':'▼'} ${Math.abs(c.change24h).toFixed(2)}%</td>
-        <td class="${up7?'up':'down'}">${up7?'▲':'▼'} ${Math.abs(c.change7d||0).toFixed(2)}%</td>
-        <td style="color:#5f6368">${(c.volume/1e6).toFixed(0)} M€</td>
-        <td class="sparkline-cell"><canvas id="${canvasId}" width="100" height="36"></canvas></td>
-      </tr>`;
-    }).join('');
-    document.getElementById('crypto-body').innerHTML = cryptoRows;
-
-    // Sparklines
-    d.crypto.forEach(c => {
-      const canvas = document.getElementById(`spark-${c.id}`);
-      if (!canvas || !c.sparkline.length) return;
-      const prices = c.sparkline;
-      const isUp = prices[prices.length-1] >= prices[0];
-      new Chart(canvas, {
-        type: 'line',
-        data: {
-          labels: prices.map((_,i)=>i),
-          datasets: [{ data: prices, borderColor: isUp ? '#0f9d58' : '#d93025', borderWidth: 1.5, fill: false, pointRadius: 0, tension: 0.3 }]
-        },
-        options: { responsive: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } }, animation: false }
-      });
-    });
-  } catch(e) {
-    console.error('Finance error:', e);
-    document.getElementById('markets-grid').innerHTML = '<p style="color:#999">Marchés indisponibles</p>';
-    document.getElementById('crypto-body').innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;padding:1rem">Crypto indisponible</td></tr>';
-  }
-}
-loadFinance();
-
-// ============================================================
-// NEWS
-// ============================================================
-let allNews = [];
-
-function sourceClass(s) {
-  if (s === 'BBC') return 'bbc';
-  if (s === 'Le Monde') return 'lemonde';
-  if (s && s.toLowerCase().includes('newsapi')) return 'newsapi';
-  return 'other';
-}
-
-function fmtDate(iso) {
-  try { return new Intl.DateTimeFormat('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(iso)); }
-  catch { return ''; }
-}
-
-function renderNews(articles) {
-  const grid = document.getElementById('news-grid');
-  if (!articles.length) { grid.innerHTML = '<p style="color:#999;text-align:center;padding:2rem">Aucun article.</p>'; return; }
-  grid.innerHTML = articles.map(a => `
-    <div class="news-card" onclick="window.open('${a.url}','_blank')">
-      ${a.imageUrl
-        ? `<img src="${a.imageUrl}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-        : ''}
-      <div class="news-img-placeholder" style="display:${a.imageUrl?'none':'flex'}">📰</div>
-      <div class="news-body">
-        <div class="news-meta">
-          <span class="badge ${sourceClass(a.source)}">${a.source}</span>
-          <span class="news-date">${fmtDate(a.publishedAt)}</span>
         </div>
-        <div class="news-title">${a.title}</div>
-        ${a.summary ? `<div class="news-summary">${a.summary}</div>` : ''}
+
+        <!-- Globe -->
+        <div class="globe-wrap">
+          <canvas id="globeCanvas" width="200" height="200"></canvas>
+        </div>
+
+        <!-- World counters -->
+        <p class="counters-title" data-i18n="counters_title">🌍 Le monde en temps réel</p>
+        <div class="counters-grid">
+          <div class="counter-card red">
+            <div class="counter-emoji">👥</div>
+            <div class="counter-label" data-i18n="pop_world">Population mondiale</div>
+            <div class="counter-value" id="cnt-pop">8 212 473 691</div>
+            <div class="counter-sub">+80M / an</div>
+          </div>
+          <div class="counter-card red">
+            <div class="counter-emoji">💀</div>
+            <div class="counter-label" data-i18n="deaths_today">Décès aujourd'hui</div>
+            <div class="counter-value" id="cnt-deaths">0</div>
+            <div class="counter-sub">~160 000 / jour</div>
+          </div>
+          <div class="counter-card green">
+            <div class="counter-emoji">🍼</div>
+            <div class="counter-label" data-i18n="births_today">Naissances aujourd'hui</div>
+            <div class="counter-value" id="cnt-births">0</div>
+            <div class="counter-sub">~360 000 / jour</div>
+          </div>
+          <div class="counter-card">
+            <div class="counter-emoji">🏭</div>
+            <div class="counter-label">CO₂ émis (t)</div>
+            <div class="counter-value" id="cnt-co2">0</div>
+            <div class="counter-sub">37 Gt / an</div>
+          </div>
+          <div class="counter-card green">
+            <div class="counter-emoji">🌱</div>
+            <div class="counter-label">Énergie solaire (MWh)</div>
+            <div class="counter-value" id="cnt-solar">0</div>
+            <div class="counter-sub">croissance +20% / an</div>
+          </div>
+          <div class="counter-card red">
+            <div class="counter-emoji">🍔</div>
+            <div class="counter-label" data-i18n="overweight">Obésité (cas)</div>
+            <div class="counter-value" id="cnt-obese">2 050 000 000</div>
+            <div class="counter-sub">~26% pop mondiale</div>
+          </div>
+          <div class="counter-card orange">
+            <div class="counter-emoji">💧</div>
+            <div class="counter-label">Eau consommée (L)</div>
+            <div class="counter-value" id="cnt-water">0</div>
+            <div class="counter-sub">4 000 km³ / an</div>
+          </div>
+          <div class="counter-card">
+            <div class="counter-emoji">🌐</div>
+            <div class="counter-label">Utilisateurs internet</div>
+            <div class="counter-value" id="cnt-internet">5 440 000 000</div>
+            <div class="counter-sub">68% pop mondiale</div>
+          </div>
+          <div class="counter-card green">
+            <div class="counter-emoji">📧</div>
+            <div class="counter-label">Emails envoyés auj.</div>
+            <div class="counter-value" id="cnt-emails">0</div>
+            <div class="counter-sub">~330 Md / jour</div>
+          </div>
+          <div class="counter-card orange">
+            <div class="counter-emoji">🔥</div>
+            <div class="counter-label">Énergie consommée (TWh)</div>
+            <div class="counter-value" id="cnt-energy">0</div>
+            <div class="counter-sub">~580 EJ / an</div>
+          </div>
+          <div class="counter-card red">
+            <div class="counter-emoji">🦟</div>
+            <div class="counter-label">Décès paludisme auj.</div>
+            <div class="counter-value" id="cnt-malaria">0</div>
+            <div class="counter-sub">~608 000 / an</div>
+          </div>
+          <div class="counter-card red">
+            <div class="counter-emoji">🍽️</div>
+            <div class="counter-label" data-i18n="hunger">Personnes affamées</div>
+            <div class="counter-value" id="cnt-hunger">828 000 000</div>
+            <div class="counter-sub">~10% pop mondiale</div>
+          </div>
+        </div>
       </div>
-    </div>`).join('');
-}
 
-function filterNews(source, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (source === 'all') renderNews(allNews);
-  else if (source === 'independent') renderNews(allNews.filter(a => a.category === 'independent'));
-  else renderNews(allNews.filter(a => a.source === source));
-}
+      <!-- ─────────────────────────────────────────
+           SLIDE 1 — NEWS
+      ───────────────────────────────────────── -->
+      <div class="slide" id="slide-news">
+        <h2 class="section-title">📰 <span data-i18n="news_title">Actualités mondiales</span></h2>
 
-async function loadNews() {
-  try {
-    const d = await fetch('/api/news').then(r => r.json());
-    allNews = d.articles || [];
-    renderNews(allNews);
-  } catch(e) {
-    document.getElementById('news-grid').innerHTML = '<p style="color:#999;text-align:center;padding:2rem">Actualités indisponibles.</p>';
+        <!-- Filters -->
+        <div class="filters-row" id="newsFilters">
+          <span style="font-size:0.72rem;font-weight:600;color:var(--muted);margin-right:4px" data-i18n="theme">Thème :</span>
+          <button class="filter-chip active" data-cat="all" data-i18n="all">Tout</button>
+          <button class="filter-chip" data-cat="monde" data-i18n="geopolitics">Géopolitique</button>
+          <button class="filter-chip" data-cat="techno" data-i18n="tech">Tech</button>
+          <button class="filter-chip" data-cat="eco" data-i18n="economy">Économie</button>
+          <button class="filter-chip" data-cat="science" data-i18n="science">Science</button>
+          <button class="filter-chip" data-cat="culture" data-i18n="culture">Culture</button>
+          <button class="filter-chip" data-cat="sport" data-i18n="sport">Sport</button>
+          <button class="filter-chip" data-cat="independent">Indépendants</button>
+          <span style="font-size:0.72rem;font-weight:600;color:var(--muted);margin-left:0.5rem;margin-right:4px" data-i18n="source">Source :</span>
+          <select id="sourceSelect" style="font-size:0.72rem;padding:4px 8px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-family:inherit;">
+            <option value="" data-i18n="all">Toutes</option>
+            <option value="bbc">BBC</option>
+            <option value="lemonde">Le Monde</option>
+            <option value="guardian">The Guardian</option>
+            <option value="aljazeera">Al Jazeera</option>
+            <option value="techcrunch">TechCrunch</option>
+            <option value="hackernews">HackerNews</option>
+            <option value="independent">Indépendants</option>
+          </select>
+        </div>
+
+        <div class="news-grid" id="newsGrid">
+          <div class="loading-msg" data-i18n="loading">Chargement des articles…</div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────
+           SLIDE 2 — WEATHER
+      ───────────────────────────────────────── -->
+      <div class="slide" id="slide-weather">
+        <h2 class="section-title">🌤️ <span data-i18n="weather_title">Météo mondiale</span></h2>
+
+        <!-- Windy embeds -->
+        <div class="windy-row">
+          <div>
+            <div class="windy-label" data-i18n="radar">Radar précipitations</div>
+            <div class="windy-wrap">
+              <iframe src="https://embed.windy.com/embed2.html?lat=20&lon=0&detailLat=48.86&detailLon=2.35&width=650&height=450&zoom=2&level=surface&overlay=rain&product=ecmwf&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1" allowfullscreen></iframe>
+            </div>
+          </div>
+          <div>
+            <div class="windy-label" data-i18n="satellite">Satellite nuages</div>
+            <div class="windy-wrap">
+              <iframe src="https://embed.windy.com/embed2.html?lat=20&lon=0&width=650&height=450&zoom=2&level=surface&overlay=satellite&product=ecmwf&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1" allowfullscreen></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- City cards -->
+        <h3 style="font-size:0.9rem;font-weight:600;color:var(--muted);margin-bottom:0.8rem;text-transform:uppercase;letter-spacing:0.06em" data-i18n="cities_click">30 villes · cliquez pour les prévisions</h3>
+        <div class="city-grid" id="cityGrid">
+          <div class="loading-msg" data-i18n="loading">Chargement météo…</div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────
+           SLIDE 3 — FINANCE
+      ───────────────────────────────────────── -->
+      <div class="slide" id="slide-finance">
+        <h2 class="section-title">💹 <span data-i18n="finance_title">Marchés & Crypto</span></h2>
+
+        <!-- TradingView ticker tape -->
+        <div class="tv-widget-wrap" style="margin-bottom:1rem;">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+            {
+              "symbols": [
+                {"proName":"FOREXCOM:SPXUSD","title":"S&P 500"},
+                {"proName":"FOREXCOM:NSXUSD","title":"Nasdaq"},
+                {"description":"CAC 40","proName":"EURONEXT:FCE1!"},
+                {"description":"IBEX 35","proName":"BME:IBEX"},
+                {"description":"DAX","proName":"XETR:DAX"},
+                {"description":"FTSE 100","proName":"SPREADEX:UK100"},
+                {"description":"Nikkei","proName":"SPREADEX:JPN225"},
+                {"description":"BTC/USD","proName":"BITSTAMP:BTCUSD"},
+                {"description":"ETH/USD","proName":"BITSTAMP:ETHUSD"},
+                {"description":"Or","proName":"TVC:GOLD"},
+                {"description":"Argent","proName":"TVC:SILVER"},
+                {"description":"Pétrole Brent","proName":"TVC:UKOIL"},
+                {"description":"WTI","proName":"TVC:USOIL"},
+                {"description":"Gaz Nat.","proName":"TVC:NATURALGAS"},
+                {"description":"Blé","proName":"CBOT:ZW1!"}
+              ],
+              "showSymbolLogo": true,
+              "colorTheme": "light",
+              "isTransparent": false,
+              "displayMode": "adaptive",
+              "locale": "fr"
+            }
+            </script>
+          </div>
+        </div>
+
+        <!-- Market tiles -->
+        <div class="market-tiles" id="marketTiles">
+          <div class="loading-msg" data-i18n="loading">Chargement marchés…</div>
+        </div>
+
+        <!-- TradingView chart -->
+        <div class="tv-widget-wrap" style="height:350px;margin-bottom:1.2rem;">
+          <div class="tradingview-widget-container" style="height:100%">
+            <div class="tradingview-widget-container__widget" style="height:100%"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+            {
+              "autosize": true,
+              "symbol": "FOREXCOM:SPXUSD",
+              "interval": "D",
+              "timezone": "Etc/UTC",
+              "theme": "light",
+              "style": "1",
+              "locale": "fr",
+              "hide_side_toolbar": false,
+              "allow_symbol_change": true,
+              "calendar": false,
+              "support_host": "https://www.tradingview.com"
+            }
+            </script>
+          </div>
+        </div>
+
+        <!-- Crypto table -->
+        <h3 class="section-title" style="font-size:1rem;margin-bottom:0.8rem">🪙 <span data-i18n="crypto">Cryptomonnaies</span></h3>
+        <div style="overflow-x:auto;margin-bottom:1.2rem;">
+          <table class="crypto-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th data-i18n="name">Nom</th>
+                <th data-i18n="price">Prix (USD)</th>
+                <th>24h %</th>
+                <th>7j %</th>
+                <th data-i18n="sparkline">7 jours</th>
+                <th data-i18n="market_cap">Cap. marché</th>
+              </tr>
+            </thead>
+            <tbody id="cryptoTbody">
+              <tr><td colspan="7" class="loading-msg" data-i18n="loading">Chargement crypto…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Commodities -->
+        <h3 class="section-title" style="font-size:1rem;margin-bottom:0.8rem">🪨 <span data-i18n="commodities">Matières premières</span></h3>
+        <div class="commodities-grid" id="commoditiesGrid">
+          <div class="loading-msg" data-i18n="loading">Chargement…</div>
+        </div>
+
+        <!-- TradingView Economic Calendar -->
+        <h3 class="section-title" style="font-size:1rem;margin:1rem 0 0.8rem">📅 <span data-i18n="eco_calendar">Calendrier économique</span></h3>
+        <div class="tv-widget-wrap">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+            {
+              "colorTheme": "light",
+              "isTransparent": false,
+              "width": "100%",
+              "height": "400",
+              "locale": "fr",
+              "importanceFilter": "0,1",
+              "countryFilter": "us,eu,gb,fr,de,jp,cn,es"
+            }
+            </script>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────
+           SLIDE 4 — EVENTS
+      ───────────────────────────────────────── -->
+      <div class="slide" id="slide-events">
+        <h2 class="section-title">🎵 <span data-i18n="events_title">Concerts & Festivals</span></h2>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.2rem" data-i18n="events_sub">Événements musicaux et culturels mondiaux</p>
+
+        <div class="events-grid" id="eventsGrid">
+          <!-- Placeholder events -->
+          <div class="event-card card">
+            <div class="event-date-box">
+              <div class="event-date-day">12</div>
+              <div class="event-date-month">Avr</div>
+            </div>
+            <div class="event-info">
+              <div class="event-name">Primavera Sound 2025</div>
+              <div class="event-venue">📍 Barcelone, Espagne</div>
+              <div class="event-tags">
+                <span class="event-tag">🎸 Rock</span>
+                <span class="event-tag">🎵 Indie</span>
+                <span class="event-tag">🎡 Festival</span>
+              </div>
+            </div>
+          </div>
+          <div class="event-card card">
+            <div class="event-date-box" style="background:var(--green)">
+              <div class="event-date-day">18</div>
+              <div class="event-date-month">Avr</div>
+            </div>
+            <div class="event-info">
+              <div class="event-name">Coachella Week 2</div>
+              <div class="event-venue">📍 Indio, California, USA</div>
+              <div class="event-tags">
+                <span class="event-tag">🎤 Pop</span>
+                <span class="event-tag">🎛️ Electronic</span>
+                <span class="event-tag">🌵 Festival</span>
+              </div>
+            </div>
+          </div>
+          <div class="event-card card">
+            <div class="event-date-box" style="background:var(--orange)">
+              <div class="event-date-day">25</div>
+              <div class="event-date-month">Avr</div>
+            </div>
+            <div class="event-info">
+              <div class="event-name">Ultra Music Festival</div>
+              <div class="event-venue">📍 Miami, USA</div>
+              <div class="event-tags">
+                <span class="event-tag">🎛️ EDM</span>
+                <span class="event-tag">🔊 Techno</span>
+                <span class="event-tag">🌊 Festival</span>
+              </div>
+            </div>
+          </div>
+          <div class="event-card card">
+            <div class="event-date-box" style="background:#9b59b6">
+              <div class="event-date-day">02</div>
+              <div class="event-date-month">Mai</div>
+            </div>
+            <div class="event-info">
+              <div class="event-name">Fuji Rock Festival</div>
+              <div class="event-venue">📍 Niigata, Japon</div>
+              <div class="event-tags">
+                <span class="event-tag">🇯🇵 Japon</span>
+                <span class="event-tag">🎸 Rock</span>
+                <span class="event-tag">🌿 Outdoor</span>
+              </div>
+            </div>
+          </div>
+          <div class="event-card card">
+            <div class="event-date-box" style="background:#e74c3c">
+              <div class="event-date-day">14</div>
+              <div class="event-date-month">Juin</div>
+            </div>
+            <div class="event-info">
+              <div class="event-name">Glastonbury Festival</div>
+              <div class="event-venue">📍 Somerset, Royaume-Uni</div>
+              <div class="event-tags">
+                <span class="event-tag">🇬🇧 UK</span>
+                <span class="event-tag">🎵 Multi-genres</span>
+                <span class="event-tag">🌳 Outdoor</span>
+              </div>
+            </div>
+          </div>
+          <div class="event-card card">
+            <div class="event-date-box" style="background:#2c3e50">
+              <div class="event-date-day">28</div>
+              <div class="event-date-month">Juin</div>
+            </div>
+            <div class="event-info">
+              <div class="event-name">Sonar Festival</div>
+              <div class="event-venue">📍 Barcelone, Espagne</div>
+              <div class="event-tags">
+                <span class="event-tag">🎛️ Electronic</span>
+                <span class="event-tag">🤖 Art & Tech</span>
+                <span class="event-tag">🌃 Festival</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────
+           SLIDE 5 — CULTURE
+      ───────────────────────────────────────── -->
+      <div class="slide" id="slide-culture">
+        <h2 class="section-title">📚 <span data-i18n="culture_title">Culture & Geek</span></h2>
+
+        <div class="culture-tabs" id="cultureTabs">
+          <button class="culture-tab active" data-tab="anime" data-i18n="anime">Anime / Manga</button>
+          <button class="culture-tab" data-tab="gaming" data-i18n="gaming">Gaming</button>
+          <button class="culture-tab" data-tab="bd" data-i18n="bd">BD / Comics</button>
+          <button class="culture-tab" data-tab="tech" data-i18n="tech_culture">Tech Culture</button>
+        </div>
+
+        <div class="culture-grid" id="cultureGrid">
+          <!-- Populated via JS -->
+          <div class="culture-card">
+            <div class="culture-cover" style="background:linear-gradient(135deg,#ff6b6b20,#feca5720)">🍥</div>
+            <div class="culture-body">
+              <div class="culture-title">Demon Slayer — Saison 5 annoncée</div>
+              <div class="culture-meta">Anime · Shonen Jump · il y a 3h</div>
+            </div>
+          </div>
+          <div class="culture-card">
+            <div class="culture-cover" style="background:linear-gradient(135deg,#4ecdc420,#44a08d20)">🎮</div>
+            <div class="culture-body">
+              <div class="culture-title">GTA VI — Nouvelle bande-annonce</div>
+              <div class="culture-meta">Gaming · Rockstar · il y a 6h</div>
+            </div>
+          </div>
+          <div class="culture-card">
+            <div class="culture-cover" style="background:linear-gradient(135deg,#f7971e20,#ffd20020)">📖</div>
+            <div class="culture-body">
+              <div class="culture-title">One Piece — Chapitre 1120 disponible</div>
+              <div class="culture-meta">Manga · Viz Media · il y a 1j</div>
+            </div>
+          </div>
+          <div class="culture-card">
+            <div class="culture-cover" style="background:linear-gradient(135deg,#667eea20,#764ba220)">🤖</div>
+            <div class="culture-body">
+              <div class="culture-title">PlayStation 6 — Fuite des specs</div>
+              <div class="culture-meta">Gaming · IGN · il y a 2h</div>
+            </div>
+          </div>
+          <div class="culture-card">
+            <div class="culture-cover" style="background:linear-gradient(135deg,#f8536820,#c0392b20)">🦸</div>
+            <div class="culture-body">
+              <div class="culture-title">Marvel — Phase 6 calendrier officiel</div>
+              <div class="culture-meta">Comics · CBR · il y a 5h</div>
+            </div>
+          </div>
+          <div class="culture-card">
+            <div class="culture-cover" style="background:linear-gradient(135deg,#11998e20,#38ef7d20)">🧙</div>
+            <div class="culture-body">
+              <div class="culture-title">Baldur's Gate 3 — Nouveau patch</div>
+              <div class="culture-meta">Gaming · PC Gamer · il y a 8h</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────
+           SLIDE 6 — SPACE
+      ───────────────────────────────────────── -->
+      <div class="slide" id="slide-space">
+        <h2 class="section-title">🛸 <span data-i18n="space_title">Espace & Géospatial</span></h2>
+
+        <!-- Space stats -->
+        <div class="space-stats" id="spaceStats">
+          <div class="space-stat">
+            <div class="space-stat-label">🛰️ ISS Altitude</div>
+            <div class="space-stat-val" id="iss-alt">—</div>
+          </div>
+          <div class="space-stat">
+            <div class="space-stat-label">⚡ Vitesse ISS</div>
+            <div class="space-stat-val" id="iss-vel">—</div>
+          </div>
+          <div class="space-stat">
+            <div class="space-stat-label">📍 ISS Latitude</div>
+            <div class="space-stat-val" id="iss-lat">—</div>
+          </div>
+          <div class="space-stat">
+            <div class="space-stat-label">📍 ISS Longitude</div>
+            <div class="space-stat-val" id="iss-lon">—</div>
+          </div>
+          <div class="space-stat">
+            <div class="space-stat-label">🌍 Jours en orbite</div>
+            <div class="space-stat-val">9 137</div>
+          </div>
+          <div class="space-stat">
+            <div class="space-stat-label">🚀 Astronautes ISS</div>
+            <div class="space-stat-val">7</div>
+          </div>
+        </div>
+
+        <!-- ISS Map -->
+        <h3 style="font-size:0.8rem;font-weight:600;color:#8899bb;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem">🗺️ Position ISS en temps réel</h3>
+        <div id="issMap"></div>
+
+        <!-- NASA APOD -->
+        <h3 style="font-size:0.8rem;font-weight:600;color:#8899bb;text-transform:uppercase;letter-spacing:0.08em;margin:1.2rem 0 0.5rem">🔭 NASA — Image du jour (APOD)</h3>
+        <div class="apod-card" id="apodCard">
+          <div class="loading-msg" style="color:#8899bb" data-i18n="loading">Chargement APOD…</div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────
+           SLIDE 7 — WORLD ORGS
+      ───────────────────────────────────────── -->
+      <div class="slide" id="slide-orgs">
+        <h2 class="section-title">🌐 <span data-i18n="orgs_title">Organisations mondiales</span></h2>
+        <div class="orgs-grid">
+          <div class="org-card card">
+            <div class="org-header">
+              <div class="org-logo">🇺🇳</div>
+              <div>
+                <div class="org-name">Nations Unies</div>
+                <div class="org-type">ONU · Paix & Sécurité</div>
+              </div>
+            </div>
+            <div class="org-news" id="org-un">
+              <div class="org-item" data-i18n="loading">Chargement…</div>
+            </div>
+          </div>
+          <div class="org-card card">
+            <div class="org-header">
+              <div class="org-logo">🏥</div>
+              <div>
+                <div class="org-name">OMS / WHO</div>
+                <div class="org-type">Santé mondiale</div>
+              </div>
+            </div>
+            <div class="org-news" id="org-who">
+              <div class="org-item" data-i18n="loading">Chargement…</div>
+            </div>
+          </div>
+          <div class="org-card card">
+            <div class="org-header">
+              <div class="org-logo">🏦</div>
+              <div>
+                <div class="org-name">Banque Mondiale</div>
+                <div class="org-type">Développement économique</div>
+              </div>
+            </div>
+            <div class="org-news" id="org-wb">
+              <div class="org-item" data-i18n="loading">Chargement…</div>
+            </div>
+          </div>
+          <div class="org-card card">
+            <div class="org-header">
+              <div class="org-logo">🧒</div>
+              <div>
+                <div class="org-name">UNICEF</div>
+                <div class="org-type">Droits des enfants</div>
+              </div>
+            </div>
+            <div class="org-news" id="org-unicef">
+              <div class="org-item" data-i18n="loading">Chargement…</div>
+            </div>
+          </div>
+          <div class="org-card card">
+            <div class="org-header">
+              <div class="org-logo">🔴</div>
+              <div>
+                <div class="org-name">MSF</div>
+                <div class="org-type">Médecins Sans Frontières</div>
+              </div>
+            </div>
+            <div class="org-news" id="org-msf">
+              <div class="org-item" data-i18n="loading">Chargement…</div>
+            </div>
+          </div>
+          <div class="org-card card">
+            <div class="org-header">
+              <div class="org-logo">🌿</div>
+              <div>
+                <div class="org-name">PNUE / UNEP</div>
+                <div class="org-type">Environnement</div>
+              </div>
+            </div>
+            <div class="org-news" id="org-unep">
+              <div class="org-item" data-i18n="loading">Chargement…</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.5rem;font-size:0.72rem;color:var(--muted);text-align:center">
+          Sources : flux RSS et APIs publiques des organisations internationales · Données à titre informatif uniquement
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────
+           SLIDE 8 — SUPPORT
+      ───────────────────────────────────────── -->
+      <div class="slide" id="slide-support">
+        <div class="support-hero">
+          <div class="support-hero-logo">infonews<span>.day</span></div>
+          <div class="support-tagline">"Invent the day"</div>
+
+          <div class="manifesto">
+            <h3 data-i18n="manifesto_title">Le manifeste</h3>
+            <p data-i18n="manifesto_text">
+              infonews.day est né d'une conviction simple : l'information doit être libre, belle, et accessible à tous.
+              Pas de paywall. Pas de cookies. Pas de publicité intrusive. Juste le monde, en temps réel.
+              Chaque article chargé, chaque ville météo affichée, chaque cours de bourse actualisé —
+              tout est gratuit, ouvert, et pensé pour que tu puisses <em>inventer ta journée</em>.
+              Si ce projet t'apporte de la valeur, soutiens-le. Un café suffit.
+            </p>
+          </div>
+
+          <a class="tipeee-btn" href="https://fr.tipeee.com/infonews" target="_blank" rel="noopener noreferrer">
+            ☕ <span data-i18n="support_btn">Soutenir sur Tipeee</span>
+          </a>
+
+          <div class="support-footer" style="margin-top:1.5rem">
+            <div class="gdpr-note">
+              🔒 <strong>RGPD :</strong> aucun cookie, aucun tracker, aucune donnée personnelle collectée.
+              La géolocalisation reste dans votre navigateur et n'est jamais transmise à nos serveurs.
+              Sources 100% libres et légales.
+            </div>
+          </div>
+
+          <div style="margin-top:2rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+            <a href="https://github.com/hachi-art/infonews-v1" target="_blank" rel="noopener"
+               style="font-size:0.78rem;color:var(--primary);font-weight:600">
+              ⭐ GitHub — hachi-art/infonews-v1
+            </a>
+            <span style="color:var(--border)">|</span>
+            <a href="/health" style="font-size:0.78rem;color:var(--muted)">
+              💚 API Status
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /slides-track -->
+  </div><!-- /slides-viewport -->
+
+  <!-- ═══════════════════════════════════════════════
+       WEATHER MODAL
+  ═══════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="weatherModal" onclick="closeWeatherModal(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-city" id="modalCityName">—</div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-current" id="modalCurrent"></div>
+      <h4 style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.6rem">Prévisions 5 jours</h4>
+      <div class="forecast-row" id="modalForecast"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       JAVASCRIPT
+  ═══════════════════════════════════════════════ -->
+  <script>
+  // ────────────────────────────────────────────────
+  // i18n
+  // ────────────────────────────────────────────────
+  const LANG = {
+    fr: {
+      nav_home: 'Accueil', nav_news: 'Actualités', nav_weather: 'Météo',
+      nav_finance: 'Finance', nav_events: 'Événements', nav_culture: 'Culture',
+      nav_space: 'Espace', nav_orgs: 'Organisations', nav_support: 'Soutenir',
+      breaking: 'Actualité', counters_title: '🌍 Le monde en temps réel',
+      pop_world: 'Population mondiale', deaths_today: 'Décès aujourd\'hui',
+      births_today: 'Naissances aujourd\'hui', overweight: 'Obésité (cas)',
+      hunger: 'Personnes affamées',
+      news_title: 'Actualités mondiales', theme: 'Thème :', source: 'Source :',
+      all: 'Tout', geopolitics: 'Géopolitique', tech: 'Tech',
+      economy: 'Économie', science: 'Science', culture: 'Culture', sport: 'Sport',
+      weather_title: 'Météo mondiale', radar: 'Radar précipitations',
+      satellite: 'Satellite nuages', cities_click: '30 villes · cliquez pour les prévisions',
+      finance_title: 'Marchés & Crypto', crypto: 'Cryptomonnaies',
+      name: 'Nom', price: 'Prix (USD)', sparkline: '7 jours', market_cap: 'Cap. marché',
+      commodities: 'Matières premières', eco_calendar: 'Calendrier économique',
+      events_title: 'Concerts & Festivals', events_sub: 'Événements musicaux et culturels mondiaux',
+      culture_title: 'Culture & Geek', anime: 'Anime / Manga', gaming: 'Gaming',
+      bd: 'BD / Comics', tech_culture: 'Tech Culture',
+      space_title: 'Espace & Géospatial',
+      orgs_title: 'Organisations mondiales',
+      manifesto_title: 'Le manifeste',
+      manifesto_text: 'infonews.day est né d\'une conviction simple : l\'information doit être libre, belle, et accessible à tous. Pas de paywall. Pas de cookies. Pas de publicité intrusive. Juste le monde, en temps réel. Si ce projet t\'apporte de la valeur, soutiens-le. Un café suffit.',
+      support_btn: 'Soutenir sur Tipeee',
+      loading: 'Chargement…'
+    },
+    en: {
+      nav_home: 'Home', nav_news: 'News', nav_weather: 'Weather',
+      nav_finance: 'Finance', nav_events: 'Events', nav_culture: 'Culture',
+      nav_space: 'Space', nav_orgs: 'Organisations', nav_support: 'Support',
+      breaking: 'Breaking', counters_title: '🌍 The world in real time',
+      pop_world: 'World Population', deaths_today: 'Deaths today',
+      births_today: 'Births today', overweight: 'Obesity (cases)',
+      hunger: 'People hungry',
+      news_title: 'World News', theme: 'Theme:', source: 'Source:',
+      all: 'All', geopolitics: 'Geopolitics', tech: 'Tech',
+      economy: 'Economy', science: 'Science', culture: 'Culture', sport: 'Sport',
+      weather_title: 'World Weather', radar: 'Precipitation radar',
+      satellite: 'Cloud satellite', cities_click: '30 cities · click for forecast',
+      finance_title: 'Markets & Crypto', crypto: 'Cryptocurrencies',
+      name: 'Name', price: 'Price (USD)', sparkline: '7 days', market_cap: 'Market Cap',
+      commodities: 'Commodities', eco_calendar: 'Economic Calendar',
+      events_title: 'Concerts & Festivals', events_sub: 'World music and cultural events',
+      culture_title: 'Culture & Geek', anime: 'Anime / Manga', gaming: 'Gaming',
+      bd: 'Comics / BD', tech_culture: 'Tech Culture',
+      space_title: 'Space & Geospatial',
+      orgs_title: 'World Organisations',
+      manifesto_title: 'The manifesto',
+      manifesto_text: 'infonews.day was born from a simple belief: information should be free, beautiful, and accessible to all. No paywall. No cookies. No intrusive ads. Just the world, in real time. If this project brings you value, support it. A coffee is enough.',
+      support_btn: 'Support on Tipeee',
+      loading: 'Loading…'
+    },
+    es: {
+      nav_home: 'Inicio', nav_news: 'Noticias', nav_weather: 'Clima',
+      nav_finance: 'Finanzas', nav_events: 'Eventos', nav_culture: 'Cultura',
+      nav_space: 'Espacio', nav_orgs: 'Organizaciones', nav_support: 'Apoyar',
+      breaking: 'Última hora', counters_title: '🌍 El mundo en tiempo real',
+      pop_world: 'Población mundial', deaths_today: 'Muertes hoy',
+      births_today: 'Nacimientos hoy', overweight: 'Obesidad (casos)',
+      hunger: 'Personas con hambre',
+      news_title: 'Noticias mundiales', theme: 'Tema:', source: 'Fuente:',
+      all: 'Todo', geopolitics: 'Geopolítica', tech: 'Tecnología',
+      economy: 'Economía', science: 'Ciencia', culture: 'Cultura', sport: 'Deporte',
+      weather_title: 'Clima mundial', radar: 'Radar de precipitaciones',
+      satellite: 'Satélite de nubes', cities_click: '30 ciudades · click para pronóstico',
+      finance_title: 'Mercados & Cripto', crypto: 'Criptomonedas',
+      name: 'Nombre', price: 'Precio (USD)', sparkline: '7 días', market_cap: 'Cap. mercado',
+      commodities: 'Materias primas', eco_calendar: 'Calendario económico',
+      events_title: 'Conciertos & Festivales', events_sub: 'Eventos musicales y culturales mundiales',
+      culture_title: 'Cultura & Geek', anime: 'Anime / Manga', gaming: 'Gaming',
+      bd: 'Cómics / BD', tech_culture: 'Cultura Tech',
+      space_title: 'Espacio & Geoespacial',
+      orgs_title: 'Organizaciones mundiales',
+      manifesto_title: 'El manifiesto',
+      manifesto_text: 'infonews.day nació de una convicción simple: la información debe ser libre, bonita y accesible para todos. Sin paywall. Sin cookies. Sin publicidad intrusiva. Solo el mundo, en tiempo real. Si este proyecto te aporta valor, apóyalo. Un café es suficiente.',
+      support_btn: 'Apoyar en Tipeee',
+      loading: 'Cargando…'
+    }
+  };
+
+  let currentLang = 'fr';
+
+  function detectLang() {
+    const nav = navigator.language || navigator.userLanguage || 'fr';
+    const code = nav.toLowerCase().split('-')[0];
+    if (['en'].includes(code)) return 'en';
+    if (['es', 'ca'].includes(code)) return 'es';
+    return 'fr';
   }
-}
-loadNews();
 
-// Rafraîchissement
-setInterval(loadNews, 10 * 60 * 1000);
-setInterval(loadFinance, 5 * 60 * 1000);
-setInterval(loadWeather, 30 * 60 * 1000);
-</script>
+  function setLang(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    // Update buttons
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.textContent.trim().toLowerCase() === lang);
+    });
+    // Translate all [data-i18n]
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (LANG[lang] && LANG[lang][key]) el.textContent = LANG[lang][key];
+    });
+  }
+
+  // ────────────────────────────────────────────────
+  // SLIDE NAVIGATION
+  // ────────────────────────────────────────────────
+  let currentSlide = 0;
+  const TOTAL_SLIDES = 9;
+  const track = document.getElementById('slidesTrack');
+  const navTabs = document.querySelectorAll('.nav-tab');
+  let slideLoaded = new Array(TOTAL_SLIDES).fill(false);
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= TOTAL_SLIDES) return;
+    currentSlide = idx;
+    track.style.transform = `translateX(-${idx * 100}vw)`;
+    navTabs.forEach((t, i) => t.classList.toggle('active', i === idx));
+    // Scroll active tab into view
+    navTabs[idx].scrollIntoView({ inline: 'nearest', behavior: 'smooth' });
+    // Load data for slide if not yet loaded
+    if (!slideLoaded[idx]) {
+      slideLoaded[idx] = true;
+      onSlideLoad(idx);
+    }
+  }
+
+  function onSlideLoad(idx) {
+    switch (idx) {
+      case 0: return; // Home loaded at init
+      case 1: loadNews(); break;
+      case 2: loadWeather(); break;
+      case 3: loadFinance(); break;
+      case 6: initSpace(); break;
+      case 7: loadOrgs(); break;
+    }
+  }
+
+  // Keyboard nav
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') goTo(currentSlide + 1);
+    if (e.key === 'ArrowLeft')  goTo(currentSlide - 1);
+  });
+
+  // Touch / swipe
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) goTo(currentSlide + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  // ────────────────────────────────────────────────
+  // CLOCKS
+  // ────────────────────────────────────────────────
+  const CLOCK_ZONES = [
+    { city: 'Paris',   tz: 'Europe/Paris'         },
+    { city: 'N.York',  tz: 'America/New_York'      },
+    { city: 'Tokyo',   tz: 'Asia/Tokyo'            },
+    { city: 'Dubai',   tz: 'Asia/Dubai'            },
+    { city: 'Sydney',  tz: 'Australia/Sydney'      },
+  ];
+
+  function initClocks() {
+    const row = document.getElementById('clocksRow');
+    CLOCK_ZONES.forEach(z => {
+      const div = document.createElement('div');
+      div.className = 'clock-item';
+      div.innerHTML = `<div class="clock-city">${z.city}</div><div class="clock-time" id="clk-${z.city.replace('.','')}"</div>`;
+      row.appendChild(div);
+    });
+  }
+
+  function tickClocks() {
+    const now = Date.now();
+    CLOCK_ZONES.forEach(z => {
+      const el = document.getElementById(`clk-${z.city.replace('.','')}`);
+      if (el) el.textContent = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: z.tz }).format(now);
+    });
+  }
+
+  // ────────────────────────────────────────────────
+  // GLOBE CANVAS
+  // ────────────────────────────────────────────────
+  function initGlobe() {
+    const canvas = document.getElementById('globeCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = 200, H = 200, R = 90;
+    let angle = 0;
+
+    const dots = [];
+    for (let lat = -80; lat <= 80; lat += 10) {
+      for (let lon = -180; lon <= 180; lon += 10) {
+        dots.push({ lat: lat * Math.PI / 180, lon: lon * Math.PI / 180 });
+      }
+    }
+
+    function project(lat, lon, rot) {
+      const x = R * Math.cos(lat) * Math.sin(lon + rot);
+      const y = R * Math.sin(lat);
+      const z = R * Math.cos(lat) * Math.cos(lon + rot);
+      return { x: W / 2 + x, y: H / 2 - y, z };
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      // Ocean
+      const grad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, R);
+      grad.addColorStop(0, '#e8f4fd');
+      grad.addColorStop(1, '#c5dff0');
+      ctx.beginPath();
+      ctx.arc(W/2, H/2, R, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Grid dots
+      dots.forEach(d => {
+        const p = project(d.lat, d.lon, angle);
+        if (p.z > 0) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 0.8, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(26,115,232,0.25)';
+          ctx.fill();
+        }
+      });
+
+      // Glow rim
+      const rim = ctx.createRadialGradient(W/2, H/2, R - 4, W/2, H/2, R + 2);
+      rim.addColorStop(0, 'rgba(255,255,255,0)');
+      rim.addColorStop(1, 'rgba(255,255,255,0.6)');
+      ctx.beginPath();
+      ctx.arc(W/2, H/2, R, 0, Math.PI * 2);
+      ctx.strokeStyle = rim;
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      angle += 0.004;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  // ────────────────────────────────────────────────
+  // LIVE COUNTERS
+  // ────────────────────────────────────────────────
+  const START_DATE = new Date('2026-01-01T00:00:00Z');
+  const RATES = {
+    pop:     2.4,           // +2.4 /sec (net)
+    deaths:  1.85,          // /sec
+    births:  4.17,          // /sec
+    co2:     1172,          // t/sec (37Gt/yr)
+    solar:   0.6,           // MWh/sec
+    water:   127000,        // L/sec
+    emails:  3819,          // /sec (330Bd/jour)
+    energy:  0.018,         // TWh/sec
+    malaria: 0.0193,        // /sec (608k/yr)
+  };
+  const BASE = {
+    pop:     8_212_473_691,
+    deaths:  0,
+    births:  0,
+    co2:     0,
+    solar:   0,
+    water:   0,
+    emails:  0,
+    energy:  0,
+    malaria: 0,
+  };
+
+  function fmt(n) {
+    if (n >= 1e9) return (n / 1e9).toFixed(2) + ' Md';
+    if (n >= 1e6) return (n / 1e6).toFixed(1) + ' M';
+    return Math.round(n).toLocaleString('fr-FR');
+  }
+
+  function tickCounters() {
+    const elapsedToday = (Date.now() - new Date().setHours(0,0,0,0)) / 1000;
+    const elapsedTotal = (Date.now() - START_DATE) / 1000;
+
+    document.getElementById('cnt-pop').textContent    = fmt(BASE.pop + elapsedTotal * RATES.pop);
+    document.getElementById('cnt-deaths').textContent = fmt(elapsedToday * RATES.deaths);
+    document.getElementById('cnt-births').textContent = fmt(elapsedToday * RATES.births);
+    document.getElementById('cnt-co2').textContent    = fmt(elapsedToday * RATES.co2);
+    document.getElementById('cnt-solar').textContent  = fmt(elapsedToday * RATES.solar);
+    document.getElementById('cnt-water').textContent  = fmt(elapsedToday * RATES.water);
+    document.getElementById('cnt-emails').textContent = fmt(elapsedToday * RATES.emails);
+    document.getElementById('cnt-energy').textContent = (elapsedToday * RATES.energy).toFixed(3) + ' TWh';
+    document.getElementById('cnt-malaria').textContent = fmt(elapsedToday * RATES.malaria);
+  }
+
+  // ────────────────────────────────────────────────
+  // TICKER
+  // ────────────────────────────────────────────────
+  async function loadTicker() {
+    try {
+      const r = await fetch('/api/news?limit=20');
+      const d = await r.json();
+      if (!d.articles || !d.articles.length) return;
+      const items = d.articles.slice(0, 15).map(a => a.title).join('  ·  ');
+      const inner = document.getElementById('tickerInner');
+      inner.innerHTML = `<span class="ticker-item">${items}</span><span class="ticker-item">${items}</span>`;
+    } catch(e) { /* keep placeholder */ }
+  }
+
+  // ────────────────────────────────────────────────
+  // NEWS
+  // ────────────────────────────────────────────────
+  let allArticles = [];
+  let activeCategory = 'all';
+
+  async function loadNews() {
+    const grid = document.getElementById('newsGrid');
+    grid.innerHTML = `<div class="loading-msg">${LANG[currentLang].loading}</div>`;
+    try {
+      const src = document.getElementById('sourceSelect').value;
+      const url = `/api/news?limit=80${src ? '&source=' + src : ''}`;
+      const r = await fetch(url);
+      const d = await r.json();
+      allArticles = d.articles || [];
+      renderNews();
+    } catch(e) {
+      grid.innerHTML = `<div class="loading-msg">Erreur de chargement ❌</div>`;
+    }
+  }
+
+  function renderNews() {
+    const grid = document.getElementById('newsGrid');
+    let arts = activeCategory === 'all' ? allArticles : allArticles.filter(a => a.category === activeCategory);
+    if (!arts.length) { grid.innerHTML = `<div class="loading-msg">Aucun article trouvé.</div>`; return; }
+
+    grid.innerHTML = arts.slice(0, 60).map(a => {
+      const ago = timeAgo(a.publishedAt);
+      const srcClass = `src-${(a.source||'').toLowerCase().replace(/\s+/g,'')}`;
+      const isRT = (a.source || '').toLowerCase().includes('rt');
+      const stateWarn = isRT ? `<span class="state-warn">⚠️ État</span>` : '';
+      return `
+        <a class="news-card" href="${a.url}" target="_blank" rel="noopener">
+          <div class="news-card-top">
+            <span class="source-badge ${srcClass}">${a.source || '?'}</span>
+            ${stateWarn}
+            <span class="news-meta">${ago}</span>
+          </div>
+          <div class="news-title">${a.title}</div>
+          <div class="news-meta">
+            <span class="news-cat">${a.category || ''}</span>
+            ${a.description ? `· ${a.description.slice(0, 80)}…` : ''}
+          </div>
+        </a>
+      `;
+    }).join('');
+  }
+
+  function timeAgo(dateStr) {
+    if (!dateStr) return '';
+    const diff = (Date.now() - new Date(dateStr)) / 1000;
+    if (diff < 3600)  return `il y a ${Math.round(diff/60)} min`;
+    if (diff < 86400) return `il y a ${Math.round(diff/3600)} h`;
+    return `il y a ${Math.round(diff/86400)} j`;
+  }
+
+  // Filter chips
+  document.getElementById('newsFilters').addEventListener('click', e => {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeCategory = chip.dataset.cat;
+    if (allArticles.length) renderNews();
+    else loadNews();
+  });
+
+  document.getElementById('sourceSelect').addEventListener('change', loadNews);
+
+  // ────────────────────────────────────────────────
+  // WEATHER
+  // ────────────────────────────────────────────────
+  let weatherData = [];
+
+  async function loadWeather() {
+    const grid = document.getElementById('cityGrid');
+    try {
+      const r = await fetch('/api/weather');
+      const d = await r.json();
+      weatherData = d.cities || d || [];
+      renderCities();
+    } catch(e) {
+      grid.innerHTML = `<div class="loading-msg">Erreur météo ❌</div>`;
+    }
+  }
+
+  function renderCities() {
+    const grid = document.getElementById('cityGrid');
+    if (!weatherData.length) { grid.innerHTML = `<div class="loading-msg">Aucune donnée météo.</div>`; return; }
+    grid.innerHTML = weatherData.map((c, i) => `
+      <div class="city-card" onclick="openWeatherModal(${i})">
+        <div class="city-flag">${c.flag || '🌍'}</div>
+        <div class="city-name">${c.city}</div>
+        <div class="city-icon">${c.current?.icon || '🌡️'}</div>
+        <div class="city-temp">${c.current?.temp ?? '—'}°C</div>
+        <div class="city-desc">${c.current?.label || ''}</div>
+      </div>
+    `).join('');
+  }
+
+  function openWeatherModal(idx) {
+    const c = weatherData[idx];
+    if (!c) return;
+    document.getElementById('modalCityName').textContent = `${c.flag || ''} ${c.city}`;
+    document.getElementById('modalCurrent').innerHTML = `
+      <div class="modal-icon">${c.current?.icon || '🌡️'}</div>
+      <div>
+        <div class="modal-temp">${c.current?.temp ?? '—'}°C</div>
+        <div class="modal-detail">
+          Ressenti : ${c.current?.feelsLike ?? '—'}°C<br>
+          Humidité : ${c.current?.humidity ?? '—'}%<br>
+          Vent : ${c.current?.wind ?? '—'} km/h<br>
+          ${c.current?.label || ''}
+        </div>
+      </div>
+    `;
+    if (c.forecast?.length) {
+      document.getElementById('modalForecast').innerHTML = c.forecast.map(f => `
+        <div class="forecast-day">
+          <div class="forecast-date">${new Date(f.date).toLocaleDateString('fr-FR', {weekday:'short',day:'numeric'})}</div>
+          <div class="forecast-icon">${f.icon || '🌡️'}</div>
+          <div class="forecast-temps">${f.max}° / ${f.min}°</div>
+          <div style="font-size:0.58rem;color:var(--muted)">${f.precip > 0 ? f.precip + ' mm' : ''}</div>
+        </div>
+      `).join('');
+    }
+    document.getElementById('weatherModal').classList.add('open');
+  }
+
+  function closeWeatherModal(e) {
+    if (e.target.id === 'weatherModal') closeModal();
+  }
+  function closeModal() {
+    document.getElementById('weatherModal').classList.remove('open');
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ────────────────────────────────────────────────
+  // FINANCE
+  // ────────────────────────────────────────────────
+  async function loadFinance() {
+    await Promise.allSettled([loadMarkets(), loadCrypto(), loadCommodities()]);
+  }
+
+  async function loadMarkets() {
+    try {
+      const r = await fetch('/api/finance/markets');
+      const d = await r.json();
+      const tiles = document.getElementById('marketTiles');
+      if (!d.markets) return;
+      tiles.innerHTML = d.markets.map(m => `
+        <div class="market-tile">
+          <div class="market-name">${m.name}</div>
+          <div class="market-val">${m.price?.toLocaleString('fr-FR') || '—'}</div>
+          <div class="market-chg ${m.change >= 0 ? 'up' : 'down'}">
+            ${m.change >= 0 ? '▲' : '▼'} ${Math.abs(m.changePercent || 0).toFixed(2)}%
+          </div>
+        </div>
+      `).join('');
+    } catch(e) {
+      document.getElementById('marketTiles').innerHTML = `<div class="loading-msg">Données marché indisponibles</div>`;
+    }
+  }
+
+  async function loadCrypto() {
+    const tbody = document.getElementById('cryptoTbody');
+    try {
+      const r = await fetch('/api/finance/crypto');
+      const d = await r.json();
+      if (!d.crypto) return;
+      tbody.innerHTML = d.crypto.map((c, i) => {
+        const chg24 = c.price_change_percentage_24h || 0;
+        const chg7  = c.price_change_percentage_7d_in_currency || 0;
+        const canvasId = `spark-${i}`;
+        return `
+          <tr>
+            <td>${i+1}</td>
+            <td>
+              <div class="crypto-name">${c.name}</div>
+              <div class="crypto-sym">${c.symbol?.toUpperCase()}</div>
+            </td>
+            <td><strong>$${c.current_price?.toLocaleString('en-US')}</strong></td>
+            <td class="${chg24 >= 0 ? 'up' : 'down'}">${chg24 >= 0 ? '▲' : '▼'} ${Math.abs(chg24).toFixed(2)}%</td>
+            <td class="${chg7 >= 0 ? 'up' : 'down'}">${chg7 >= 0 ? '▲' : '▼'} ${Math.abs(chg7).toFixed(2)}%</td>
+            <td><canvas class="sparkline-canvas" id="${canvasId}"></canvas></td>
+            <td>${c.market_cap ? '$' + (c.market_cap/1e9).toFixed(1) + ' Md' : '—'}</td>
+          </tr>
+        `;
+      }).join('');
+
+      // Draw sparklines
+      d.crypto.forEach((c, i) => {
+        const canvas = document.getElementById(`spark-${i}`);
+        if (!canvas || !c.sparkline_in_7d?.price) return;
+        const prices = c.sparkline_in_7d.price;
+        const min = Math.min(...prices), max = Math.max(...prices);
+        const isUp = prices[prices.length-1] >= prices[0];
+        new Chart(canvas, {
+          type: 'line',
+          data: {
+            labels: prices.map((_,j) => j),
+            datasets: [{ data: prices, borderColor: isUp ? '#1a8a52' : '#d93025', borderWidth: 1.5, pointRadius: 0, fill: false, tension: 0.3 }]
+          },
+          options: {
+            animation: false, responsive: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { display: false }, y: { display: false, min: min * 0.99, max: max * 1.01 } }
+          }
+        });
+      });
+    } catch(e) {
+      tbody.innerHTML = `<tr><td colspan="7" class="loading-msg">Crypto indisponible</td></tr>`;
+    }
+  }
+
+  async function loadCommodities() {
+    const grid = document.getElementById('commoditiesGrid');
+    const COMMODITIES = [
+      { name: 'Or (XAU/USD)', symbol: 'GOLD', icon: '🥇' },
+      { name: 'Argent (XAG/USD)', symbol: 'SILVER', icon: '🥈' },
+      { name: 'Pétrole Brent', symbol: 'BRENT', icon: '🛢️' },
+      { name: 'WTI', symbol: 'WTI', icon: '⛽' },
+      { name: 'Gaz naturel', symbol: 'GAS', icon: '🔥' },
+      { name: 'Blé', symbol: 'WHEAT', icon: '🌾' },
+    ];
+    // Display static placeholder with TradingView mini widgets
+    grid.innerHTML = COMMODITIES.map(c => `
+      <div class="commodity-card">
+        <div class="commodity-name">${c.icon} ${c.name}</div>
+        <div class="commodity-val">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+            { "symbol": "TVC:${c.symbol}", "width": "100%", "colorTheme": "light", "isTransparent": true, "locale": "fr" }
+            <\/script>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ────────────────────────────────────────────────
+  // SPACE — ISS + APOD
+  // ────────────────────────────────────────────────
+  let issMap = null, issMarker = null;
+
+  async function initSpace() {
+    // Init Leaflet map
+    if (!issMap) {
+      issMap = L.map('issMap', { zoomControl: false, attributionControl: false }).setView([0, 0], 1);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 18
+      }).addTo(issMap);
+      const issIcon = L.divIcon({ html: '🛸', className: '', iconSize: [28, 28] });
+      issMarker = L.marker([0, 0], { icon: issIcon }).addTo(issMap);
+    }
+    trackISS();
+    setInterval(trackISS, 5000);
+    loadAPOD();
+  }
+
+  async function trackISS() {
+    try {
+      const r = await fetch('https://api.wheretheiss.at/v1/satellites/25544');
+      const d = await r.json();
+      const lat = d.latitude, lon = d.longitude;
+      issMarker.setLatLng([lat, lon]);
+      issMap.setView([lat, lon], issMap.getZoom());
+      document.getElementById('iss-lat').textContent = lat.toFixed(4) + '°';
+      document.getElementById('iss-lon').textContent = lon.toFixed(4) + '°';
+      document.getElementById('iss-alt').textContent = d.altitude?.toFixed(1) + ' km';
+      document.getElementById('iss-vel').textContent = (d.velocity / 3.6)?.toFixed(0) + ' m/s';
+    } catch(e) {}
+  }
+
+  async function loadAPOD() {
+    try {
+      const r = await fetch('/api/space/apod');
+      const d = await r.json();
+      const card = document.getElementById('apodCard');
+      if (d.media_type === 'image') {
+        card.innerHTML = `
+          <img id="apodImg" src="${d.hdurl || d.url}" alt="${d.title}" loading="lazy"/>
+          <div class="apod-title">${d.title}</div>
+          <div class="apod-date">${d.date} · NASA APOD</div>
+          <div class="apod-body">${d.explanation?.slice(0, 400)}…</div>
+        `;
+      } else {
+        card.innerHTML = `
+          <div class="apod-title">${d.title}</div>
+          <div class="apod-date">${d.date} · NASA APOD</div>
+          <div class="apod-body">${d.explanation?.slice(0, 400)}…</div>
+        `;
+      }
+    } catch(e) {
+      document.getElementById('apodCard').innerHTML = `<div class="loading-msg" style="color:#8899bb">APOD indisponible — configurez NASA_API_KEY dans .env</div>`;
+    }
+  }
+
+  // ────────────────────────────────────────────────
+  // ORGS — RSS feeds
+  // ────────────────────────────────────────────────
+  const ORG_FEEDS = [
+    { id: 'org-un',    label: 'ONU',          url: 'https://news.un.org/feed/subscribe/fr/news/all/rss.xml' },
+    { id: 'org-who',   label: 'OMS',          url: 'https://www.who.int/rss-feeds/news-english.xml' },
+    { id: 'org-wb',    label: 'Banque Mond.', url: 'https://blogs.worldbank.org/en/rss.xml' },
+    { id: 'org-unicef',label: 'UNICEF',       url: 'https://www.unicef.org/press-releases/rss' },
+    { id: 'org-msf',   label: 'MSF',          url: 'https://www.msf.fr/rss/actualites' },
+    { id: 'org-unep',  label: 'PNUE',         url: 'https://www.unep.org/news-and-stories/news/rss.xml' },
+  ];
+
+  async function loadOrgs() {
+    // Use our backend as RSS proxy (or display a note)
+    ORG_FEEDS.forEach(f => {
+      const el = document.getElementById(f.id);
+      if (el) el.innerHTML = `
+        <div class="org-item">📡 Flux RSS activé — données en cours d'intégration backend</div>
+        <div class="org-item">
+          <a href="${f.url}" target="_blank" rel="noopener" style="color:var(--primary)">
+            Voir les dernières nouvelles de ${f.label} →
+          </a>
+        </div>
+      `;
+    });
+  }
+
+  // ────────────────────────────────────────────────
+  // CULTURE TABS
+  // ────────────────────────────────────────────────
+  document.getElementById('cultureTabs').addEventListener('click', e => {
+    const tab = e.target.closest('.culture-tab');
+    if (!tab) return;
+    document.querySelectorAll('.culture-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    // Future: filter culture grid by tab
+  });
+
+  // ────────────────────────────────────────────────
+  // INIT
+  // ────────────────────────────────────────────────
+  window.addEventListener('DOMContentLoaded', () => {
+    // Detect language
+    currentLang = detectLang();
+    setLang(currentLang);
+
+    initClocks();
+    setInterval(tickClocks, 1000);
+    tickClocks();
+
+    initGlobe();
+
+    // Counters
+    tickCounters();
+    setInterval(tickCounters, 1000);
+
+    // Ticker (news)
+    loadTicker();
+    setInterval(loadTicker, 300_000); // refresh every 5 min
+
+    // Mark slide 0 as loaded
+    slideLoaded[0] = true;
+
+    // Navigate to current slide 0
+    goTo(0);
+  });
+  </script>
 </body>
 </html>
