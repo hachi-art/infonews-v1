@@ -416,6 +416,22 @@
     .src-cgtn        { background: #c0392b; color:#fff; }
     .src-tass        { background: #b71c1c; color:#fff; }
     .src-xinhua      { background: #c62828; color:#fff; }
+    .src-reuters     { background: #ff6600; color:#fff; }
+    .src-trtworld    { background: #e63946; color:#fff; }
+    .src-africanews  { background: #2d6a4f; color:#fff; }
+    .src-allafrica   { background: #1b4332; color:#fff; }
+    .src-telesur     { background: #d62828; color:#fff; }
+    .src-bleepingcomputer { background: #023e8a; color:#fff; }
+    .src-esa         { background: #00b4d8; color:#fff; }
+    .src-openai      { background: #10a37f; color:#fff; }
+    .src-deepmind    { background: #4285f4; color:#fff; }
+    .src-who         { background: #006eb8; color:#fff; }
+    .src-oms         { background: #006eb8; color:#fff; }
+    .src-onu         { background: #009edb; color:#fff; }
+    .src-variety     { background: #7b2d8b; color:#fff; }
+    .src-hollywoodreporter { background: #c9184a; color:#fff; }
+    .src-microsoftai { background: #0078d4; color:#fff; }
+    .src-bair        { background: #003262; color:#fff; }
     .state-warn { font-size: 0.56rem; color: var(--orange); font-weight: 600; }
     .news-title { font-size: 0.86rem; font-weight: 600; line-height: 1.4; color: var(--text); }
     .news-meta { font-size: 0.67rem; color: var(--muted); display: flex; gap: 0.4rem; align-items: center; }
@@ -954,16 +970,20 @@
 
     <!-- P1.1 Globe & Compteurs -->
     <div class="slide active" id="s-globe" data-pole="0" data-sub="0">
+      <!-- Ticker Hybride : News + Séismes + Marchés -->
       <div class="ticker-bar">
-        <div class="ticker-label">🔴 Breaking</div>
+        <div class="ticker-label">🔴 LIVE</div>
         <div class="ticker-track">
           <div class="ticker-inner" id="tickerInner">
-            <span class="ticker-item">Chargement des dernières actualités…</span>
-            <span class="ticker-item">⋯</span>
-            <span class="ticker-item">Chargement des dernières actualités…</span>
+            <span class="ticker-item">Chargement flux hybride…</span>
             <span class="ticker-item">⋯</span>
           </div>
         </div>
+      </div>
+      <!-- Alertes GDACS + USGS -->
+      <div id="alertsBanner" style="display:none;background:#fce8e6;border:1px solid #f5c6c3;border-radius:var(--radius);padding:0.6rem 1rem;margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+        <span style="font-size:0.7rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0">🚨 Alertes</span>
+        <div id="alertsItems" style="display:flex;flex-wrap:wrap;gap:0.5rem;flex:1"></div>
       </div>
       <div class="globe-wrap">
         <canvas id="globeCanvas" width="240" height="240"></canvas>
@@ -1009,16 +1029,47 @@
         <button class="filter-chip" data-cat="sport">Sport</button>
         <span style="font-size:0.72rem;font-weight:600;color:var(--muted);margin-left:0.5rem;margin-right:4px">Source :</span>
         <select id="sourceSelect" style="font-size:0.72rem;padding:4px 8px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-family:inherit;">
-          <option value="">Toutes</option>
-          <option value="bbc">BBC</option>
-          <option value="lemonde">Le Monde</option>
-          <option value="guardian">The Guardian</option>
-          <option value="aljazeera">Al Jazeera</option>
-          <option value="techcrunch">TechCrunch</option>
-          <option value="hackernews">HackerNews</option>
-          <option value="dw">Deutsche Welle</option>
-          <option value="euronews">Euronews</option>
-          <option value="independent">Indépendants</option>
+          <option value="">Toutes sources</option>
+          <optgroup label="── Occident ──">
+            <option value="bbc">BBC</option>
+            <option value="lemonde">Le Monde</option>
+            <option value="guardian">The Guardian</option>
+            <option value="reuters">Reuters</option>
+            <option value="dw">Deutsche Welle</option>
+            <option value="euronews">Euronews</option>
+          </optgroup>
+          <optgroup label="── Moyen-Orient / Monde ──">
+            <option value="aljazeera">Al Jazeera</option>
+            <option value="trtworld">TRT World</option>
+          </optgroup>
+          <optgroup label="── Asie ⚠️ État ──">
+            <option value="xinhua">Xinhua ⚠️</option>
+            <option value="tass">TASS ⚠️</option>
+            <option value="rt">RT ⚠️</option>
+          </optgroup>
+          <optgroup label="── Afrique ──">
+            <option value="africanews">Africanews</option>
+            <option value="allafrica">AllAfrica</option>
+          </optgroup>
+          <optgroup label="── Latam ──">
+            <option value="telesur">TeleSUR</option>
+          </optgroup>
+          <optgroup label="── Tech ──">
+            <option value="techcrunch">TechCrunch</option>
+            <option value="hackernews">HackerNews</option>
+            <option value="bleeping">BleepingComputer</option>
+            <option value="ai">OpenAI / DeepMind</option>
+            <option value="esa">ESA</option>
+          </optgroup>
+          <optgroup label="── Culture ──">
+            <option value="variety">Variety / HollywoodReporter</option>
+          </optgroup>
+          <optgroup label="── Santé ──">
+            <option value="who">WHO / OMS</option>
+          </optgroup>
+          <optgroup label="── Indépendants ──">
+            <option value="independent">Médias indépendants</option>
+          </optgroup>
         </select>
         <button class="filter-chip" onclick="loadNews()" style="margin-left:4px">🔄 Actualiser</button>
       </div>
@@ -1196,15 +1247,40 @@
         <button class="filter-chip" data-cat2="sport">Sport</button>
         <select id="sourceSelect2" style="font-size:0.72rem;padding:4px 8px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-family:inherit;margin-left:0.5rem">
           <option value="">Toutes sources</option>
-          <option value="bbc">BBC</option>
-          <option value="lemonde">Le Monde</option>
-          <option value="guardian">The Guardian</option>
-          <option value="aljazeera">Al Jazeera</option>
-          <option value="dw">Deutsche Welle</option>
-          <option value="euronews">Euronews</option>
-          <option value="techcrunch">TechCrunch</option>
-          <option value="hackernews">HackerNews</option>
-          <option value="independent">Indépendants</option>
+          <optgroup label="── Occident ──">
+            <option value="bbc">BBC</option>
+            <option value="lemonde">Le Monde</option>
+            <option value="guardian">The Guardian</option>
+            <option value="reuters">Reuters</option>
+            <option value="dw">Deutsche Welle</option>
+            <option value="euronews">Euronews</option>
+          </optgroup>
+          <optgroup label="── Orient / Monde ──">
+            <option value="aljazeera">Al Jazeera</option>
+            <option value="trtworld">TRT World</option>
+            <option value="xinhua">Xinhua ⚠️</option>
+            <option value="tass">TASS ⚠️</option>
+            <option value="rt">RT ⚠️</option>
+          </optgroup>
+          <optgroup label="── Afrique & Latam ──">
+            <option value="africanews">Africanews</option>
+            <option value="allafrica">AllAfrica</option>
+            <option value="telesur">TeleSUR</option>
+          </optgroup>
+          <optgroup label="── Tech & Science ──">
+            <option value="techcrunch">TechCrunch</option>
+            <option value="hackernews">HackerNews</option>
+            <option value="bleeping">BleepingComputer</option>
+            <option value="esa">ESA</option>
+            <option value="ai">OpenAI / DeepMind</option>
+            <option value="who">WHO / OMS</option>
+          </optgroup>
+          <optgroup label="── Culture ──">
+            <option value="variety">Variety</option>
+          </optgroup>
+          <optgroup label="── Indépendants ──">
+            <option value="independent">Indépendants</option>
+          </optgroup>
         </select>
         <button class="filter-chip" onclick="loadNews2()" style="margin-left:4px">🔄</button>
       </div>
@@ -1219,13 +1295,22 @@
         <h2>⚖️ Cross-Check — Ouest vs Est</h2>
         <p>Même événement, angles différents. Comparez les récits médiatiques occidentaux et orientaux.</p>
       </div>
+      <!-- Sélecteur Cross-Check -->
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem">
+        <button class="filter-chip active" onclick="setCrossCheck('west','east')">Occident vs Orient</button>
+        <button class="filter-chip" onclick="setCrossCheck('west','latam')">Occident vs Latam</button>
+        <button class="filter-chip" onclick="setCrossCheck('west','africa')">Occident vs Afrique</button>
+        <button class="filter-chip" onclick="setCrossCheck('reuters','tass')">Reuters vs TASS</button>
+        <button class="filter-chip" onclick="setCrossCheck('guardian','xinhua')">Guardian vs Xinhua</button>
+        <button class="filter-chip" onclick="setCrossCheck('aljazeera','bbc')">Al Jazeera vs BBC</button>
+      </div>
       <div class="crosscheck-grid" id="crosscheckGrid">
         <div class="crosscheck-col">
-          <div class="crosscheck-col-header col-west">🌍 Médias Occidentaux <span class="badge badge-blue" style="margin-left:auto">BBC · Guardian · Le Monde</span></div>
+          <div class="crosscheck-col-header col-west" id="cc-west-header">🌍 Médias Occidentaux <span class="badge badge-blue" style="margin-left:auto">BBC · Guardian · Reuters</span></div>
           <div class="crosscheck-col-body" id="cc-west"><div class="loading-msg">Chargement…</div></div>
         </div>
         <div class="crosscheck-col">
-          <div class="crosscheck-col-header col-east">🌏 Médias Orientaux <span class="badge badge-red" style="margin-left:auto">Al Jazeera · DW · Euronews</span></div>
+          <div class="crosscheck-col-header col-east" id="cc-east-header">🌏 Médias Orientaux <span class="badge badge-red" style="margin-left:auto">Al Jazeera · Xinhua · TASS</span></div>
           <div class="crosscheck-col-body" id="cc-east"><div class="loading-msg">Chargement…</div></div>
         </div>
       </div>
@@ -1406,14 +1491,41 @@
     <!-- P5.3 Espace -->
     <div class="slide" id="s-espace" data-pole="4" data-sub="2">
       <h2 class="section-title">🛸 Espace & Géospatial</h2>
-      <div class="iss-stats">
-        <div class="iss-stat"><div class="iss-stat-label">Latitude</div><div class="iss-stat-value" id="iss-lat">—</div></div>
-        <div class="iss-stat"><div class="iss-stat-label">Longitude</div><div class="iss-stat-value" id="iss-lon">—</div></div>
-        <div class="iss-stat"><div class="iss-stat-label">Altitude</div><div class="iss-stat-value" id="iss-alt">—</div></div>
-        <div class="iss-stat"><div class="iss-stat-label">Vitesse</div><div class="iss-stat-value" id="iss-vel">—</div></div>
+      <div class="grid-2" style="margin-bottom:1.2rem;gap:0.8rem">
+        <div>
+          <h3 style="font-size:0.85rem;font-weight:600;color:var(--muted);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.06em">🛸 ISS — Station spatiale</h3>
+          <div class="iss-stats" style="grid-template-columns:repeat(2,1fr)">
+            <div class="iss-stat"><div class="iss-stat-label">Latitude</div><div class="iss-stat-value" id="iss-lat">—</div></div>
+            <div class="iss-stat"><div class="iss-stat-label">Longitude</div><div class="iss-stat-value" id="iss-lon">—</div></div>
+            <div class="iss-stat"><div class="iss-stat-label">Altitude</div><div class="iss-stat-value" id="iss-alt">—</div></div>
+            <div class="iss-stat"><div class="iss-stat-label">Vitesse</div><div class="iss-stat-value" id="iss-vel">—</div></div>
+          </div>
+          <div id="issMap" style="margin-top:0.5rem"></div>
+        </div>
+        <div>
+          <h3 style="font-size:0.85rem;font-weight:600;color:var(--muted);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.06em">✈️ Trafic aérien — OpenSky</h3>
+          <div style="background:#0d1117;border-radius:var(--radius);padding:1rem;color:#fff;height:100%;min-height:180px">
+            <div style="display:flex;gap:1rem;margin-bottom:0.8rem">
+              <div style="text-align:center;flex:1">
+                <div style="font-size:0.62rem;color:#8b949e">Avions en vol</div>
+                <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#58a6ff" id="sky-inflight">—</div>
+              </div>
+              <div style="text-align:center;flex:1">
+                <div style="font-size:0.62rem;color:#8b949e">Total détectés</div>
+                <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#3fb950" id="sky-total">—</div>
+              </div>
+            </div>
+            <div id="skyFlights" style="font-size:0.72rem;display:flex;flex-direction:column;gap:0.3rem;max-height:200px;overflow-y:auto">
+              <div style="color:#8b949e">Chargement vols Europe…</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div id="issMap"></div>
-      <h3 class="section-title" style="font-size:1.1rem;margin-top:1.4rem">📸 Image du jour — NASA APOD</h3>
+      <h3 class="section-title" style="font-size:1.1rem">📡 Actualités spatiales — NASA · ESA · CNSA</h3>
+      <div class="news-grid" id="spaceNewsGrid">
+        <div class="loading-msg">Chargement actualités espace…</div>
+      </div>
+      <h3 class="section-title" style="font-size:1.1rem;margin-top:1.2rem">📸 Image du jour — NASA APOD</h3>
       <div class="apod-card" id="apodCard">
         <div class="loading-msg">Chargement APOD…</div>
       </div>
@@ -1422,7 +1534,7 @@
     <!-- P5.4 Intelligence Artificielle -->
     <div class="slide" id="s-ia" data-pole="4" data-sub="3">
       <h2 class="section-title">🤖 Intelligence Artificielle</h2>
-      <p class="section-sub">Recherche, modèles, éthique, déploiements</p>
+      <p class="section-sub">OpenAI · DeepMind · Microsoft AI · Berkeley AI Research · HackerNews IA</p>
       <div class="news-grid" id="iaGrid">
         <div class="loading-msg">Chargement IA news…</div>
       </div>
@@ -1730,6 +1842,7 @@
       case 's-crosscheck': return loadCrossCheck();
       case 's-indep':      return loadIndep();
       case 's-timemachine':return loadTimeMachine();
+      case 's-events':     break; // statique
       case 's-culture':    return loadCulture();
       case 's-cinema':     return loadCinema();
       case 's-tech':       return loadTechNews();
@@ -1738,8 +1851,11 @@
       case 's-ia':         return loadIANews();
       case 's-radio':      return loadRadio();
       case 's-orgs':       return loadOrgs();
+      case 's-hist':       break; // liens statiques
       case 's-art':        return loadArt();
-      case 's-worldmood':  return loadReddit();
+      case 's-debat':      return initDebat();
+      case 's-worldmood':  { initWorldMood(); loadReddit(); return; }
+      case 's-soutenir':   break;
     }
   }
 
@@ -1962,16 +2078,71 @@
   }
 
   // ────────────────────────────────────────────────
-  // TICKER
+  // TICKER HYBRIDE — News + Séismes + Marchés
   // ────────────────────────────────────────────────
   async function loadTicker() {
     try {
-      const r = await fetch('/api/news?limit=20');
-      const d = await r.json();
-      if (!d.articles?.length) return;
-      const items = d.articles.slice(0, 15).map(a => a.title).join('  ·  ');
+      const [newsR, quakeR] = await Promise.allSettled([
+        fetch('/api/news?limit=15').then(r => r.json()),
+        fetch('/api/alerts?limit=5').then(r => r.json()),
+      ]);
+
+      const items = [];
+
+      // Articles
+      if (newsR.status === 'fulfilled' && newsR.value.articles?.length) {
+        newsR.value.articles.slice(0, 12).forEach(a => {
+          items.push(`📰 ${a.title}`);
+        });
+      }
+
+      // Séismes
+      if (quakeR.status === 'fulfilled' && quakeR.value.quakes?.length) {
+        quakeR.value.quakes.forEach(q => {
+          const icon = q.magnitude >= 6 ? '🔴' : q.magnitude >= 5 ? '🟠' : '🟡';
+          items.push(`${icon} SÉISME M${q.magnitude} — ${q.place}`);
+        });
+      }
+
+      if (!items.length) return;
+
+      // Mélanger news + séismes
+      const shuffled = items.sort(() => Math.random() - 0.5);
+      const text = shuffled.join('  ·  ');
       const inner = document.getElementById('tickerInner');
-      if (inner) inner.innerHTML = `<span class="ticker-item">${items}</span><span class="ticker-item">${items}</span>`;
+      if (inner) inner.innerHTML = `<span class="ticker-item">${text}</span><span class="ticker-item">${text}</span>`;
+    } catch(e) {}
+  }
+
+  // ────────────────────────────────────────────────
+  // ALERTES GDACS + USGS (bannière accueil)
+  // ────────────────────────────────────────────────
+  async function loadAlerts() {
+    try {
+      const r = await fetch('/api/alerts/all');
+      const d = await r.json();
+      const allAlerts = [];
+
+      // Séismes M5+
+      (d.earthquakes || []).filter(q => q.magnitude >= 5).slice(0, 4).forEach(q => {
+        const icon = q.magnitude >= 6 ? '🔴' : '🟠';
+        allAlerts.push(`<span style="background:${q.magnitude>=6?'#fce8e6':'#fff3cd'};padding:3px 8px;border-radius:6px;font-size:0.7rem;font-weight:600">${icon} M${q.magnitude} — ${q.place}</span>`);
+      });
+
+      // Catastrophes GDACS rouge/orange
+      (d.disasters || []).filter(a => a.alertLevel !== 'Green').slice(0, 3).forEach(a => {
+        const icon = a.alertLevel === 'Red' ? '🚨' : '⚠️';
+        allAlerts.push(`<span style="background:${a.alertLevel==='Red'?'#fce8e6':'#fff3cd'};padding:3px 8px;border-radius:6px;font-size:0.7rem;font-weight:600">${icon} ${a.title?.slice(0,60)}</span>`);
+      });
+
+      if (allAlerts.length > 0) {
+        const banner = document.getElementById('alertsBanner');
+        const items  = document.getElementById('alertsItems');
+        if (banner && items) {
+          items.innerHTML = allAlerts.join('');
+          banner.style.display = 'flex';
+        }
+      }
     } catch(e) {}
   }
 
@@ -2200,33 +2371,60 @@
   }
 
   // ────────────────────────────────────────────────
-  // CROSS-CHECK
+  // CROSS-CHECK DYNAMIQUE
   // ────────────────────────────────────────────────
+  const CC_CONFIGS = {
+    west:    { url: '/api/news?group=west&limit=12',    label: '🌍 Occident',     badge: 'BBC · Guardian · Reuters',         cls: 'west' },
+    east:    { url: '/api/news?group=east&limit=12',    label: '🌏 Orient',       badge: 'Al Jazeera · Xinhua ⚠️ · TASS ⚠️', cls: 'east' },
+    africa:  { url: '/api/news?group=africa&limit=12',  label: '🌍 Afrique',      badge: 'Africanews · AllAfrica',           cls: 'east' },
+    latam:   { url: '/api/news?group=latam&limit=12',   label: '🌎 Latam',        badge: 'TeleSUR',                          cls: 'east' },
+    reuters: { url: '/api/news/reuters',                label: '📡 Reuters',      badge: 'Reuters (occidental)',             cls: 'west' },
+    tass:    { url: '/api/news/tass',                   label: '📡 TASS ⚠️',      badge: 'TASS (russe — État)',              cls: 'east' },
+    guardian:{ url: '/api/news/guardian',               label: '📰 The Guardian', badge: 'Guardian (UK)',                    cls: 'west' },
+    xinhua:  { url: '/api/news/xinhua',                 label: '📡 Xinhua ⚠️',    badge: 'Xinhua (chinois — État)',          cls: 'east' },
+    aljazeera:{ url: '/api/news/aljazeera',             label: '📡 Al Jazeera',   badge: 'Al Jazeera (Qatar)',               cls: 'east' },
+    bbc:     { url: '/api/news/bbc',                    label: '📺 BBC',          badge: 'BBC (UK)',                         cls: 'west' },
+  };
+
+  async function setCrossCheck(leftKey, rightKey) {
+    document.querySelectorAll('#s-crosscheck .filter-chip').forEach(b => b.classList.remove('active'));
+    event?.target?.classList?.add('active');
+
+    const leftCfg  = CC_CONFIGS[leftKey]  || CC_CONFIGS.west;
+    const rightCfg = CC_CONFIGS[rightKey] || CC_CONFIGS.east;
+
+    // Mettre à jour les en-têtes
+    const hWest = document.getElementById('cc-west-header');
+    const hEast = document.getElementById('cc-east-header');
+    if (hWest) hWest.innerHTML = `${leftCfg.label} <span class="badge badge-blue" style="margin-left:auto">${leftCfg.badge}</span>`;
+    if (hEast) hEast.innerHTML = `${rightCfg.label} <span class="badge badge-red" style="margin-left:auto">${rightCfg.badge}</span>`;
+
+    document.getElementById('cc-west').innerHTML = '<div class="loading-msg">Chargement…</div>';
+    document.getElementById('cc-east').innerHTML = '<div class="loading-msg">Chargement…</div>';
+
+    const [leftR, rightR] = await Promise.allSettled([
+      fetch(leftCfg.url).then(r => r.json()),
+      fetch(rightCfg.url).then(r => r.json()),
+    ]);
+
+    const renderCC = (result, containerId, cls) => {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      const articles = result.status === 'fulfilled' ? (result.value.articles || []) : [];
+      el.innerHTML = articles.slice(0, 8).map(a => `
+        <a class="cc-article ${cls}" href="${a.url}" target="_blank" rel="noopener">
+          <div class="cc-source">${a.source}${a.stateMedia ? ' ⚠️' : ''}</div>
+          <div class="cc-title">${a.title}</div>
+          <div class="cc-time">${timeAgo(a.publishedAt)}</div>
+        </a>`).join('') || '<div class="loading-msg">Aucun article disponible.</div>';
+    };
+
+    renderCC(leftR,  'cc-west', leftCfg.cls);
+    renderCC(rightR, 'cc-east', rightCfg.cls);
+  }
+
   async function loadCrossCheck() {
-    try {
-      const [westR, eastR] = await Promise.allSettled([
-        fetch('/api/news?source=bbc&limit=15').then(r => r.json()),
-        fetch('/api/news?source=aljazeera&limit=15').then(r => r.json()),
-      ]);
-      const ccWest = document.getElementById('cc-west');
-      const ccEast = document.getElementById('cc-east');
-      if (westR.status === 'fulfilled' && ccWest) {
-        ccWest.innerHTML = (westR.value.articles||[]).slice(0,8).map(a => `
-          <a class="cc-article west" href="${a.url}" target="_blank" rel="noopener">
-            <div class="cc-source">${a.source}</div>
-            <div class="cc-title">${a.title}</div>
-            <div class="cc-time">${timeAgo(a.publishedAt)}</div>
-          </a>`).join('') || '<div class="loading-msg">Aucun article</div>';
-      }
-      if (eastR.status === 'fulfilled' && ccEast) {
-        ccEast.innerHTML = (eastR.value.articles||[]).slice(0,8).map(a => `
-          <a class="cc-article east" href="${a.url}" target="_blank" rel="noopener">
-            <div class="cc-source">${a.source}</div>
-            <div class="cc-title">${a.title}</div>
-            <div class="cc-time">${timeAgo(a.publishedAt)}</div>
-          </a>`).join('') || '<div class="loading-msg">Aucun article</div>';
-      }
-    } catch(e) {}
+    await setCrossCheck('west', 'east');
   }
 
   // ────────────────────────────────────────────────
@@ -2303,15 +2501,23 @@
   });
 
   // ────────────────────────────────────────────────
-  // CINEMA
+  // CINEMA — Variety + Hollywood Reporter + news culture
   // ────────────────────────────────────────────────
   async function loadCinema() {
     const grid = document.getElementById('cinemaNewsGrid');
     if (!grid) return;
     try {
-      const r = await fetch('/api/news?category=culture&limit=20');
-      const d = await r.json();
-      grid.innerHTML = (d.articles||[]).slice(0,16).map(a => newsCardHTML(a)).join('') || `<div class="loading-msg">Aucun article culture/cinéma.</div>`;
+      const [varR, cultR] = await Promise.allSettled([
+        fetch('/api/news/variety').then(r => r.json()),
+        fetch('/api/news?category=culture&limit=15').then(r => r.json()),
+      ]);
+      let arts = [];
+      if (varR.status === 'fulfilled')  arts.push(...(varR.value.articles||[]));
+      if (cultR.status === 'fulfilled') arts.push(...(cultR.value.articles||[]));
+      arts.sort((a,b) => new Date(b.publishedAt)-new Date(a.publishedAt));
+      const seen = new Set();
+      arts = arts.filter(a => { const k=a.url||a.id; if(seen.has(k))return false; seen.add(k); return true; });
+      grid.innerHTML = arts.slice(0,20).map(a => newsCardHTML(a)).join('') || `<div class="loading-msg">Aucun article culture/cinéma.</div>`;
     } catch(e) { grid.innerHTML = `<div class="loading-msg">Erreur ❌</div>`; }
   }
 
@@ -2335,33 +2541,50 @@
   }
 
   // ────────────────────────────────────────────────
-  // SCIENCE NEWS
+  // SCIENCE NEWS — WHO + ESA + catégorie science
   // ────────────────────────────────────────────────
   async function loadScienceNews() {
     const grid = document.getElementById('scienceGrid');
     if (!grid) return;
     try {
-      const r = await fetch('/api/news?category=science&limit=30');
-      const d = await r.json();
-      grid.innerHTML = (d.articles||[]).slice(0,24).map(a => newsCardHTML(a)).join('') || `<div class="loading-msg">Aucun article science.</div>`;
+      const [sciR, whoR, esaR] = await Promise.allSettled([
+        fetch('/api/news?category=science&limit=20').then(r => r.json()),
+        fetch('/api/news/who').then(r => r.json()),
+        fetch('/api/news/esa').then(r => r.json()),
+      ]);
+      let arts = [];
+      if (sciR.status === 'fulfilled') arts.push(...(sciR.value.articles||[]));
+      if (whoR.status === 'fulfilled') arts.push(...(whoR.value.articles||[]));
+      if (esaR.status === 'fulfilled') arts.push(...(esaR.value.articles||[]));
+      arts.sort((a,b) => new Date(b.publishedAt)-new Date(a.publishedAt));
+      // Dédupliquer
+      const seen = new Set();
+      arts = arts.filter(a => { const k=a.url||a.id; if(seen.has(k))return false; seen.add(k); return true; });
+      grid.innerHTML = arts.slice(0,30).map(a => newsCardHTML(a)).join('') || `<div class="loading-msg">Aucun article science.</div>`;
     } catch(e) { grid.innerHTML = `<div class="loading-msg">Erreur ❌</div>`; }
   }
 
   // ────────────────────────────────────────────────
-  // IA NEWS
+  // IA NEWS — OpenAI Blog + DeepMind + HackerNews IA
   // ────────────────────────────────────────────────
   async function loadIANews() {
     const grid = document.getElementById('iaGrid');
     if (!grid) return;
     try {
-      const r = await fetch('/api/news/hackernews');
-      const d = await r.json();
-      grid.innerHTML = (d.articles||[]).filter(a => /\bAI\b|LLM|GPT|machine learning|artificial/i.test(a.title)).slice(0,20).map(a => newsCardHTML(a)).join('') || `<div class="loading-msg">Aucun article IA trouvé.</div>`;
+      const [aiR, hnR] = await Promise.allSettled([
+        fetch('/api/news/ai').then(r => r.json()),
+        fetch('/api/news/hackernews').then(r => r.json()),
+      ]);
+      let arts = [];
+      if (aiR.status === 'fulfilled') arts.push(...(aiR.value.articles || []));
+      if (hnR.status === 'fulfilled') arts.push(...(hnR.value.articles||[]).filter(a => /\bAI\b|LLM|GPT|machine.?learning|artificial|neural|Claude|Gemini|Llama|Mistral/i.test(a.title)));
+      arts.sort((a,b) => new Date(b.publishedAt)-new Date(a.publishedAt));
+      grid.innerHTML = arts.slice(0,24).map(a => newsCardHTML(a)).join('') || `<div class="loading-msg">Aucun article IA trouvé.</div>`;
     } catch(e) { grid.innerHTML = `<div class="loading-msg">Erreur ❌</div>`; }
   }
 
   // ────────────────────────────────────────────────
-  // SPACE — ISS + APOD
+  // SPACE — ISS + APOD + OpenSky + ESA News
   // ────────────────────────────────────────────────
   let issMap = null, issMarker = null, issInterval = null;
 
@@ -2375,6 +2598,53 @@
     trackISS();
     if (!issInterval) issInterval = setInterval(trackISS, 5000);
     loadAPOD();
+    loadOpenSky();
+    setInterval(loadOpenSky, 60_000);
+    loadSpaceNews();
+  }
+
+  async function loadOpenSky() {
+    try {
+      const [statsR, flightsR] = await Promise.allSettled([
+        fetch('/api/opensky/stats').then(r => r.json()),
+        fetch('/api/opensky/flights?region=europe&limit=15').then(r => r.json()),
+      ]);
+      if (statsR.status === 'fulfilled') {
+        const set = (id, v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+        set('sky-inflight', statsR.value.inFlight?.toLocaleString('fr-FR') || '—');
+        set('sky-total',    statsR.value.total?.toLocaleString('fr-FR') || '—');
+      }
+      if (flightsR.status === 'fulfilled' && flightsR.value.flights?.length) {
+        const grid = document.getElementById('skyFlights');
+        if (grid) {
+          grid.innerHTML = flightsR.value.flights.slice(0, 12).map(f => `
+            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+              <span style="color:#58a6ff;font-family:'DM Mono',monospace;font-size:0.68rem">${f.callsign}</span>
+              <span style="color:#8b949e;font-size:0.65rem">${f.country}</span>
+              <span style="color:#3fb950;font-size:0.65rem">${f.altitude ? f.altitude.toLocaleString() + 'm' : '—'}</span>
+              <span style="color:#d29922;font-size:0.65rem">${f.velocity ? f.velocity + 'km/h' : '—'}</span>
+            </div>`).join('');
+        }
+      }
+    } catch(e) {}
+  }
+
+  async function loadSpaceNews() {
+    const grid = document.getElementById('spaceNewsGrid');
+    if (!grid) return;
+    try {
+      const [esaR, nasaR] = await Promise.allSettled([
+        fetch('/api/news/esa').then(r => r.json()),
+        fetch('/api/space/apod').then(r => r.json()),
+      ]);
+      let arts = [];
+      if (esaR.status === 'fulfilled') arts.push(...(esaR.value.articles || []));
+      // Ajouter article APOD comme card
+      if (nasaR.status === 'fulfilled' && nasaR.value.title) {
+        arts.unshift({ title: nasaR.value.title, url: 'https://apod.nasa.gov', source: 'NASA APOD', publishedAt: nasaR.value.date, category: 'science', summary: nasaR.value.explanation?.slice(0,120) });
+      }
+      grid.innerHTML = arts.slice(0,12).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Aucune actualité espace.</div>';
+    } catch(e) { grid.innerHTML = '<div class="loading-msg">Erreur ❌</div>'; }
   }
 
   async function trackISS() {
@@ -2763,6 +3033,10 @@
 
     loadTicker();
     setInterval(loadTicker, 300_000);
+
+    // Alertes GDACS + USGS
+    loadAlerts();
+    setInterval(loadAlerts, 600_000);
 
     // Mark slide 0 as loaded (globe + counters, no async needed)
     slideLoaded['s-globe'] = true;
