@@ -1,13 +1,14 @@
 // ============================================================
-// services/rtRss.js — RT News RSS ⚠️ ÉTAT / SANCTIONNÉ EU
-// Media russe sanctionné dans l'UE depuis 2022
-// Affiché avec badge d'avertissement obligatoire
+// services/espnRss.js — ESPN RSS (gratuit, sans clé)
 // ============================================================
 const Parser = require('rss-parser');
 const parser = new Parser({ timeout: 10000, headers: { 'User-Agent': 'infonews.day/2.0' } });
 
-const RT_FEEDS = [
-  { url: 'https://www.rt.com/rss/', category: 'monde' },
+const FEEDS = [
+  { url: 'https://www.espn.com/espn/rss/news',         category: 'sport' },
+  { url: 'https://www.espn.com/espn/rss/soccer/news',  category: 'sport' },
+  { url: 'https://www.espn.com/espn/rss/tennis/news',  category: 'sport' },
+  { url: 'https://www.espn.com/espn/rss/nba/news',     category: 'sport' },
 ];
 
 function normalize(item, category) {
@@ -16,19 +17,17 @@ function normalize(item, category) {
     title:       item.title || 'Sans titre',
     summary:     item.contentSnippet || item.summary || '',
     url:         item.link,
-    source:      'RT',
+    source:      'ESPN',
     category,
     publishedAt: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
-    imageUrl:    item['media:content']?.$.url || null,
-    lang:        'en',
-    stateMedia:  true,
-    sanctioned:  true
+    imageUrl:    item['media:content']?.$.url || item.enclosure?.url || null,
+    lang:        'en'
   };
 }
 
-async function fetchRTNews(limit = 8) {
+async function fetchESPNNews(limit = 8) {
   const results = await Promise.allSettled(
-    RT_FEEDS.map(async f => {
+    FEEDS.map(async f => {
       const data = await parser.parseURL(f.url);
       return data.items.slice(0, limit).map(i => normalize(i, f.category));
     })
@@ -36,4 +35,4 @@ async function fetchRTNews(limit = 8) {
   return results.filter(r => r.status === 'fulfilled').flatMap(r => r.value);
 }
 
-module.exports = { fetchRTNews };
+module.exports = { fetchESPNNews };

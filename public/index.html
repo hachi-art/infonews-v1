@@ -1462,6 +1462,24 @@
       </div>
     </div>
 
+    <!-- P4.4 Sport -->
+    <div class="slide" id="s-sport" data-pole="3" data-sub="3">
+      <h2 class="section-title">⚽ Sport en direct</h2>
+      <div class="filters-row" id="sportLeagueFilters">
+        <button class="filter-chip active" data-league="all" onclick="filterSportLeague('all',this)">Tout</button>
+        <button class="filter-chip" data-league="PL"  onclick="filterSportLeague('PL',this)">🇬🇧 Premier League</button>
+        <button class="filter-chip" data-league="PD"  onclick="filterSportLeague('PD',this)">🇪🇸 La Liga</button>
+        <button class="filter-chip" data-league="FL1" onclick="filterSportLeague('FL1',this)">🇫🇷 Ligue 1</button>
+        <button class="filter-chip" data-league="BL1" onclick="filterSportLeague('BL1',this)">🇩🇪 Bundesliga</button>
+        <button class="filter-chip" data-league="CL"  onclick="filterSportLeague('CL',this)">🌍 Champions League</button>
+      </div>
+      <div id="sportMatchesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.8rem;margin-bottom:1.4rem">
+        <div class="loading-msg">Chargement matchs…</div>
+      </div>
+      <h3 class="section-title" style="font-size:1.1rem">📰 Actualités sport</h3>
+      <div class="news-grid" id="sportNewsGrid"><div class="loading-msg">Chargement…</div></div>
+    </div>
+
     <!-- ─── PÔLE 5 : TECH & SCIENCE ─────────────── -->
 
     <!-- P5.1 Technologie -->
@@ -1658,6 +1676,19 @@
       </div>
     </div>
 
+    <!-- P6.5 Musique -->
+    <div class="slide" id="s-musique" data-pole="5" data-sub="4">
+      <h2 class="section-title">🎵 Charts Musique</h2>
+      <div class="filters-row">
+        <button class="filter-chip active" id="musicTabTracks"   onclick="loadMusicTab('tracks',this)">🎵 Top Tracks Deezer</button>
+        <button class="filter-chip"        id="musicTabBeatport" onclick="loadMusicTab('beatport',this)">🎧 Beatport Electronic</button>
+        <button class="filter-chip"        id="musicTabNews"     onclick="loadMusicTab('mnews',this)">📰 Actualités</button>
+      </div>
+      <div id="musicGrid" style="margin-top:0.8rem">
+        <div class="loading-msg">Chargement charts…</div>
+      </div>
+    </div>
+
     <!-- ─── PÔLE 7 : HUB DÉBAT ───────────────────── -->
 
     <!-- P7.1 Débat citoyen -->
@@ -1701,11 +1732,28 @@
         <div class="news-grid" id="redditGrid">
           <div class="loading-msg">Chargement Reddit trends…</div>
         </div>
+        <p style="font-size:0.72rem;color:var(--muted);margin-top:0.6rem">💡 Voir les tendances Google : <a href="#" onclick="goToPole(6);setTimeout(()=>goToSub(6,2),100);return false;" style="color:var(--primary)">Pôle Débat → Tendances</a></p>
       </div>
     </div>
 
-    <!-- P7.3 Soutenir -->
-    <div class="slide" id="s-soutenir" data-pole="6" data-sub="2">
+    <!-- P7.3 Tendances Google -->
+    <div class="slide" id="s-trends" data-pole="6" data-sub="2">
+      <h2 class="section-title">📊 Tendances du moment</h2>
+      <p class="section-sub">Google Trends · Ce dont le monde parle en ce moment</p>
+      <div class="filters-row" id="trendsGeoFilters">
+        <button class="filter-chip active" data-geo="FR" onclick="loadTrendsGeo('FR',this)">🇫🇷 France</button>
+        <button class="filter-chip" data-geo="ES" onclick="loadTrendsGeo('ES',this)">🇪🇸 Espagne</button>
+        <button class="filter-chip" data-geo="GB" onclick="loadTrendsGeo('GB',this)">🇬🇧 UK</button>
+        <button class="filter-chip" data-geo="US" onclick="loadTrendsGeo('US',this)">🇺🇸 USA</button>
+        <button class="filter-chip" data-geo="DE" onclick="loadTrendsGeo('DE',this)">🇩🇪 Allemagne</button>
+      </div>
+      <div id="trendsGrid" style="margin-top:0.8rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0.8rem">
+        <div class="loading-msg">Chargement tendances…</div>
+      </div>
+    </div>
+
+    <!-- P7.4 Soutenir -->
+    <div class="slide" id="s-soutenir" data-pole="6" data-sub="3">
       <div class="support-hero">
         <div class="support-hero-logo">info<span>news</span>.day</div>
         <div class="support-tagline">"Invent the day"</div>
@@ -1774,10 +1822,10 @@
     { id: 'monde',    label: '🌍 Monde',    slides: ['s-globe','s-news','s-meteo'],                        subLabels: ['🌐 Globe','📰 Actualités','🌤️ Météo'] },
     { id: 'eco',      label: '💹 Éco',      slides: ['s-marches','s-crypto','s-donnees'],                  subLabels: ['📈 Marchés','🪙 Crypto','📊 Données'] },
     { id: 'newsroom', label: '📡 Newsroom', slides: ['s-sources','s-crosscheck','s-indep','s-timemachine'],subLabels: ['🗞️ Sources','⚖️ Cross-Check','🔍 Indépendants','⏳ Time Machine'] },
-    { id: 'culture',  label: '🎭 Culture',  slides: ['s-events','s-culture','s-cinema'],                   subLabels: ['🎵 Événements','📚 Culture','🎬 Cinéma'] },
+    { id: 'culture',  label: '🎭 Culture',  slides: ['s-events','s-culture','s-cinema','s-sport'],         subLabels: ['🎵 Événements','📚 Culture','🎬 Cinéma','⚽ Sport'] },
     { id: 'tech',     label: '🔬 Tech',     slides: ['s-tech','s-science','s-espace','s-ia'],              subLabels: ['💻 Tech','🔬 Science','🛸 Espace','🤖 IA'] },
-    { id: 'audio',    label: '📻 Audio',    slides: ['s-radio','s-orgs','s-hist','s-art'],                 subLabels: ['📻 Radio','🌐 Organisations','🗂️ Archives','🎨 Art'] },
-    { id: 'debat',    label: '💬 Débat',    slides: ['s-debat','s-worldmood','s-soutenir'],                subLabels: ['💬 Débat','🌡️ WorldMood','💰 Soutenir'] },
+    { id: 'audio',    label: '📻 Audio',    slides: ['s-radio','s-orgs','s-hist','s-art','s-musique'],     subLabels: ['📻 Radio','🌐 Organisations','🗂️ Archives','🎨 Art','🎵 Musique'] },
+    { id: 'debat',    label: '💬 Débat',    slides: ['s-debat','s-worldmood','s-trends','s-soutenir'],     subLabels: ['💬 Débat','🌡️ WorldMood','📊 Tendances','💰 Soutenir'] },
   ];
 
   let activePole = 0;
@@ -1853,6 +1901,9 @@
       case 's-orgs':       return loadOrgs();
       case 's-hist':       break; // liens statiques
       case 's-art':        return loadArt();
+      case 's-sport':      return loadSport();
+      case 's-musique':    return loadMusicTab('tracks', document.getElementById('musicTabTracks'));
+      case 's-trends':     return loadTrends('FR');
       case 's-debat':      return initDebat();
       case 's-worldmood':  { initWorldMood(); loadReddit(); return; }
       case 's-soutenir':   break;
@@ -2501,24 +2552,176 @@
   });
 
   // ────────────────────────────────────────────────
-  // CINEMA — Variety + Hollywood Reporter + news culture
+  // CINEMA — TMDB + Variety + Hollywood Reporter
   // ────────────────────────────────────────────────
   async function loadCinema() {
-    const grid = document.getElementById('cinemaNewsGrid');
-    if (!grid) return;
+    const posterGrid  = document.getElementById('cinemaGrid');
+    const newsGrid    = document.getElementById('cinemaNewsGrid');
+    if (!posterGrid || !newsGrid) return;
     try {
-      const [varR, cultR] = await Promise.allSettled([
-        fetch('/api/news/variety').then(r => r.json()),
-        fetch('/api/news?category=culture&limit=15').then(r => r.json()),
+      const [tmdbR, newsR] = await Promise.allSettled([
+        fetch('/api/cinema/now-playing?limit=12').then(r => r.json()),
+        fetch('/api/cinema/news?limit=12').then(r => r.json()),
       ]);
+      // Poster cards
+      if (tmdbR.status === 'fulfilled' && (tmdbR.value.data||[]).length > 0) {
+        posterGrid.innerHTML = (tmdbR.value.data||[]).map(m => `
+          <a class="card" href="${m.url}" target="_blank" rel="noopener" style="overflow:hidden;padding:0;display:flex;flex-direction:column">
+            ${m.poster ? `<img src="${m.poster}" alt="${m.title}" style="width:100%;height:260px;object-fit:cover" loading="lazy"/>` : `<div style="height:260px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:3rem">🎬</div>`}
+            <div style="padding:0.7rem">
+              <div style="font-size:0.85rem;font-weight:700;margin-bottom:0.2rem">${m.title}</div>
+              <div style="font-size:0.7rem;color:var(--muted)">⭐ ${m.rating} · ${m.releaseDate||''}</div>
+              ${m.overview ? `<div style="font-size:0.7rem;color:var(--muted);margin-top:0.3rem;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${m.overview}</div>` : ''}
+            </div>
+          </a>`).join('');
+      } else {
+        posterGrid.innerHTML = `<div class="loading-msg" style="grid-column:1/-1">Ajoutez TMDB_API_KEY dans .env pour les affiches · <a href="https://www.themoviedb.org/settings/api" target="_blank" style="color:var(--primary)">Créer une clé gratuite →</a></div>`;
+      }
+      // News
       let arts = [];
-      if (varR.status === 'fulfilled')  arts.push(...(varR.value.articles||[]));
-      if (cultR.status === 'fulfilled') arts.push(...(cultR.value.articles||[]));
-      arts.sort((a,b) => new Date(b.publishedAt)-new Date(a.publishedAt));
-      const seen = new Set();
-      arts = arts.filter(a => { const k=a.url||a.id; if(seen.has(k))return false; seen.add(k); return true; });
-      grid.innerHTML = arts.slice(0,20).map(a => newsCardHTML(a)).join('') || `<div class="loading-msg">Aucun article culture/cinéma.</div>`;
+      if (newsR.status === 'fulfilled') arts.push(...(newsR.value.articles||[]));
+      newsGrid.innerHTML = arts.slice(0,12).map(a => newsCardHTML(a)).join('') || `<div class="loading-msg">Aucun article cinéma.</div>`;
+    } catch(e) { posterGrid.innerHTML = `<div class="loading-msg">Erreur ❌</div>`; }
+  }
+
+  // ────────────────────────────────────────────────
+  // SPORT — TheSportsDB + BBC Sport + ESPN
+  // ────────────────────────────────────────────────
+  let _sportAllMatches = [];
+
+  async function loadSport() {
+    const matchGrid = document.getElementById('sportMatchesGrid');
+    const newsGrid  = document.getElementById('sportNewsGrid');
+    if (!matchGrid) return;
+    matchGrid.innerHTML = '<div class="loading-msg">Chargement matchs…</div>';
+    if (newsGrid) newsGrid.innerHTML = '<div class="loading-msg">Chargement actualités sport…</div>';
+    try {
+      const [matchR, newsR] = await Promise.allSettled([
+        fetch('/api/sport/matches').then(r => r.json()),
+        fetch('/api/sport/news').then(r => r.json()),
+      ]);
+      if (matchR.status === 'fulfilled') {
+        _sportAllMatches = matchR.value.leagues || [];
+        renderSportMatches('all');
+      } else { matchGrid.innerHTML = '<div class="loading-msg">Matchs non disponibles.</div>'; }
+      if (newsR.status === 'fulfilled' && newsGrid) {
+        const arts = (newsR.value.articles||[]).slice(0,20);
+        newsGrid.innerHTML = arts.map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Aucun article sport.</div>';
+      }
+    } catch(e) { matchGrid.innerHTML = `<div class="loading-msg">Erreur ❌</div>`; }
+  }
+
+  function renderSportMatches(leagueFilter) {
+    const grid = document.getElementById('sportMatchesGrid');
+    if (!grid) return;
+    let leagues = _sportAllMatches;
+    if (leagueFilter !== 'all') leagues = leagues.filter(l => l.code === leagueFilter || l.league === leagueFilter);
+    if (!leagues.length) { grid.innerHTML = '<div class="loading-msg">Aucun match disponible.</div>'; return; }
+    grid.innerHTML = leagues.slice(0,20).map(l => {
+      const score = (l.homeScore !== undefined && l.awayScore !== undefined)
+        ? `<span style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700">${l.homeScore} — ${l.awayScore}</span>`
+        : `<span style="color:var(--muted);font-size:0.75rem">${l.status || 'À venir'}</span>`;
+      return `
+        <div class="card" style="padding:0.9rem">
+          <div style="font-size:0.68rem;color:var(--muted);margin-bottom:0.4rem">${l.league||l.competition||''}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem">
+            <span style="font-size:0.82rem;font-weight:600;flex:1;text-align:right">${l.homeTeam||l.home||''}</span>
+            ${score}
+            <span style="font-size:0.82rem;font-weight:600;flex:1">${l.awayTeam||l.away||''}</span>
+          </div>
+          ${l.date ? `<div style="font-size:0.65rem;color:var(--muted);text-align:center;margin-top:0.3rem">${new Date(l.date).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>` : ''}
+        </div>`;
+    }).join('') || '<div class="loading-msg">Aucun match.</div>';
+  }
+
+  function filterSportLeague(league, btn) {
+    document.querySelectorAll('#sportLeagueFilters .filter-chip').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderSportMatches(league);
+  }
+
+  // ────────────────────────────────────────────────
+  // MUSIQUE — Deezer Charts + Beatport + Billboard
+  // ────────────────────────────────────────────────
+  async function loadMusicTab(tab, btn) {
+    if (btn) {
+      document.querySelectorAll('#s-musique .filter-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    const grid = document.getElementById('musicGrid');
+    if (!grid) return;
+    grid.innerHTML = '<div class="loading-msg">Chargement…</div>';
+    try {
+      if (tab === 'tracks') {
+        const r = await fetch('/api/music/tracks?limit=20').then(r => r.json());
+        grid.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0.8rem">` +
+          (r.tracks||[]).map((t,i) => `
+            <div class="card" style="padding:0.8rem;display:flex;gap:0.8rem;align-items:center">
+              <div style="font-family:'DM Mono',monospace;font-size:0.85rem;font-weight:700;color:var(--muted);min-width:24px;text-align:center">${i+1}</div>
+              ${t.album?.cover_small ? `<img src="${t.album.cover_small}" style="width:52px;height:52px;border-radius:8px;object-fit:cover" loading="lazy"/>` : `<div style="width:52px;height:52px;background:var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center">🎵</div>`}
+              <div style="flex:1;min-width:0">
+                <div style="font-size:0.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.title||t.name}</div>
+                <div style="font-size:0.7rem;color:var(--muted)">${t.artist?.name||''}</div>
+              </div>
+              ${t.preview ? `<audio src="${t.preview}" controls style="width:80px;height:28px" title="Aperçu 30s"></audio>` : ''}
+            </div>`).join('') + `</div>`;
+      } else if (tab === 'beatport') {
+        const r = await fetch('/api/music/beatport?limit=6').then(r => r.json());
+        const genres = {};
+        (r.tracks||[]).forEach(t => { if (!genres[t.genre]) genres[t.genre] = []; genres[t.genre].push(t); });
+        grid.innerHTML = Object.entries(genres).map(([genre, tracks]) => `
+          <div style="margin-bottom:1.2rem">
+            <h3 style="font-size:0.88rem;font-weight:700;margin-bottom:0.5rem;color:var(--primary)">${genre}</h3>
+            <div style="display:grid;gap:0.4rem">
+              ${tracks.map((t,i) => `
+                <a class="card" href="${t.url}" target="_blank" rel="noopener" style="padding:0.6rem;display:flex;gap:0.6rem;align-items:center">
+                  <span style="font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);min-width:20px">${i+1}</span>
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:0.8rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.title||t.name}</div>
+                    <div style="font-size:0.68rem;color:var(--muted)">${t.artist||''}</div>
+                  </div>
+                </a>`).join('')}
+            </div>
+          </div>`).join('') || '<div class="loading-msg">Beatport non disponible.</div>';
+      } else if (tab === 'mnews') {
+        const r = await fetch('/api/music/news?limit=12').then(r => r.json());
+        grid.innerHTML = `<div class="news-grid">` + (r.articles||[]).map(a => newsCardHTML(a)).join('') + `</div>` || '<div class="loading-msg">Aucune actualité musique.</div>';
+      }
     } catch(e) { grid.innerHTML = `<div class="loading-msg">Erreur ❌</div>`; }
+  }
+
+  // ────────────────────────────────────────────────
+  // TENDANCES — Google Trends RSS
+  // ────────────────────────────────────────────────
+  let _currentTrendsGeo = 'FR';
+
+  async function loadTrends(geo) {
+    _currentTrendsGeo = geo || _currentTrendsGeo;
+    const grid = document.getElementById('trendsGrid');
+    if (!grid) return;
+    grid.innerHTML = '<div class="loading-msg">Chargement tendances…</div>';
+    try {
+      const r = await fetch(`/api/trends?geo=${_currentTrendsGeo}&limit=24`).then(r => r.json());
+      const items = r.trends || [];
+      grid.innerHTML = items.map((t, i) => `
+        <div class="card" style="padding:0.8rem">
+          <div style="display:flex;align-items:flex-start;gap:0.6rem">
+            <span style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--primary);min-width:28px">${i+1}</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:0.85rem;font-weight:600">${t.title||t.query}</div>
+              ${t.trafficVolume ? `<div style="font-size:0.68rem;color:var(--green);margin-top:0.2rem">📈 ${t.trafficVolume} recherches</div>` : ''}
+              ${t.articles && t.articles.length ? `<div style="font-size:0.68rem;color:var(--muted);margin-top:0.2rem">📰 ${t.articles.length} article${t.articles.length>1?'s':''} liés</div>` : ''}
+            </div>
+          </div>
+          ${t.newsUrl ? `<a href="${t.newsUrl}" target="_blank" rel="noopener" style="display:block;margin-top:0.5rem;font-size:0.68rem;color:var(--primary)">Voir les actualités →</a>` : ''}
+        </div>`).join('') || '<div class="loading-msg">Tendances non disponibles (Google Trends RSS indisponible).</div>';
+    } catch(e) { grid.innerHTML = `<div class="loading-msg">Erreur ❌</div>`; }
+  }
+
+  function loadTrendsGeo(geo, btn) {
+    document.querySelectorAll('#trendsGeoFilters .filter-chip').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    loadTrends(geo);
   }
 
   // ────────────────────────────────────────────────

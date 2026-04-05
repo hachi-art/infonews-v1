@@ -23,7 +23,6 @@ router.get('/reuters',     ctrl.getReutersNews);
 router.get('/aljazeera',   ctrl.getAlJazeeraNews);
 router.get('/xinhua',      ctrl.getXinhuaNews);
 router.get('/tass',        ctrl.getTASSNews);
-router.get('/rt',          ctrl.getRTNews);
 router.get('/trtworld',    ctrl.getTRTWorldNews);
 
 // Sources Afrique & Latam

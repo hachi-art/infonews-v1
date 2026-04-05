@@ -2,7 +2,7 @@
 // controllers/newsController.js — Logique métier des routes news
 // Sources : BBC · Le Monde · NewsAPI · Guardian · Al Jazeera
 //           TechCrunch · HackerNews · DW · Euronews
-//           Reuters · Xinhua ⚠️ · TASS ⚠️ · RT ⚠️
+//           Reuters · Xinhua ⚠️ · TASS ⚠️
 //           TRT World · Africanews · AllAfrica · TeleSUR
 //           BleepingComputer · ESA · OpenAI Blog · WHO · Variety
 // ============================================================
@@ -20,7 +20,6 @@ const euronewsService        = require('../services/euronewsRss');
 const reutersService         = require('../services/reutersRss');
 const xinhuaService          = require('../services/xinhuaRss');
 const tassService            = require('../services/tassRss');
-const rtService              = require('../services/rtRss');
 const trtWorldService        = require('../services/trtWorldRss');
 const africanewsService      = require('../services/africanewsRss');
 const allAfricaService       = require('../services/allAfricaRss');
@@ -35,7 +34,7 @@ const VALID_CATEGORIES = ['monde', 'techno', 'eco', 'science', 'sport', 'culture
 const VALID_SOURCES    = [
   'bbc', 'lemonde', 'newsapi', 'guardian', 'aljazeera', 'techcrunch', 'hackernews',
   'independent', 'dw', 'euronews',
-  'reuters', 'xinhua', 'tass', 'rt', 'trtworld', 'africanews', 'allafrica', 'telesur',
+  'reuters', 'xinhua', 'tass', 'trtworld', 'africanews', 'allafrica', 'telesur',
   'bleeping', 'esa', 'ai', 'who', 'variety',
 ];
 
@@ -130,7 +129,6 @@ const ALL_FETCHERS = {
   reuters:     () => reutersService.fetchReutersNews(10),
   xinhua:      () => xinhuaService.fetchXinhuaNews(10),
   tass:        () => tassService.fetchTASSNews(8),
-  rt:          () => rtService.fetchRTNews(8),
   trtworld:    () => trtWorldService.fetchTRTWorldNews(8),
   africanews:  () => africanewsService.fetchAfricanewsNews(8),
   allafrica:   () => allAfricaService.fetchAllAfricaNews(8),
@@ -159,7 +157,7 @@ exports.getAllNews = async (req, res) => {
   if (group) {
     const GROUPS = {
       west:    ['bbc', 'lemonde', 'guardian', 'euronews', 'dw', 'reuters'],
-      east:    ['aljazeera', 'xinhua', 'tass', 'rt', 'trtworld'],
+      east:    ['aljazeera', 'xinhua', 'tass', 'trtworld'],
       africa:  ['africanews', 'allafrica'],
       latam:   ['telesur'],
       tech:    ['techcrunch', 'hackernews', 'bleeping', 'ai'],
@@ -236,7 +234,6 @@ exports.getEuronewsNews     = makeHandler(() => euronewsService.fetchEuronewsNew
 exports.getReutersNews      = makeHandler(() => reutersService.fetchReutersNews(),      'Reuters');
 exports.getXinhuaNews       = makeHandler(() => xinhuaService.fetchXinhuaNews(),        'Xinhua');
 exports.getTASSNews         = makeHandler(() => tassService.fetchTASSNews(),            'TASS');
-exports.getRTNews           = makeHandler(() => rtService.fetchRTNews(),                'RT');
 exports.getTRTWorldNews     = makeHandler(() => trtWorldService.fetchTRTWorldNews(),    'TRT World');
 exports.getAfricanewsNews   = makeHandler(() => africanewsService.fetchAfricanewsNews(),'Africanews');
 exports.getAllAfricaNews     = makeHandler(() => allAfricaService.fetchAllAfricaNews(),  'AllAfrica');
