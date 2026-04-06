@@ -9,19 +9,23 @@ const express = require('express');
 const cors    = require('cors');
 const path    = require('path');
 
-const newsRouter    = require('./routes/news');
-const weatherRouter = require('./routes/weather');
-const financeRouter = require('./routes/finance');
-const exchangeRouter= require('./routes/exchange');
-const alertsRouter  = require('./routes/alerts');
-const spaceRouter   = require('./routes/space');
-const openskyRouter = require('./routes/opensky');
-const sportRouter   = require('./routes/sport');
-const musicRouter   = require('./routes/music');
-const trendsRouter  = require('./routes/trends');
-const cinemaRouter  = require('./routes/cinema');
-const youtubeRouter = require('./routes/youtube');
-const techRouter    = require('./routes/tech');
+const newsRouter      = require('./routes/news');
+const weatherRouter   = require('./routes/weather');
+const financeRouter   = require('./routes/finance');
+const exchangeRouter  = require('./routes/exchange');
+const alertsRouter    = require('./routes/alerts');
+const spaceRouter     = require('./routes/space');
+const openskyRouter   = require('./routes/opensky');
+const sportRouter     = require('./routes/sport');
+const musicRouter     = require('./routes/music');
+const trendsRouter    = require('./routes/trends');
+const cinemaRouter    = require('./routes/cinema');
+const youtubeRouter   = require('./routes/youtube');
+const techRouter      = require('./routes/tech');
+const redditRouter    = require('./routes/reddit');
+const worldbankRouter = require('./routes/worldbank');
+const societyRouter   = require('./routes/society');
+const podcastsRouter  = require('./routes/podcasts');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -33,19 +37,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ── Routes API ────────────────────────────────────────────────
-app.use('/api/news',     newsRouter);
-app.use('/api/weather',  weatherRouter);
-app.use('/api/finance',  financeRouter);
-app.use('/api/exchange', exchangeRouter);
-app.use('/api/alerts',   alertsRouter);
-app.use('/api/space',    spaceRouter);
-app.use('/api/opensky',  openskyRouter);
-app.use('/api/sport',    sportRouter);
-app.use('/api/music',    musicRouter);
-app.use('/api/trends',   trendsRouter);
-app.use('/api/cinema',   cinemaRouter);
-app.use('/api/youtube',  youtubeRouter);
-app.use('/api/tech',     techRouter);
+app.use('/api/news',      newsRouter);
+app.use('/api/weather',   weatherRouter);
+app.use('/api/finance',   financeRouter);
+app.use('/api/exchange',  exchangeRouter);
+app.use('/api/alerts',    alertsRouter);
+app.use('/api/space',     spaceRouter);
+app.use('/api/opensky',   openskyRouter);
+app.use('/api/sport',     sportRouter);
+app.use('/api/music',     musicRouter);
+app.use('/api/trends',    trendsRouter);
+app.use('/api/cinema',    cinemaRouter);
+app.use('/api/youtube',   youtubeRouter);
+app.use('/api/tech',      techRouter);
+app.use('/api/reddit',    redditRouter);
+app.use('/api/worldbank', worldbankRouter);
+app.use('/api/society',   societyRouter);
+app.use('/api/podcasts',  podcastsRouter);
 
 // ── Health check ──────────────────────────────────────────────
 app.get('/health', (req, res) => {

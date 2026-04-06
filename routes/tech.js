@@ -1,12 +1,15 @@
 // ============================================================
-// routes/tech.js — Tech & Science & IA
+// routes/tech.js — Tech & Science & IA & Cybersécurité
 // GET /api/tech/arxiv-ia     → ArXiv cs.AI + cs.LG
 // GET /api/tech/arxiv-sci    → ArXiv physics + q-bio
 // GET /api/tech/feargreed    → Fear & Greed crypto (alternative.me)
+// GET /api/tech/cyber        → BleepingComputer + CISA RSS
 // ============================================================
 const express = require('express');
 const router  = express.Router();
 const axios   = require('axios');
+const Parser  = require('rss-parser');
+const rssParser = new Parser({ timeout: 10000, headers: { 'User-Agent': 'infonews.day/1.0' } });
 const { fetchArxivIA, fetchArxivScience } = require('../services/arxivService');
 
 router.get('/arxiv-ia', async (req, res) => {
@@ -35,6 +38,30 @@ router.get('/feargreed', async (req, res) => {
       history: data.slice(0, 7),
     });
   } catch (e) { res.status(500).json({ error: 'Erreur Fear & Greed', detail: e.message }); }
+});
+
+router.get('/cyber', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 16;
+    const [bcR, cisaR] = await Promise.allSettled([
+      rssParser.parseURL('https://www.bleepingcomputer.com/feed/'),
+      rssParser.parseURL('https://www.cisa.gov/news.xml'),
+    ]);
+    const mapItems = (feed, source) =>
+      (feed?.items || []).slice(0, limit).map(i => ({
+        title:       i.title,
+        url:         i.link,
+        summary:     (i.contentSnippet || '').slice(0, 200),
+        publishedAt: i.pubDate || i.isoDate,
+        source,
+        category:    i.categories?.[0] || 'Cybersécurité',
+      }));
+    const articles = [
+      ...(bcR.status   === 'fulfilled' ? mapItems(bcR.value,   'BleepingComputer') : []),
+      ...(cisaR.status === 'fulfilled' ? mapItems(cisaR.value, 'CISA')             : []),
+    ].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)).slice(0, limit);
+    res.json({ total: articles.length, sources: ['BleepingComputer','CISA'], articles });
+  } catch (e) { res.status(500).json({ error: 'Erreur Cyber', detail: e.message }); }
 });
 
 module.exports = router;

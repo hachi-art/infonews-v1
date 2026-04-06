@@ -976,7 +976,8 @@
     <button class="pole-btn" onclick="goToPole(3)">📡 Newsroom</button>
     <button class="pole-btn" onclick="goToPole(4)">🎭 Culture</button>
     <button class="pole-btn" onclick="goToPole(5)">🔬 Tech & IA</button>
-    <button class="pole-btn" onclick="goToPole(6)">🎙️ Média</button>
+    <button class="pole-btn" onclick="goToPole(6)">🏥 Société</button>
+    <button class="pole-btn" onclick="goToPole(7)">🎙️ Média</button>
   </nav>
 
   <!-- ═══════════════════════════════════════════
@@ -1132,6 +1133,10 @@
       <div class="market-tiles" id="marketTiles">
         <div class="loading-msg">Chargement marchés…</div>
       </div>
+      <h3 class="section-title" style="font-size:1.1rem;margin-top:1.2rem">💱 Taux de change (EUR base)</h3>
+      <div id="exchangeGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:0.5rem;margin-bottom:1.2rem">
+        <div class="loading-msg">Chargement taux…</div>
+      </div>
       <h3 class="section-title" style="font-size:1.1rem">📊 Matières premières</h3>
       <div class="tradingview-wrap">
         <div class="tv-widget-box">
@@ -1220,6 +1225,10 @@
     <div class="slide" id="s-donnees" data-pole="2" data-sub="2">
       <h2 class="section-title">📊 Données mondiales</h2>
       <p class="section-sub">Banque Mondiale · FMI · Sources ouvertes</p>
+      <h3 class="section-title" style="font-size:1rem;margin-bottom:0.6rem">🏆 Top PIB mondial — Banque Mondiale</h3>
+      <div id="wbGdpGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.5rem;margin-bottom:1.4rem">
+        <div class="loading-msg">Chargement Banque Mondiale…</div>
+      </div>
       <div class="tradingview-wrap" style="margin-bottom:1.4rem">
         <div class="tv-widget-box">
           <div class="tradingview-widget-container">
@@ -1596,7 +1605,17 @@
       </div>
     </div>
 
-    <!-- P6.3 Intelligence Artificielle -->
+    
+    <!-- P5.3 Cybersécurité -->
+    <div class="slide" id="s-cyber" data-pole="5" data-sub="3">
+      <h2 class="section-title">🛡️ Cybersécurité</h2>
+      <p class="section-sub">BleepingComputer · CISA — Alertes, failles et actualités cyber en temps réel</p>
+      <div class="news-grid" id="cyberGrid">
+        <div class="loading-msg">Chargement cyber…</div>
+      </div>
+    </div>
+
+<!-- P6.3 Intelligence Artificielle -->
     <div class="slide" id="s-ia" data-pole="5" data-sub="2">
       <h2 class="section-title">🤖 Intelligence Artificielle</h2>
       <p class="section-sub">OpenAI · DeepMind · Microsoft AI · Berkeley AI Research · HackerNews IA</p>
@@ -1630,7 +1649,63 @@
     <!-- ─── PÔLE 6 : AUDIO & ARCHIVES ───────────── -->
 
     <!-- P6.1 Radio mondiale -->
-    <div class="slide" id="s-radio" data-pole="6" data-sub="0">
+    <!-- ═══════════════════════════════════════════════════
+         PÔLE 6 — SOCIÉTÉ
+         ═══════════════════════════════════════════════════ -->
+
+    <!-- P6.0 Alertes mondiales -->
+    <div class="slide" id="s-alertes" data-pole="6" data-sub="0">
+      <h2 class="section-title">🚨 Alertes mondiales</h2>
+      <p class="section-sub">USGS séismes · GDACS catastrophes · Alertes en temps réel</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div>
+          <h3 class="section-title" style="font-size:1rem">🌋 Séismes récents</h3>
+          <div id="alertsQuakeList" style="display:flex;flex-direction:column;gap:0.5rem">
+            <div class="loading-msg">Chargement…</div>
+          </div>
+        </div>
+        <div>
+          <h3 class="section-title" style="font-size:1rem">🌊 Catastrophes GDACS</h3>
+          <div id="alertsDisasterList" style="display:flex;flex-direction:column;gap:0.5rem">
+            <div class="loading-msg">Chargement…</div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:0.7rem;color:var(--muted);margin-top:1rem">Sources : USGS Earthquake Hazards Program · GDACS (Global Disaster Alert and Coordination System) · Domaine public</p>
+    </div>
+
+    <!-- P6.1 Santé mondiale -->
+    <div class="slide" id="s-sante" data-pole="6" data-sub="1">
+      <h2 class="section-title">🏥 Santé mondiale</h2>
+      <p class="section-sub">Organisation Mondiale de la Santé — Alertes sanitaires, épidémies, recommandations</p>
+      <div class="news-grid" id="santeGrid">
+        <div class="loading-msg">Chargement OMS…</div>
+      </div>
+      <p style="font-size:0.7rem;color:var(--muted);margin-top:1rem">Source : OMS/WHO · <a href="https://www.who.int" target="_blank" rel="noopener" style="color:var(--primary)">who.int</a> · Licence ouverte</p>
+    </div>
+
+    <!-- P6.2 Droits humains -->
+    <div class="slide" id="s-droits" data-pole="6" data-sub="2">
+      <h2 class="section-title">⚖️ Droits humains</h2>
+      <p class="section-sub">Amnesty International · Human Rights Watch · UNHCR</p>
+      <div class="news-grid" id="droitsGrid">
+        <div class="loading-msg">Chargement droits humains…</div>
+      </div>
+      <p style="font-size:0.7rem;color:var(--muted);margin-top:1rem">Sources : Amnesty International · Human Rights Watch · UNHCR/Nations Unies</p>
+    </div>
+
+    <!-- P6.3 Environnement -->
+    <div class="slide" id="s-environnement" data-pole="6" data-sub="3">
+      <h2 class="section-title">🌿 Environnement</h2>
+      <p class="section-sub">Greenpeace · PNUE — Climat, biodiversité, pollution</p>
+      <div class="news-grid" id="environGrid">
+        <div class="loading-msg">Chargement environnement…</div>
+      </div>
+      <p style="font-size:0.7rem;color:var(--muted);margin-top:1rem">Sources : Greenpeace International · PNUE (Programme des Nations Unies pour l'environnement)</p>
+    </div>
+
+
+    <div class="slide" id="s-radio" data-pole="7" data-sub="0">
       <h2 class="section-title">📻 Radio mondiale</h2>
       <div class="radio-player" id="radioPlayer">
         <div class="radio-current-icon">📻</div>
@@ -1650,7 +1725,7 @@
     </div>
 
     <!-- P7.2 YouTube — Chaînes d'info & Science -->
-    <div class="slide" id="s-youtube" data-pole="6" data-sub="1">
+    <div class="slide" id="s-youtube" data-pole="7" data-sub="1">
       <h2 class="section-title">📺 YouTube — Chaînes d'information</h2>
       <p class="section-sub">RSS natif YouTube · Sans clé · 12 chaînes mondiales</p>
       <div class="filters-row" id="ytCatFilters">
@@ -1755,7 +1830,7 @@
     <!-- ─── PÔLE 7 : HUB DÉBAT ───────────────────── -->
 
     <!-- P7.1 Débat citoyen -->
-    <div class="slide" id="s-debat" data-pole="6" data-sub="2">
+    <div class="slide" id="s-debat" data-pole="7" data-sub="2">
       <div class="debat-header">
         <h2>💬 Hub Débat Citoyen</h2>
         <p>Espace de discussion anonyme · Pseudonymes générés aléatoirement · Pas de compte requis · RGPD compliant</p>
@@ -1793,7 +1868,7 @@
     </div>
 
     <!-- P7.2 WorldMood -->
-    <div class="slide" id="s-worldmood" data-pole="6" data-sub="3">
+    <div class="slide" id="s-worldmood" data-pole="7" data-sub="3">
       <div class="worldmood-header">
         <div class="worldmood-title">🌡️ WorldMood</div>
         <p style="font-size:0.8rem;color:var(--muted)">Comment percevez-vous l'état du monde aujourd'hui ?</p>
@@ -1812,12 +1887,12 @@
         <div class="news-grid" id="redditGrid">
           <div class="loading-msg">Chargement Reddit trends…</div>
         </div>
-        <p style="font-size:0.72rem;color:var(--muted);margin-top:0.6rem">💡 Voir les tendances Google : <a href="#" onclick="goToPole(6);setTimeout(()=>goToSub(6,2),100);return false;" style="color:var(--primary)">Pôle Débat → Tendances</a></p>
+        <p style="font-size:0.72rem;color:var(--muted);margin-top:0.6rem">💡 Voir les tendances Google : <a href="#" onclick="goToPole(7);setTimeout(()=>goToSub(7,4),100);return false;" style="color:var(--primary)">Pôle Débat → Tendances</a></p>
       </div>
     </div>
 
     <!-- P7.3 Tendances Google -->
-    <div class="slide" id="s-trends" data-pole="6" data-sub="4">
+    <div class="slide" id="s-trends" data-pole="7" data-sub="4">
       <h2 class="section-title">📊 Tendances du moment</h2>
       <p class="section-sub">Google Trends · Ce dont le monde parle en ce moment</p>
       <div class="filters-row" id="trendsGeoFilters">
@@ -1832,8 +1907,25 @@
       </div>
     </div>
 
+    <!-- P7.5 Podcasts -->
+    <div class="slide" id="s-podcasts" data-pole="7" data-sub="5">
+      <h2 class="section-title">🎙️ Podcasts</h2>
+      <p class="section-sub">Épisodes récents · 8 podcasts internationaux · Sciences, Économie, Monde, Cyber</p>
+      <div class="filters-row" id="podcastCatFilters">
+        <button class="filter-chip active" onclick="loadPodcastSlide('',this)">Tous</button>
+        <button class="filter-chip" onclick="loadPodcastSlide('monde',this)">🌍 Monde</button>
+        <button class="filter-chip" onclick="loadPodcastSlide('éco',this)">💹 Éco</button>
+        <button class="filter-chip" onclick="loadPodcastSlide('science',this)">🔬 Science</button>
+        <button class="filter-chip" onclick="loadPodcastSlide('cyber',this)">🛡️ Cyber</button>
+        <button class="filter-chip" onclick="loadPodcastSlide('santé',this)">🏥 Santé</button>
+      </div>
+      <div id="podcastGrid" style="margin-top:0.8rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0.8rem">
+        <div class="loading-msg">Chargement podcasts…</div>
+      </div>
+    </div>
+
     <!-- P7.4 Soutenir -->
-    <div class="slide" id="s-soutenir" data-pole="6" data-sub="5">
+    <div class="slide" id="s-soutenir" data-pole="7" data-sub="6">
       <div class="support-hero">
         <div class="support-hero-logo">info<span>news</span>.day</div>
         <div class="support-tagline">"Invent the day"</div>
@@ -1971,13 +2063,14 @@
   // POLES CONFIGURATION
   // ────────────────────────────────────────────────
   const POLES = [
-    { id: 'monde',   label: '🌍 Monde',     slides: ['s-globe','s-news','s-orgs'],                                  subLabels: ['🌐 Globe','📰 Actualités','🏛️ Organisations'] },
-    { id: 'planete', label: '🌐 Planète',   slides: ['s-meteo','s-espace','s-sky','s-ocean'],                       subLabels: ['🌤️ Météo & Air','🚀 Espace','✈️ Vue du ciel','🌊 Vue des océans'] },
-    { id: 'eco',     label: '💹 Éco',       slides: ['s-marches','s-crypto','s-donnees'],                           subLabels: ['📈 Marchés','🪙 Crypto','📊 Données'] },
-    { id: 'newsroom',label: '📡 Newsroom',  slides: ['s-sources','s-crosscheck','s-indep','s-hist','s-timemachine'],subLabels: ['🗞️ Sources','⚖️ Cross-Check','🔍 Indépendants','🗂️ Archives','⏳ Time Machine'] },
-    { id: 'culture', label: '🎭 Culture',   slides: ['s-events','s-art','s-cinema','s-sport','s-musique'],          subLabels: ['🎪 Agenda','🎨 Art','🎬 Cinéma','⚽ Sport','🎵 Musique'] },
-    { id: 'tech',    label: '🔬 Tech & IA', slides: ['s-tech','s-science','s-ia'],                                  subLabels: ['💻 Tech','🔬 Science','🤖 IA'] },
-    { id: 'media',   label: '🎙️ Média',     slides: ['s-radio','s-youtube','s-debat','s-worldmood','s-trends','s-soutenir'], subLabels: ['📻 Radio','📺 YouTube','💬 Débat','🌡️ WorldMood','📊 Tendances','💰 Soutenir'] },
+    { id: 'monde',   label: '🌍 Monde',     slides: ['s-globe','s-news','s-orgs'],                                                              subLabels: ['🌐 Globe','📰 Actualités','🏛️ Organisations'] },
+    { id: 'planete', label: '🌐 Planète',   slides: ['s-meteo','s-espace','s-sky','s-ocean'],                                                   subLabels: ['🌤️ Météo & Air','🚀 Espace','✈️ Vue du ciel','🌊 Vue des océans'] },
+    { id: 'eco',     label: '💹 Éco',       slides: ['s-marches','s-crypto','s-donnees'],                                                       subLabels: ['📈 Marchés','🪙 Crypto','📊 Données'] },
+    { id: 'newsroom',label: '📡 Newsroom',  slides: ['s-sources','s-crosscheck','s-indep','s-hist','s-timemachine'],                           subLabels: ['🗞️ Sources','⚖️ Cross-Check','🔍 Indépendants','🗂️ Archives','⏳ Time Machine'] },
+    { id: 'culture', label: '🎭 Culture',   slides: ['s-events','s-art','s-cinema','s-sport','s-musique'],                                     subLabels: ['🎪 Agenda','🎨 Art','🎬 Cinéma','⚽ Sport','🎵 Musique'] },
+    { id: 'tech',    label: '🔬 Tech & IA', slides: ['s-tech','s-science','s-ia','s-cyber'],                                                   subLabels: ['💻 Tech','🔬 Science','🤖 IA','🛡️ Cyber'] },
+    { id: 'societe', label: '🏥 Société',   slides: ['s-alertes','s-sante','s-droits','s-environnement'],                                     subLabels: ['🚨 Alertes','🏥 Santé','⚖️ Droits','🌿 Environnement'] },
+    { id: 'media',   label: '🎙️ Média',     slides: ['s-radio','s-youtube','s-debat','s-worldmood','s-trends','s-podcasts','s-soutenir'],     subLabels: ['📻 Radio','📺 YouTube','💬 Débat','🌡️ WorldMood','📊 Tendances','🎙️ Podcasts','💰 Soutenir'] },
   ];
 
   let activePole = 0;
@@ -2044,7 +2137,7 @@
       // ── Pôle 2 : Éco ──
       case 's-marches':    return loadFinance();
       case 's-crypto':     return loadCrypto();
-      case 's-donnees':    break; // TradingView auto-loads
+      case 's-donnees':    return loadWorldBank();
       // ── Pôle 3 : Newsroom ──
       case 's-sources':    return loadNews2();
       case 's-crosscheck': return loadCrossCheck();
@@ -2061,9 +2154,16 @@
       case 's-tech':       return loadTechNews();
       case 's-science':    return loadScienceNews();
       case 's-ia':         return loadIANews();
-      // ── Pôle 6 : Média ──
+      case 's-cyber':      return loadCyberNews();
+      // ── Pôle 6 : Société ──
+      case 's-alertes':    return loadAlertes();
+      case 's-sante':      return loadSanteNews();
+      case 's-droits':     return loadDroitsNews();
+      case 's-environnement': return loadEnvironNews();
+      // ── Pôle 7 : Média ──
       case 's-radio':      return loadRadio();
       case 's-youtube':    return loadYouTubeSlide('', document.querySelector('#ytCatFilters .filter-chip'));
+      case 's-podcasts':   return loadPodcastSlide('', document.querySelector('#podcastCatFilters .filter-chip'));
       case 's-debat':      return initDebat();
       case 's-worldmood':  { initWorldMood(); loadReddit(); return; }
       case 's-trends':     return loadTrends('FR');
@@ -2087,45 +2187,48 @@
   // Traductions des labels UI
   const I18N = {
     fr: {
-      poles: ['🌍 Monde','🌐 Planète','💹 Éco','📡 Newsroom','🎭 Culture','🔬 Tech & IA','🎙️ Média'],
+      poles: ['🌍 Monde','🌐 Planète','💹 Éco','📡 Newsroom','🎭 Culture','🔬 Tech & IA','🏥 Société','🎙️ Média'],
       subLabels: [
         ['🌐 Globe','📰 Actualités','🏛️ Organisations'],
         ['🌤️ Météo & Air','🚀 Espace','✈️ Vue du ciel','🌊 Vue des océans'],
         ['📈 Marchés','🪙 Crypto','📊 Données'],
         ['🗞️ Sources','⚖️ Cross-Check','🔍 Indépendants','🗂️ Archives','⏳ Time Machine'],
         ['🎪 Agenda','🎨 Art','🎬 Cinéma','⚽ Sport','🎵 Musique'],
-        ['💻 Tech','🔬 Science','🤖 IA'],
-        ['📻 Radio','📺 YouTube','💬 Débat','🌡️ WorldMood','📊 Tendances','💰 Soutenir'],
+        ['💻 Tech','🔬 Science','🤖 IA','🛡️ Cyber'],
+        ['🚨 Alertes','🏥 Santé','⚖️ Droits','🌿 Environnement'],
+        ['📻 Radio','📺 YouTube','💬 Débat','🌡️ WorldMood','📊 Tendances','🎙️ Podcasts','💰 Soutenir'],
       ],
       ggPlaceholder: 'Posez votre question…',
     },
     en: {
-      poles: ['🌍 World','🌐 Planet','💹 Economy','📡 Newsroom','🎭 Culture','🔬 Tech & AI','🎙️ Media'],
+      poles: ['🌍 World','🌐 Planet','💹 Economy','📡 Newsroom','🎭 Culture','🔬 Tech & AI','🏥 Society','🎙️ Media'],
       subLabels: [
-        ['🌐 Globe','📰 News','🏛️ Organisations'],
+        ['🌐 Globe','📰 News','🏛️ Organizations'],
         ['🌤️ Weather & Air','🚀 Space','✈️ Sky view','🌊 Ocean view'],
         ['📈 Markets','🪙 Crypto','📊 Data'],
-        ['🗞️ Sources','⚖️ Cross-Check','🔍 Independent','🗂️ Archives','⏳ Time Machine'],
+        ['🗞️ Sources','⚖️ Cross-Check','🔍 Independents','🗂️ Archives','⏳ Time Machine'],
         ['🎪 Agenda','🎨 Art','🎬 Cinema','⚽ Sport','🎵 Music'],
-        ['💻 Tech','🔬 Science','🤖 AI'],
-        ['📻 Radio','📺 YouTube','💬 Debate','🌡️ WorldMood','📊 Trends','💰 Support'],
+        ['💻 Tech','🔬 Science','🤖 AI','🛡️ Cyber'],
+        ['🚨 Alerts','🏥 Health','⚖️ Rights','🌿 Environment'],
+        ['📻 Radio','📺 YouTube','💬 Debate','🌡️ WorldMood','📊 Trends','🎙️ Podcasts','💰 Support'],
       ],
       ggPlaceholder: 'Ask a question…',
     },
     es: {
-      poles: ['🌍 Mundo','🌐 Planeta','💹 Economía','📡 Newsroom','🎭 Cultura','🔬 Tech & IA','🎙️ Medios'],
+      poles: ['🌍 Mundo','🌐 Planeta','💹 Economía','📡 Newsroom','🎭 Cultura','🔬 Tech & IA','🏥 Sociedad','🎙️ Medios'],
       subLabels: [
         ['🌐 Globo','📰 Noticias','🏛️ Organizaciones'],
-        ['🌤️ Tiempo & Aire','🚀 Espacio','✈️ Vista del cielo','🌊 Vista de los océanos'],
+        ['🌤️ Clima & Aire','🚀 Espacio','✈️ Vista del cielo','🌊 Vista del océano'],
         ['📈 Mercados','🪙 Cripto','📊 Datos'],
-        ['🗞️ Fuentes','⚖️ Cross-Check','🔍 Independientes','🗂️ Archivos','⏳ Máquina del Tiempo'],
+        ['🗞️ Fuentes','⚖️ Cross-Check','🔍 Independientes','🗂️ Archivos','⏳ Máquina del tiempo'],
         ['🎪 Agenda','🎨 Arte','🎬 Cine','⚽ Deporte','🎵 Música'],
-        ['💻 Tech','🔬 Ciencia','🤖 IA'],
-        ['📻 Radio','📺 YouTube','💬 Debate','🌡️ WorldMood','📊 Tendencias','💰 Apoyar'],
+        ['💻 Tech','🔬 Ciencia','🤖 IA','🛡️ Ciberseguridad'],
+        ['🚨 Alertas','🏥 Salud','⚖️ Derechos','🌿 Medioambiente'],
+        ['📻 Radio','📺 YouTube','💬 Debate','🌡️ WorldMood','📊 Tendencias','🎙️ Podcasts','💰 Apoyar'],
       ],
-      ggPlaceholder: 'Haz una pregunta…',
+      ggPlaceholder: 'Haz tu pregunta…',
     },
-  };
+  };;
 
   function setLang(lang) {
     currentLang = lang;
@@ -2583,7 +2686,55 @@
   // FINANCE
   // ────────────────────────────────────────────────
   async function loadFinance() {
-    await Promise.allSettled([loadMarkets()]);
+    await Promise.allSettled([loadMarkets(), loadExchangeRates()]);
+  }
+
+  async function loadWorldBank() {
+    const grid = document.getElementById('wbGdpGrid');
+    if (!grid) return;
+    try {
+      const r = await fetch('/api/worldbank/gdp?limit=15');
+      const d = await r.json();
+      const fmt = v => v >= 1e12 ? (v/1e12).toFixed(2)+'T$' : v >= 1e9 ? (v/1e9).toFixed(1)+'Md$' : '—';
+      grid.innerHTML = (d.data||[]).map((c, i) => `
+        <div style="padding:0.5rem 0.7rem;background:var(--card);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;gap:0.5rem">
+          <span style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);min-width:18px">#${i+1}</span>
+          <div>
+            <div style="font-size:0.78rem;font-weight:600">${c.country}</div>
+            <div style="font-size:0.72rem;color:var(--primary);font-family:'DM Mono',monospace">${fmt(c.value)} <span style="color:var(--muted)">(${c.year})</span></div>
+          </div>
+        </div>`).join('') || '<div class="loading-msg">Données Banque Mondiale indisponibles</div>';
+    } catch(e) { grid.innerHTML = '<div class="loading-msg">Erreur Banque Mondiale ❌</div>'; }
+  }
+
+  async function loadExchangeRates() {
+    const grid = document.getElementById('exchangeGrid');
+    if (!grid) return;
+    try {
+      const r = await fetch('/api/exchange');
+      const d = await r.json();
+      const rates = d.rates || {};
+      const pairs = [
+        { code:'USD', flag:'🇺🇸', label:'Dollar' },
+        { code:'GBP', flag:'🇬🇧', label:'Livre' },
+        { code:'JPY', flag:'🇯🇵', label:'Yen' },
+        { code:'CHF', flag:'🇨🇭', label:'Franc CH' },
+        { code:'CAD', flag:'🇨🇦', label:'Dollar CA' },
+        { code:'AUD', flag:'🇦🇺', label:'Dollar AU' },
+        { code:'CNY', flag:'🇨🇳', label:'Yuan' },
+        { code:'BRL', flag:'🇧🇷', label:'Real' },
+      ];
+      grid.innerHTML = pairs.map(p => {
+        const rate = rates[p.code];
+        return rate ? `
+          <div style="padding:0.6rem;background:var(--card);border-radius:8px;border:1px solid var(--border);text-align:center">
+            <div style="font-size:1.1rem">${p.flag}</div>
+            <div style="font-size:0.65rem;color:var(--muted)">${p.label}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:0.85rem;font-weight:700;color:var(--text)">1€ = ${rate.toFixed(4)} ${p.code}</div>
+          </div>` : '';
+      }).join('');
+      if (!grid.innerHTML) grid.innerHTML = '<div class="loading-msg">Taux indisponibles</div>';
+    } catch(e) { grid.innerHTML = '<div class="loading-msg">Erreur taux de change</div>'; }
   }
 
   async function loadMarkets() {
@@ -3196,12 +3347,30 @@
   ];
 
   async function loadOrgs() {
-    ORG_FEEDS.forEach(f => {
-      const el = document.getElementById(f.id);
-      if (el) el.innerHTML = `
-        <div class="org-item">📡 Flux RSS en cours d'intégration backend</div>
-        <div class="org-item"><a href="${f.url}" target="_blank" rel="noopener" style="color:var(--primary)">Dernières nouvelles ${f.label} →</a></div>`;
-    });
+    try {
+      const r = await fetch('/api/society/orgs?limit=4');
+      const d = await r.json();
+      const MAP = { un:'org-un', who:'org-who', wb:'org-wb', unicef:'org-unicef', msf:'org-msf', unep:'org-unep' };
+      Object.entries(MAP).forEach(([key, elId]) => {
+        const el = document.getElementById(elId);
+        if (!el) return;
+        const arts = d.orgs?.[key] || [];
+        if (!arts.length) { el.innerHTML = '<div class="org-item" style="color:var(--muted)">Chargement…</div>'; return; }
+        el.innerHTML = arts.map(a => `
+          <div class="org-item">
+            <a href="${a.url}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none">
+              <div style="font-size:0.78rem;font-weight:600;margin-bottom:2px">${a.title}</div>
+              <div style="font-size:0.65rem;color:var(--muted)">${timeAgo(a.publishedAt)}</div>
+            </a>
+          </div>`).join('');
+      });
+    } catch(e) {
+      // fallback: liens directs
+      ORG_FEEDS.forEach(f => {
+        const el = document.getElementById(f.id);
+        if (el) el.innerHTML = `<div class="org-item"><a href="${f.url}" target="_blank" rel="noopener" style="color:var(--primary)">Actualités ${f.label} →</a></div>`;
+      });
+    }
   }
 
   // ────────────────────────────────────────────────
@@ -3392,24 +3561,22 @@
   async function loadReddit() {
     const grid = document.getElementById('redditGrid');
     if (!grid) return;
+    grid.innerHTML = '<div class="loading-msg">Chargement Reddit…</div>';
     try {
-      const r = await fetch('https://www.reddit.com/r/worldnews/hot.json?limit=10');
+      const r = await fetch('/api/reddit?sub=worldnews&limit=12');
       const d = await r.json();
-      const posts = d.data?.children || [];
-      grid.innerHTML = posts.slice(0,10).map(p => {
-        const post = p.data;
-        return `
-          <a class="news-card" href="https://reddit.com${post.permalink}" target="_blank" rel="noopener">
-            <div class="news-card-top">
-              <span class="source-badge" style="background:#ff4500;color:#fff">Reddit</span>
-              <span class="news-meta">👍 ${post.score?.toLocaleString()}</span>
-            </div>
-            <div class="news-title">${post.title}</div>
-            <div class="news-meta"><span class="news-cat">r/${post.subreddit}</span> · ${post.num_comments} commentaires</div>
-          </a>`;
-      }).join('') || '<div class="loading-msg">Reddit non disponible (CORS).</div>';
+      const posts = d.posts || [];
+      grid.innerHTML = posts.map(p => `
+        <a class="news-card" href="${p.url}" target="_blank" rel="noopener">
+          <div class="news-card-top">
+            <span class="source-badge" style="background:#ff4500;color:#fff">Reddit</span>
+            <span class="news-meta">${p.source}</span>
+          </div>
+          <div class="news-title">${p.title}</div>
+          <div class="news-meta">${timeAgo(p.publishedAt)}</div>
+        </a>`).join('') || '<div class="loading-msg">Aucun post disponible.</div>';
     } catch(e) {
-      grid.innerHTML = `<div class="loading-msg">Reddit API non accessible directement — intégration backend recommandée.</div>`;
+      grid.innerHTML = '<div class="loading-msg">Erreur chargement Reddit ❌</div>';
     }
   }
 
@@ -3667,6 +3834,120 @@
   }
 
   // ────────────────────────────────────────────────
+  // PÔLE SOCIÉTÉ — Alertes, Santé, Droits, Environnement
+  // ────────────────────────────────────────────────
+
+  async function loadAlertes() {
+    const quakeEl    = document.getElementById('alertsQuakeList');
+    const disasterEl = document.getElementById('alertsDisasterList');
+    if (!quakeEl) return;
+    try {
+      const r = await fetch('/api/society/alerts?limit=8');
+      const d = await r.json();
+      const severityColor = m => m >= 6.5 ? '#f85149' : m >= 5.5 ? '#d29922' : '#3fb950';
+      quakeEl.innerHTML = (d.earthquakes || []).slice(0,8).map(q => `
+        <div style="padding:0.5rem;background:var(--card);border-radius:8px;border:1px solid var(--border)">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:0.82rem;font-weight:600">${q.place || q.title || 'Séisme'}</span>
+            <span style="font-family:'DM Mono',monospace;font-size:0.85rem;color:${severityColor(q.magnitude)};font-weight:700">M${q.magnitude?.toFixed(1)||'?'}</span>
+          </div>
+          <div style="font-size:0.65rem;color:var(--muted);margin-top:2px">${timeAgo(q.time || q.publishedAt)} · ${q.depth ? q.depth.toFixed(0)+'km de profondeur' : ''}</div>
+        </div>`).join('') || '<div class="loading-msg">Aucun séisme significatif récent.</div>';
+      disasterEl.innerHTML = (d.disasters || []).slice(0,8).map(ev => `
+        <div style="padding:0.5rem;background:var(--card);border-radius:8px;border:1px solid var(--border)">
+          <div style="font-size:0.82rem;font-weight:600">${ev.title}</div>
+          <div style="font-size:0.65rem;color:var(--muted);margin-top:2px">${ev.country || ''} · ${timeAgo(ev.publishedAt)}</div>
+        </div>`).join('') || '<div class="loading-msg">Aucune alerte GDACS active.</div>';
+    } catch(e) {
+      if (quakeEl) quakeEl.innerHTML = '<div class="loading-msg">Erreur ❌</div>';
+    }
+  }
+
+  async function loadSanteNews() {
+    const grid = document.getElementById('santeGrid');
+    if (!grid) return;
+    grid.innerHTML = '<div class="loading-msg">Chargement OMS…</div>';
+    try {
+      const r = await fetch('/api/society/health?limit=16');
+      const d = await r.json();
+      grid.innerHTML = (d.articles||[]).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Aucune actualité santé.</div>';
+    } catch(e) { grid.innerHTML = '<div class="loading-msg">Erreur ❌</div>'; }
+  }
+
+  async function loadDroitsNews() {
+    const grid = document.getElementById('droitsGrid');
+    if (!grid) return;
+    grid.innerHTML = '<div class="loading-msg">Chargement droits humains…</div>';
+    try {
+      const r = await fetch('/api/society/rights?limit=16');
+      const d = await r.json();
+      grid.innerHTML = (d.articles||[]).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Aucune actualité droits humains.</div>';
+    } catch(e) { grid.innerHTML = '<div class="loading-msg">Erreur ❌</div>'; }
+  }
+
+  async function loadEnvironNews() {
+    const grid = document.getElementById('environGrid');
+    if (!grid) return;
+    grid.innerHTML = '<div class="loading-msg">Chargement environnement…</div>';
+    try {
+      const r = await fetch('/api/society/environment?limit=16');
+      const d = await r.json();
+      grid.innerHTML = (d.articles||[]).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Aucune actualité environnement.</div>';
+    } catch(e) { grid.innerHTML = '<div class="loading-msg">Erreur ❌</div>'; }
+  }
+
+  // ────────────────────────────────────────────────
+  // CYBERSÉCURITÉ (Pôle Tech & IA)
+  // ────────────────────────────────────────────────
+
+  async function loadCyberNews() {
+    const grid = document.getElementById('cyberGrid');
+    if (!grid) return;
+    grid.innerHTML = '<div class="loading-msg">Chargement cyber…</div>';
+    try {
+      const r = await fetch('/api/tech/cyber?limit=18');
+      const d = await r.json();
+      grid.innerHTML = (d.articles||[]).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Aucune actualité cyber.</div>';
+    } catch(e) { grid.innerHTML = '<div class="loading-msg">Erreur ❌</div>'; }
+  }
+
+  // ────────────────────────────────────────────────
+  // PODCASTS (Pôle Média)
+  // ────────────────────────────────────────────────
+
+  async function loadPodcastSlide(cat, btn) {
+    const grid = document.getElementById('podcastGrid');
+    if (!grid) return;
+    if (btn) {
+      document.querySelectorAll('#podcastCatFilters .filter-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    grid.innerHTML = '<div class="loading-msg">Chargement podcasts…</div>';
+    try {
+      const url = cat ? `/api/podcasts?limit=3&cat=${encodeURIComponent(cat)}` : '/api/podcasts?limit=3';
+      const r = await fetch(url);
+      const d = await r.json();
+      let episodes = d.episodes || [];
+      if (cat) episodes = episodes.filter(e => e.cat === cat || e.cat?.includes(cat));
+      if (!episodes.length) episodes = d.episodes || [];
+      grid.innerHTML = episodes.slice(0,24).map(ep => `
+        <div class="card" style="padding:0.9rem;display:flex;flex-direction:column;gap:0.4rem">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem">
+            <div style="font-size:0.82rem;font-weight:700;line-height:1.3;flex:1">${ep.title}</div>
+            ${ep.audio ? `<a href="${ep.audio}" target="_blank" rel="noopener" style="flex-shrink:0;background:var(--primary);color:#fff;border-radius:20px;padding:3px 10px;font-size:0.7rem;font-weight:600;text-decoration:none">▶ Écouter</a>` : ''}
+          </div>
+          <div style="font-size:0.72rem;color:var(--primary);font-weight:600">${ep.podcast}</div>
+          ${ep.summary ? `<div style="font-size:0.73rem;color:var(--muted);line-height:1.4">${ep.summary}</div>` : ''}
+          <div style="font-size:0.65rem;color:var(--muted);display:flex;gap:0.5rem">
+            <span>🗓️ ${timeAgo(ep.publishedAt)}</span>
+            ${ep.duration ? `<span>⏱️ ${ep.duration}</span>` : ''}
+            <span class="news-cat">${ep.cat || ''}</span>
+          </div>
+        </div>`).join('') || '<div class="loading-msg">Aucun épisode disponible.</div>';
+    } catch(e) { grid.innerHTML = '<div class="loading-msg">Erreur ❌</div>'; }
+  }
+
+  // ────────────────────────────────────────────────
   // WORLDMOOD
   // ────────────────────────────────────────────────
   const MOODS = ['optimiste','neutre','inquiet','en-colere','espoir','fatigue'];
@@ -3712,15 +3993,16 @@
   const GG_CONTEXT = {
     0: { pole: 'Monde',     hint: '🌍 Globe 3D + 22 compteurs · 22 sources d\'actualités · Organisations (ONU, UNESCO, WHO, MSF)' },
     1: { pole: 'Planète',   hint: '🌐 Météo + qualité de l\'air · Espace (ISS live, NASA APOD, prochains lancements) · Vue du ciel (OpenSky) · Vue des océans (NOAA + OpenSeaMap)' },
-    2: { pole: 'Éco',       hint: '💹 Marchés Yahoo Finance · Crypto CoinGecko + Fear & Greed Index · Données TradingView' },
+    2: { pole: 'Éco',       hint: '💹 Marchés Yahoo Finance + taux de change · Crypto CoinGecko + Fear & Greed Index · Données Banque Mondiale' },
     3: { pole: 'Newsroom',  hint: '📡 22 sources mondiales · Cross-Check 6 combinaisons · Indépendants · Archives BNF/Gallica · Time Machine' },
     4: { pole: 'Culture',   hint: '🎭 Agenda · Art Met Museum · Cinéma & Séries TMDB · Sport live TheSportsDB+ESPN · Musique Deezer+Beatport' },
-    5: { pole: 'Tech & IA', hint: '🔬 Tech (TechCrunch+HackerNews) · Science (WHO+ArXiv) · IA (OpenAI+DeepMind+ArXiv cs.AI)' },
-    6: { pole: 'Média',     hint: '🎙️ Radio 12 stations · YouTube 12 chaînes · Débat anonyme · WorldMood · Tendances Google 5 pays' },
+    5: { pole: 'Tech & IA', hint: '🔬 Tech (TechCrunch+HackerNews) · Science (ArXiv) · IA (OpenAI+DeepMind+ArXiv cs.AI) · Cyber (BleepingComputer+CISA)' },
+    6: { pole: 'Société',   hint: '🏥 Alertes (USGS séismes + GDACS catastrophes) · Santé mondiale (WHO) · Droits humains (Amnesty+HRW+UNHCR) · Environnement (Greenpeace+UNEP)' },
+    7: { pole: 'Média',     hint: '🎙️ Radio 12 stations · YouTube 12 chaînes · Débat + Sondages · WorldMood · Tendances Google 5 pays · 8 Podcasts' },
   };
 
   const GG_RESPONSES = {
-    aide:      'Je suis le Globe-Guide 🌐 ! 7 pôles disponibles : 🌍 Monde · 🌐 Planète · 💹 Éco · 📡 Newsroom · 🎭 Culture · 🔬 Tech & IA · 🎙️ Média. Posez votre question !',
+    aide:      'Je suis le Globe-Guide 🌐 ! 8 pôles disponibles : 🌍 Monde · 🌐 Planète · 💹 Éco · 📡 Newsroom · 🎭 Culture · 🔬 Tech & IA · 🏥 Société · 🎙️ Média. Posez votre question !',
     monde:     'Pôle Monde 🌍 : Globe interactif 3D, 22 compteurs mondiaux temps réel, Actualités (22 sources), Organisations (ONU, UNESCO, WHO, MSF, G20).',
     planete:   'Pôle Planète 🌐 : Météo & qualité de l\'air (Open-Meteo), Espace (ISS live, NASA APOD, prochains lancements), Vue du ciel (OpenSky — vols en direct), Vue des océans (NOAA bouées + OpenSeaMap).',
     eco:       'Pôle Éco 💹 : Marchés financiers (Yahoo Finance, cours CAC40/SP500/NASDAQ), Crypto top 50 CoinGecko + Fear & Greed Index, Données TradingView.',
@@ -3736,8 +4018,15 @@
     radio:     'Radio mondiale 📻 : 12 stations en direct (BBC World, France Inter, Al Jazeera English, RFI, NHK World…). Pôle Média → Radio.',
     youtube:   'YouTube 📺 : 12 chaînes filtrées par catégorie (Monde, Éco, Science, Tech). Pôle Média → YouTube.',
     ocean:     'Vue des océans 🌊 : Bouées NOAA temps réel (température, vagues, vents), carte OpenSeaMap. Pôle Planète → Vue des océans.',
+    societe:   'Pôle Société 🏥 : Alertes (USGS séismes + GDACS catastrophes) · Santé mondiale (WHO) · Droits humains (Amnesty International + HRW + UNHCR) · Environnement (Greenpeace + UNEP).',
+    alertes:   'Alertes 🚨 : Séismes USGS (magnitude, profondeur) + Catastrophes GDACS (cyclones, inondations, tsunamis) en temps réel. Pôle Société → Alertes.',
+    droits:    'Droits humains ⚖️ : Actualités Amnesty International, Human Rights Watch et UNHCR sur les violations des droits dans le monde. Pôle Société → Droits.',
+    environnement: 'Environnement 🌿 : Actualités Greenpeace et PNUE sur le climat, la biodiversité, la pollution et les espèces menacées. Pôle Société → Environnement.',
+    podcasts:  'Podcasts 🎙️ : 8 podcasts (BBC Global, RFI, FT News, Radiolab, 99% Invisible, Freakonomics, Darknet Diaries, Huberman Lab). Pôle Média → Podcasts.',
+    cyber:     'Cybersécurité 🛡️ : BleepingComputer + CISA — failles critiques, ransomwares, alertes gouvernementales. Pôle Tech & IA → Cyber.',
+    worldbank: 'Données Banque Mondiale 📊 : Top 15 PIB mondial, taux de change EUR en temps réel, indicateurs macro. Pôle Éco → Données.',
     legal:     'Sources légales 📋 : Toutes nos sources sont libres et légales. RT supprimé (banni UE, Règlement 2022/350). TASS/Xinhua marqués ⚠️ médias d\'État. Aucun cookie ni tracker. Page : /sources-legales',
-    default:   'Bonne question ! Naviguez via les 7 pôles en haut. Chaque pôle a des sous-pages. Tapez "aide" pour la liste complète des fonctionnalités. 🌐'
+    default:   'Bonne question ! Naviguez via les 8 pôles en haut. Chaque pôle a des sous-pages. Tapez "aide" pour la liste complète des fonctionnalités. 🌐'
   };
 
   function updateGGContext() {
@@ -3786,7 +4075,14 @@
     else if (/planète|planete|météo|meteo|vol|avion|ciel/.test(low))        reply = GG_RESPONSES.planete;
     else if (/monde|globe|pays|actualit|séisme|seis/.test(low))             reply = GG_RESPONSES.monde;
     else if (/culture|cinéma|cinema|sport|musique|art|agenda/.test(low))    reply = GG_RESPONSES.culture;
-    else if (/légal|legal|rgpd|gdpr|source|copyright|droit/.test(low))      reply = GG_RESPONSES.legal;
+    else if (/société|societe|alerte|séisme|seisme|gdacs|usgs|catastrophe/.test(low)) reply = GG_RESPONSES.societe;
+    else if (/alerte|séisme|seisme|tremblement|tsunami|cyclone/.test(low))   reply = GG_RESPONSES.alertes;
+    else if (/droits|amnesty|hrw|réfugié|refugie|human rights/.test(low))   reply = GG_RESPONSES.droits;
+    else if (/environnement|greenpeace|climat|biodiversité|pnue/.test(low)  ) reply = GG_RESPONSES.environnement;
+    else if (/podcast|épisode|episode|écouter|huberman|darknet/.test(low))   reply = GG_RESPONSES.podcasts;
+    else if (/cyber|sécurité|securite|hack|faille|cisa|bleeping/.test(low)) reply = GG_RESPONSES.cyber;
+    else if (/banque mondiale|worldbank|pib|gdp|indicateur/.test(low))      reply = GG_RESPONSES.worldbank;
+    else if (/légal|legal|rgpd|gdpr|copyright/.test(low))                   reply = GG_RESPONSES.legal;
     setTimeout(() => addGGMessage(reply, 'bot'), 300);
   }
 
