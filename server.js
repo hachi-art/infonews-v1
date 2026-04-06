@@ -21,6 +21,7 @@ const musicRouter   = require('./routes/music');
 const trendsRouter  = require('./routes/trends');
 const cinemaRouter  = require('./routes/cinema');
 const youtubeRouter = require('./routes/youtube');
+const techRouter    = require('./routes/tech');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -44,6 +45,7 @@ app.use('/api/music',    musicRouter);
 app.use('/api/trends',   trendsRouter);
 app.use('/api/cinema',   cinemaRouter);
 app.use('/api/youtube',  youtubeRouter);
+app.use('/api/tech',     techRouter);
 
 // ── Health check ──────────────────────────────────────────────
 app.get('/health', (req, res) => {
