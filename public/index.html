@@ -1767,7 +1767,7 @@
           <span class="sondage-tag">📊 Sondage du jour</span>
           <div class="sondage-nav">
             <button class="sondage-nav-btn" onclick="prevSondage()">‹</button>
-            <span id="sondageCounter" style="font-size:0.75rem;color:var(--muted)">1/10</span>
+            <span id="sondageCounter" style="font-size:0.75rem;color:var(--muted)">1/20</span>
             <button class="sondage-nav-btn" onclick="nextSondage()">›</button>
           </div>
         </div>
@@ -3496,53 +3496,103 @@
   const SONDAGES = [
     {
       id: 'ia_2030',
-      q: '🤖 L'IA va-t-elle transformer positivement le monde d'ici 2030 ?',
-      opts: ['Oui, clairement', 'Non, elle représente un risque', 'Les deux à la fois', 'Trop tôt pour le dire']
+      q: '🤖 L\u2019IA va-t-elle transformer positivement le monde d\u2019ici 2030\u00a0?',
+      opts: ['Oui, clairement', 'Non, elle repr\u00e9sente un risque', 'Les deux \u00e0 la fois', 'Trop t\u00f4t pour le dire']
     },
     {
       id: 'crise_urgente',
-      q: '🌍 Quelle crise vous semble la plus urgente aujourd'hui ?',
-      opts: ['Crise climatique', 'Guerres & conflits', 'Crise économique', 'Pandémies & santé']
+      q: '\ud83c\udf0d Quelle crise vous semble la plus urgente aujourd\u2019hui\u00a0?',
+      opts: ['Crise climatique', 'Guerres & conflits', 'Crise \u00e9conomique', 'Pand\u00e9mies & sant\u00e9']
     },
     {
       id: 'confiance_medias',
-      q: '📰 Faites-vous confiance aux médias traditionnels ?',
-      opts: ['Oui, globalement', 'Partiellement', 'Non, pas du tout', 'Je me renseigne par moi-même']
+      q: '\ud83d\udcf0 Faites-vous confiance aux m\u00e9dias traditionnels\u00a0?',
+      opts: ['Oui, globalement', 'Partiellement', 'Non, pas du tout', 'Je me renseigne par moi-m\u00eame']
     },
     {
       id: 'reseaux_democratie',
-      q: '📱 Les réseaux sociaux sont-ils bénéfiques pour la démocratie ?',
-      opts: ['Oui', 'Non', 'Ça dépend du pays', 'Ils sont dangereux']
+      q: '\ud83d\udcf1 Les r\u00e9seaux sociaux sont-ils b\u00e9n\u00e9fiques pour la d\u00e9mocratie\u00a0?',
+      opts: ['Oui', 'Non', '\u00c7a d\u00e9pend du pays', 'Ils sont dangereux']
     },
     {
       id: 'crypto_futur',
-      q: '🪙 Quel avenir pour les cryptomonnaies ?',
-      opts: ['Adoption de masse', 'Bulle qui va éclater', 'Régulation forte nécessaire', 'Elles vont coexister avec le fiat']
+      q: '\ud83e\ude99 Quel avenir pour les cryptomonnaies\u00a0?',
+      opts: ['Adoption de masse', 'Bulle qui va \u00e9clater', 'R\u00e9gulation forte n\u00e9cessaire', 'Coexistence avec le fiat']
     },
     {
       id: 'climat_priorite',
-      q: '🌱 Le changement climatique est-il la priorité n°1 des gouvernements ?',
-      opts: ['Oui, rien d'autre ne prime', 'Parmi les grandes priorités', 'D'autres urgences d'abord', 'Non, ils font semblant']
+      q: '\ud83c\udf31 Le changement climatique est-il la priorit\u00e9 n\u00b01 des gouvernements\u00a0?',
+      opts: ['Oui, rien d\u2019autre ne prime', 'Parmi les grandes priorit\u00e9s', 'D\u2019autres urgences d\u2019abord', 'Non, ils font semblant']
     },
     {
       id: 'big_tech',
-      q: '🏢 Les grandes entreprises tech sont-elles trop puissantes ?',
-      opts: ['Oui, il faut réguler fortement', 'Oui, mais elles innovent', 'Non, la concurrence suffit', 'NSP']
+      q: '\ud83c\udfe2 Les grandes entreprises tech sont-elles trop puissantes\u00a0?',
+      opts: ['Oui, il faut r\u00e9guler fortement', 'Oui, mais elles innovent', 'Non, la concurrence suffit', 'NSP']
     },
     {
       id: 'geopolitique',
-      q: '🌐 Comment percevez-vous la situation géopolitique mondiale ?',
-      opts: ['En nette amélioration', 'Stable', 'En détérioration', 'Au bord d'un basculement']
+      q: '\ud83c\udf10 Comment percevez-vous la situation g\u00e9opolitique mondiale\u00a0?',
+      opts: ['En nette am\u00e9lioration', 'Stable', 'En d\u00e9t\u00e9rioration', 'Au bord d\u2019un basculement']
     },
     {
       id: 'teletravail',
-      q: '🏡 Le télétravail a-t-il amélioré votre qualité de vie ?',
-      opts: ['Oui, vraiment', 'Oui, mais les liens sociaux manquent', 'Non, je préfère le bureau', 'Je n'ai pas cette option']
+      q: '\ud83c\udfe1 Le t\u00e9l\u00e9travail a-t-il am\u00e9lior\u00e9 votre qualit\u00e9 de vie\u00a0?',
+      opts: ['Oui, vraiment', 'Oui, mais les liens sociaux manquent', 'Non, je pr\u00e9f\u00e8re le bureau', 'Je n\u2019ai pas cette option']
     },
     {
       id: 'open_source_ia',
-      q: '🔓 Soutenez-vous le développement de l'IA open source ?',
-      opts: ['Oui, la transparence prime', 'Non, trop dangereux sans garde-fous', 'Ça dépend de l'usage', 'Je ne suis pas concerné']
+      q: '\ud83d\udd13 Soutenez-vous le d\u00e9veloppement de l\u2019IA open source\u00a0?',
+      opts: ['Oui, la transparence prime', 'Non, trop dangereux sans garde-fous', '\u00c7a d\u00e9pend de l\u2019usage', 'Je ne suis pas concern\u00e9']
+    },
+    {
+      id: 'revenu_universel',
+      q: '\ud83d\udcb8 \u00cates-vous favorable au revenu universel de base\u00a0?',
+      opts: ['Oui, c\u2019est l\u2019avenir', 'Oui, mais sous conditions', 'Non, trop co\u00fbteux', 'Non, \u00e7a d\u00e9responsabilise']
+    },
+    {
+      id: 'nucleaire',
+      q: '\u26a1 Le nucl\u00e9aire est-il une \u00e9nergie d\u2019avenir\u00a0?',
+      opts: ['Oui, indispensable pour le climat', 'Oui, mais avec pr\u00e9caution', 'Non, trop risqu\u00e9', 'Uniquement en transition']
+    },
+    {
+      id: 'vie_privee',
+      q: '\ud83d\udd12 La vie priv\u00e9e est-elle une valeur encore d\u00e9fendue sur internet\u00a0?',
+      opts: ['Oui, les outils existent', 'Partiellement', 'Non, elle est morte', 'Je ne m\u2019en pr\u00e9occupe pas']
+    },
+    {
+      id: 'space_colonisation',
+      q: '\ud83d\ude80 L\u2019humanit\u00e9 doit-elle coloniser Mars dans les 50 prochaines ann\u00e9es\u00a0?',
+      opts: ['Oui, priorit\u00e9 absolue', 'Oui, mais apr\u00e8s avoir r\u00e9gl\u00e9 les probl\u00e8mes terrestres', 'Non, trop risqu\u00e9 et co\u00fbteux', 'Rester focus sur la Terre']
+    },
+    {
+      id: 'education_ia',
+      q: '\ud83c\udf93 L\u2019IA va-t-elle red\u00e9finir l\u2019\u00e9ducation\u00a0?',
+      opts: ['Oui, compl\u00e8tement', 'Oui, partiellement', 'Non, le r\u00f4le de l\u2019enseignant reste central', 'Elle va cr\u00e9er de nouvelles in\u00e9galit\u00e9s']
+    },
+    {
+      id: 'guerre_ukraine',
+      q: '\ud83c\uddfa\ud83c\udde6 Comment devrait se terminer le conflit en Ukraine\u00a0?',
+      opts: ['N\u00e9gociations imm\u00e9diates', 'Soutien militaire jusqu\u2019\u00e0 la victoire', 'Cessez-le-feu gel\u00e9', 'Tribunal international']
+    },
+    {
+      id: 'bourse_2025',
+      q: '\ud83d\udcc8 Pensez-vous que les march\u00e9s financiers vont monter en 2025\u00a0?',
+      opts: ['Oui, la hausse continue', 'Non, une correction arrive', 'Tr\u00e8s volatile, impossible \u00e0 pr\u00e9dire', 'Un krach syst\u00e9mique est possible']
+    },
+    {
+      id: 'sante_mentale',
+      q: '\ud83e\udde0 La sant\u00e9 mentale est-elle suffisamment prise en compte dans notre soci\u00e9t\u00e9\u00a0?',
+      opts: ['Oui, des progr\u00e8s ont \u00e9t\u00e9 faits', 'Non, c\u2019est encore un tabou', 'Pas du tout, le syst\u00e8me est inad\u00e9quat', 'Variable selon les pays']
+    },
+    {
+      id: 'migration',
+      q: '\ud83c\udf0f Les politiques migratoires actuelles sont-elles adapt\u00e9es\u00a0?',
+      opts: ['Oui, globalement', 'Non, trop restrictives', 'Non, pas assez strictes', 'Besoin d\u2019une r\u00e9forme profonde']
+    },
+    {
+      id: 'optimisme_avenir',
+      q: '\u2728 Globalement, \u00eates-vous optimiste pour l\u2019avenir de l\u2019humanit\u00e9\u00a0?',
+      opts: ['Oui, je suis confiant(e)', 'Plut\u00f4t oui', 'Plut\u00f4t non', 'Non, la trajectoire est mauvaise']
     },
   ];
 
