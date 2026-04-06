@@ -40,6 +40,7 @@
       --pole-nav-h: 46px;
       --sub-nav-h:  40px;
       --nav-total:  calc(var(--header-h) + var(--pole-nav-h) + var(--sub-nav-h));
+      --legal-bar-h: 26px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
@@ -216,7 +217,7 @@
     #slides-wrap {
       position: fixed;
       top: var(--nav-total);
-      left: 0; right: 0; bottom: 0;
+      left: 0; right: 0; bottom: var(--legal-bar-h);
       overflow: hidden;
     }
     .slide {
@@ -1045,7 +1046,6 @@
           <optgroup label="── Asie ⚠️ État ──">
             <option value="xinhua">Xinhua ⚠️</option>
             <option value="tass">TASS ⚠️</option>
-            <option value="rt">RT ⚠️</option>
           </optgroup>
           <optgroup label="── Afrique ──">
             <option value="africanews">Africanews</option>
@@ -1260,7 +1260,6 @@
             <option value="trtworld">TRT World</option>
             <option value="xinhua">Xinhua ⚠️</option>
             <option value="tass">TASS ⚠️</option>
-            <option value="rt">RT ⚠️</option>
           </optgroup>
           <optgroup label="── Afrique & Latam ──">
             <option value="africanews">Africanews</option>
@@ -1765,14 +1764,60 @@
           ☕ Soutenir sur Tipeee
         </a>
         <div class="gdpr-note" style="margin-top:1.5rem">
-          🔒 <strong>RGPD :</strong> aucun cookie, aucun tracker, aucune donnée personnelle collectée. La géolocalisation reste dans votre navigateur et n'est jamais transmise à nos serveurs. Sources 100% libres et légales. Votes stockés uniquement en localStorage.
+          🔒 <strong>RGPD (Règlement UE 2016/679) :</strong> aucun cookie, aucun tracker, aucune donnée personnelle collectée. La géolocalisation météo reste dans votre navigateur et n'est jamais transmise à nos serveurs. Votes WorldMood et pseudonymes Hub Débat stockés uniquement en localStorage local — jamais envoyés. Sources 100% libres et légales.
         </div>
         <div style="margin-top:1.5rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
           <a href="https://github.com/hachi-art/infonews-v1" target="_blank" rel="noopener" style="font-size:0.78rem;color:var(--primary);font-weight:600">⭐ GitHub — hachi-art/infonews-v1</a>
           <span style="color:var(--border)">|</span>
           <a href="/health" style="font-size:0.78rem;color:var(--muted)">💚 API Status</a>
           <span style="color:var(--border)">|</span>
-          <a href="/sources-legales" style="font-size:0.78rem;color:var(--muted)">📋 Sources légales</a>
+          <a href="/sources-legales" target="_blank" style="font-size:0.78rem;color:var(--muted)">📋 Sources légales</a>
+        </div>
+
+        <!-- Mentions légales complètes -->
+        <div style="margin-top:2rem;max-width:700px;margin-left:auto;margin-right:auto;text-align:left">
+          <h3 style="font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:1rem;color:var(--text)">📋 Mentions légales & Disclaimers</h3>
+
+          <div style="display:grid;gap:0.8rem">
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0.9rem">
+              <div style="font-size:0.78rem;font-weight:700;margin-bottom:0.3rem">🏛️ Éditeur</div>
+              <div style="font-size:0.72rem;color:var(--muted)">infonews.day — projet indépendant open source. Domaine enregistré sur GoDaddy. Dépôt public : <a href="https://github.com/hachi-art/infonews-v1" target="_blank" rel="noopener" style="color:var(--primary)">hachi-art/infonews-v1</a></div>
+            </div>
+
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0.9rem">
+              <div style="font-size:0.78rem;font-weight:700;margin-bottom:0.3rem">📰 Droits des sources</div>
+              <div style="font-size:0.72rem;color:var(--muted)">Toutes les actualités proviennent de flux RSS publics ou d'APIs gratuites officielles. Les articles appartiennent à leurs auteurs respectifs. infonews.day agrège et redirige vers les sources originales — aucun contenu n'est reproduit in extenso sans lien source. Conformément à la directive européenne sur le droit d'auteur (2019/790/UE), nous n'affichons que des extraits et titres, avec lien vers l'article original.</div>
+            </div>
+
+            <div style="background:#fef3cd;border:1px solid #fde68a;border-radius:10px;padding:0.9rem">
+              <div style="font-size:0.78rem;font-weight:700;margin-bottom:0.3rem">⚠️ Sources médias d'État</div>
+              <div style="font-size:0.72rem;color:#92400e">TASS (Russie) et Xinhua (Chine) sont des médias contrôlés par leurs gouvernements respectifs. Leurs contenus sont affichés avec avertissement ⚠️ conformément aux bonnes pratiques journalistiques. RT (Russia Today) est supprimé depuis mars 2022 — interdit dans l'UE par le Règlement (UE) 2022/350 du Conseil du 1er mars 2022.</div>
+            </div>
+
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0.9rem">
+              <div style="font-size:0.78rem;font-weight:700;margin-bottom:0.3rem">💹 Données financières</div>
+              <div style="font-size:0.72rem;color:var(--muted)">Les données de marchés (cours de bourse, cryptomonnaies, taux de change) sont fournies à titre purement informatif. Elles ne constituent en aucun cas un conseil en investissement, une recommandation d'achat ou de vente, ni une prestation de service d'investissement au sens de la Directive MIF II (2014/65/UE). infonews.day n'est pas un prestataire de services d'investissement agréé.</div>
+            </div>
+
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0.9rem">
+              <div style="font-size:0.78rem;font-weight:700;margin-bottom:0.3rem">🌍 Données météo & alertes</div>
+              <div style="font-size:0.72rem;color:var(--muted)">Météo fournie par Open-Meteo (CC BY 4.0). Alertes séismes : USGS Earthquake Hazards Program (domaine public). Alertes catastrophes : GDACS (Global Disaster Alert and Coordination System, ONU). Ces données sont indicatives — consultez les autorités locales en cas d'urgence réelle.</div>
+            </div>
+
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0.9rem">
+              <div style="font-size:0.78rem;font-weight:700;margin-bottom:0.3rem">🎬 Données cinéma</div>
+              <div style="font-size:0.72rem;color:var(--muted)">Affiches et données films/séries fournies par <a href="https://www.themoviedb.org" target="_blank" rel="noopener" style="color:var(--primary)">The Movie Database (TMDB)</a> sous licence Creative Commons. Ce produit utilise l'API TMDB mais n'est pas approuvé ou certifié par TMDB.</div>
+            </div>
+
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0.9rem">
+              <div style="font-size:0.78rem;font-weight:700;margin-bottom:0.3rem">🔒 Vie privée (RGPD)</div>
+              <div style="font-size:0.72rem;color:var(--muted)">Aucune donnée personnelle collectée. Aucun cookie. Aucun pixel de tracking. Le Globe-Guide (IA locale) n'envoie aucune requête externe — les réponses sont générées en local (JavaScript). Les votes WorldMood et pseudonymes Débat sont stockés uniquement en localStorage de votre navigateur, jamais transmis. Géolocalisation utilisée uniquement localement pour l'affichage météo. Vous pouvez supprimer toutes vos données locales via <code style="background:var(--border);padding:1px 4px;border-radius:4px">localStorage.clear()</code> dans la console de votre navigateur.</div>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin-top:1.2rem;font-size:0.65rem;color:var(--muted)">
+            © 2024–2026 infonews.day · Projet open source sous licence MIT · Sébastien Marquetoux
+          </div>
         </div>
       </div>
     </div>
@@ -1807,6 +1852,32 @@
       </div>
     </div>
     <button id="gg-toggle" onclick="toggleGG()" title="Globe-Guide">🌐</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       BARRE LÉGALE FIXE (bas de page)
+  ═══════════════════════════════════════════ -->
+  <div id="legal-bar" style="
+    position:fixed;bottom:0;left:0;right:0;
+    background:rgba(26,26,46,0.92);backdrop-filter:blur(6px);
+    color:rgba(255,255,255,0.65);font-size:0.62rem;
+    padding:0.35rem 1rem;display:flex;align-items:center;gap:0.8rem;
+    z-index:500;white-space:nowrap;overflow:hidden;
+    border-top:1px solid rgba(255,255,255,0.08);
+  ">
+    <span style="color:rgba(255,255,255,0.4);flex-shrink:0">© 2026 infonews.day</span>
+    <span style="color:rgba(255,255,255,0.2)">|</span>
+    <span style="flex-shrink:0">🔒 Aucun cookie · Aucun tracker · localStorage uniquement · RGPD Art.5</span>
+    <span style="color:rgba(255,255,255,0.2)">|</span>
+    <span style="flex-shrink:0">⚠️ TASS · Xinhua : médias d'État — signalés conformément à l'Art.L.97 CPI</span>
+    <span style="color:rgba(255,255,255,0.2)">|</span>
+    <span style="flex-shrink:0">RT supprimé — Règlement UE 2022/350</span>
+    <span style="color:rgba(255,255,255,0.2)">|</span>
+    <span style="flex-shrink:0">📊 Marchés & crypto : à titre informatif uniquement — pas de conseil en investissement</span>
+    <span style="color:rgba(255,255,255,0.2)">|</span>
+    <a href="/sources-legales" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.55);text-decoration:underline;flex-shrink:0">Sources légales</a>
+    <span style="color:rgba(255,255,255,0.2)">|</span>
+    <a href="https://github.com/hachi-art/infonews-v1" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.55);flex-shrink:0">Open source</a>
   </div>
 
   <!-- ═══════════════════════════════════════════
@@ -1923,11 +1994,74 @@
     return 'fr';
   }
 
+  // Traductions des labels UI
+  const I18N = {
+    fr: {
+      poles: ['🌍 Monde','💹 Éco','📡 Newsroom','🎭 Culture','🔬 Tech','📻 Audio','💬 Débat'],
+      subLabels: [
+        ['🌐 Globe','📰 Actualités','🌤️ Météo'],
+        ['📈 Marchés','🪙 Crypto','📊 Données'],
+        ['🗞️ Sources','⚖️ Cross-Check','🔍 Indépendants','⏳ Time Machine'],
+        ['🎵 Événements','📚 Culture','🎬 Cinéma','⚽ Sport'],
+        ['💻 Tech','🔬 Science','🛸 Espace','🤖 IA'],
+        ['📻 Radio','🌐 Organisations','🗂️ Archives','🎨 Art','🎵 Musique'],
+        ['💬 Débat','🌡️ WorldMood','📊 Tendances','💰 Soutenir'],
+      ],
+      searchPlaceholder: 'Filtrer par source…',
+      ggPlaceholder: 'Posez votre question…',
+    },
+    en: {
+      poles: ['🌍 World','💹 Economy','📡 Newsroom','🎭 Culture','🔬 Tech','📻 Audio','💬 Debate'],
+      subLabels: [
+        ['🌐 Globe','📰 News','🌤️ Weather'],
+        ['📈 Markets','🪙 Crypto','📊 Data'],
+        ['🗞️ Sources','⚖️ Cross-Check','🔍 Independent','⏳ Time Machine'],
+        ['🎵 Events','📚 Culture','🎬 Cinema','⚽ Sport'],
+        ['💻 Tech','🔬 Science','🛸 Space','🤖 AI'],
+        ['📻 Radio','🌐 Organisations','🗂️ Archives','🎨 Art','🎵 Music'],
+        ['💬 Debate','🌡️ WorldMood','📊 Trends','💰 Support'],
+      ],
+      searchPlaceholder: 'Filter by source…',
+      ggPlaceholder: 'Ask a question…',
+    },
+    es: {
+      poles: ['🌍 Mundo','💹 Economía','📡 Newsroom','🎭 Cultura','🔬 Tech','📻 Audio','💬 Debate'],
+      subLabels: [
+        ['🌐 Globo','📰 Noticias','🌤️ Tiempo'],
+        ['📈 Mercados','🪙 Cripto','📊 Datos'],
+        ['🗞️ Fuentes','⚖️ Cross-Check','🔍 Independientes','⏳ Máquina del Tiempo'],
+        ['🎵 Eventos','📚 Cultura','🎬 Cine','⚽ Deporte'],
+        ['💻 Tech','🔬 Ciencia','🛸 Espacio','🤖 IA'],
+        ['📻 Radio','🌐 Organizaciones','🗂️ Archivos','🎨 Arte','🎵 Música'],
+        ['💬 Debate','🌡️ WorldMood','📊 Tendencias','💰 Apoyar'],
+      ],
+      searchPlaceholder: 'Filtrar por fuente…',
+      ggPlaceholder: 'Haz una pregunta…',
+    },
+  };
+
   function setLang(lang) {
     currentLang = lang;
     document.documentElement.lang = lang;
     document.querySelectorAll('.lang-btn').forEach(b => {
       b.classList.toggle('active', b.textContent.trim().toLowerCase() === lang);
+    });
+    // Traduire les labels des pôles
+    const t = I18N[lang] || I18N.fr;
+    document.querySelectorAll('.pole-btn').forEach((btn, i) => {
+      if (t.poles[i]) btn.textContent = t.poles[i];
+    });
+    // Traduire les sous-labels du pôle actif
+    const subBtns = document.querySelectorAll('.sub-btn');
+    const subs = t.subLabels[activePole] || [];
+    subBtns.forEach((btn, i) => { if (subs[i]) btn.textContent = subs[i]; });
+    // Traduire le placeholder Globe-Guide
+    const ggInput = document.getElementById('gg-input');
+    if (ggInput && t.ggPlaceholder) ggInput.placeholder = t.ggPlaceholder;
+    // Mettre à jour POLES en mémoire pour renderSubNav
+    POLES.forEach((p, i) => {
+      if (t.poles[i]) p.label = t.poles[i];
+      if (t.subLabels[i]) p.subLabels = t.subLabels[i];
     });
   }
 
@@ -3146,31 +3280,37 @@
   let ggOpen = false;
 
   const GG_CONTEXT = {
-    0: { pole: 'Monde', hint: '🌍 Globe, compteurs mondiaux, actualités, météo' },
-    1: { pole: 'Éco',   hint: '💹 Marchés financiers, crypto, données économiques' },
-    2: { pole: 'Newsroom', hint: '📡 Sources, Cross-Check Ouest/Est, médias indépendants' },
-    3: { pole: 'Culture', hint: '🎭 Événements, culture, cinéma' },
-    4: { pole: 'Tech',  hint: '🔬 Tech, sciences, espace, IA' },
-    5: { pole: 'Audio', hint: '📻 Radio, organisations, archives' },
-    6: { pole: 'Débat', hint: '💬 Débat citoyen, WorldMood, soutenir le projet' },
+    0: { pole: 'Monde',    hint: '🌍 Globe interactif, 22 compteurs temps réel, Actualités (22 sources), Météo 25 villes' },
+    1: { pole: 'Éco',      hint: '💹 Marchés financiers (Yahoo Finance), Crypto (CoinGecko top 50), Données TradingView' },
+    2: { pole: 'Newsroom', hint: '📡 22 sources mondiales, Cross-Check Occident/Orient, Médias indépendants, Time Machine' },
+    3: { pole: 'Culture',  hint: '🎭 Événements culturels, Culture (anime/gaming/BD), Cinéma TMDB, Sport live (TheSportsDB + BBC Sport)' },
+    4: { pole: 'Tech',     hint: '🔬 Tech (TechCrunch+HackerNews), Sciences (WHO+ESA), Espace (ISS live + NASA APOD), IA (OpenAI+DeepMind)' },
+    5: { pole: 'Audio',    hint: '📻 Radio mondiale (12 stations), Organisations (UNESCO/ONU), Archives (BNF/Gallica), Art (Met Museum), Musique (Deezer Charts + Beatport)' },
+    6: { pole: 'Débat',    hint: '💬 Débat citoyen anonyme, WorldMood (vote émotionnel), Tendances Google (5 pays), Soutenir le projet' },
   };
 
   const GG_RESPONSES = {
-    aide: 'Je suis le Globe-Guide ! Je peux vous aider à naviguer sur infonews.day. Quel pôle vous intéresse ?',
-    monde: 'Le pôle Monde contient : le Globe interactif, les Actualités mondiales, et la Météo 25 villes.',
-    eco: 'Le pôle Éco : Marchés financiers (TradingView), Cryptomonnaies (CoinGecko), Données mondiales.',
-    newsroom: 'Le Newsroom : toutes les sources, le Cross-Check Ouest/Est, médias indépendants, Time Machine.',
-    crosscheck: 'Cross-Check compare les médias occidentaux (BBC, Guardian) vs orientaux (Al Jazeera, DW) sur les mêmes actualités.',
-    iss: 'La station spatiale ISS est visible dans le pôle Tech → Espace. Elle orbite à ~420 km d\'altitude.',
-    debat: 'Le Hub Débat est dans le pôle 7. Aucun compte requis — pseudonyme anonyme généré automatiquement.',
-    radio: 'Le pôle Audio → Radio permet d\'écouter des stations mondiales en direct.',
-    default: 'Bonne question ! Naviguez avec les onglets en haut. Chaque pôle contient des sous-pages thématiques. 🌐'
+    aide:      'Je suis le Globe-Guide 🌐 ! Posez-moi une question sur un pôle ou une fonctionnalité : Monde, Éco, Newsroom, Culture, Tech, Audio, Débat.',
+    monde:     'Pôle Monde 🌍 : Globe interactif 3D, Ticker live (news + séismes), 22 compteurs mondiaux temps réel, Actualités (22 sources), Météo 25 villes.',
+    eco:       'Pôle Éco 💹 : Marchés financiers (Yahoo Finance, cours CAC40/SP500/NASDAQ), Crypto top 50 CoinGecko, Taux de change Frankfurter, Widgets TradingView.',
+    newsroom:  'Pôle Newsroom 📡 : 22 sources mondiales (Occident, Orient, Afrique, Latam), Cross-Check Occident vs Orient (6 combinaisons), Médias indépendants, Time Machine.',
+    crosscheck:'Cross-Check ⚖️ : compare BBC/Guardian/Reuters vs Al Jazeera/Xinhua/TASS. 6 combinaisons disponibles : Occident vs Orient, vs Latam, vs Afrique, Reuters vs TASS, Guardian vs Xinhua, Al Jazeera vs BBC.',
+    culture:   'Pôle Culture 🎭 : Événements culturels (festivals, expos), Culture (anime/gaming/BD/littérature), Cinéma & Séries (TMDB + Variety), Sport live (TheSportsDB, BBC Sport, ESPN).',
+    cinema:    'Cinéma 🎬 : Films en salle et séries tendances via TMDB (clé gratuite). Critiques Variety + Hollywood Reporter. Disponible dans Pôle Culture → Cinéma.',
+    sport:     'Sport ⚽ : Matchs TheSportsDB (Premier League, La Liga, Ligue 1, Bundesliga, Champions League), scores live, actualités BBC Sport + ESPN. Disponible dans Pôle Culture → Sport.',
+    musique:   'Musique 🎵 : Top 20 Deezer avec prévisualisations 30s, Charts Beatport (Techno, House, D&B, Afro House…), Actualités Billboard + Pitchfork + NME. Pôle Audio → Musique.',
+    tendances: 'Tendances 📊 : Google Trends RSS officiel pour France, Espagne, UK, USA, Allemagne — ce dont les gens parlent en temps réel. Pôle Débat → Tendances.',
+    iss:       'ISS 🛸 : Carte Leaflet avec position live de la Station Spatiale Internationale, orbite à ~420 km. NASA APOD (photo astronomique du jour). Pôle Tech → Espace.',
+    debat:     'Hub Débat 💬 : Pôle 7. Pseudonyme anonyme généré automatiquement, aucun compte requis, données en localStorage uniquement. RGPD compliant.',
+    radio:     'Radio mondiale 📻 : 12 stations en direct (BBC World, France Inter, Al Jazeera English, RFI, NHK World…). Pôle Audio → Radio.',
+    legal:     'Sources légales 📋 : Toutes nos sources sont libres et légales. RT supprimé (banni UE, Règlement 2022/350). TASS/Xinhua marqués ⚠️ médias d\'État. Aucun cookie ni tracker. Page : /sources-legales',
+    default:   'Bonne question ! Naviguez via les onglets (pôles) en haut. Chaque pôle a des sous-pages thématiques. Tapez "aide" pour voir toutes les fonctionnalités. 🌐'
   };
 
   function updateGGContext() {
     const ctx = GG_CONTEXT[activePole];
     if (!ctx || !ggOpen) return;
-    addGGMessage(`[Pôle actif : ${ctx.pole}] ${ctx.hint}`, 'bot');
+    addGGMessage(`[Pôle actif : ${ctx.pole}]\n${ctx.hint}`, 'bot');
   }
 
   function toggleGG() {
@@ -3194,17 +3334,22 @@
     if (!text) return;
     addGGMessage(text, 'user');
     input.value = '';
-    // Simple intent detection
+    // Intent detection — ordre du plus spécifique au plus général
     const low = text.toLowerCase();
     let reply = GG_RESPONSES.default;
-    if (/aide|help|quoi|c'est quoi/.test(low)) reply = GG_RESPONSES.aide;
-    else if (/monde|globe|pays|actualit/.test(low)) reply = GG_RESPONSES.monde;
-    else if (/éco|eco|marché|bourse|crypto|bitcoin/.test(low)) reply = GG_RESPONSES.eco;
-    else if (/newsroom|source|cross.?check|ouest|est/.test(low)) reply = GG_RESPONSES.newsroom;
-    else if (/cross.?check|comparer/.test(low)) reply = GG_RESPONSES.crosscheck;
-    else if (/iss|station|espace|nasa/.test(low)) reply = GG_RESPONSES.iss;
-    else if (/débat|debat|discussion|opinion/.test(low)) reply = GG_RESPONSES.debat;
-    else if (/radio|écouter|écoute|musique|station/.test(low)) reply = GG_RESPONSES.radio;
+    if      (/aide|help|comment|quoi faire|que fait|fonctionnalit/.test(low)) reply = GG_RESPONSES.aide;
+    else if (/cross.?check|comparer|biais|occident|orient/.test(low))        reply = GG_RESPONSES.crosscheck;
+    else if (/newsroom|source|médias|media|journali/.test(low))               reply = GG_RESPONSES.newsroom;
+    else if (/cinéma|cinema|film|série|serie|tmdb|streaming/.test(low))      reply = GG_RESPONSES.cinema;
+    else if (/sport|match|foot|football|liga|ligue|scores?.live/.test(low))  reply = GG_RESPONSES.sport;
+    else if (/musique|music|deezer|beatport|billboard|charts/.test(low))     reply = GG_RESPONSES.musique;
+    else if (/tendance|trend|google trend|viral|buzz/.test(low))             reply = GG_RESPONSES.tendances;
+    else if (/iss|station spatiale|espace|nasa|apod|satellite/.test(low))    reply = GG_RESPONSES.iss;
+    else if (/radio|écouter|écoute|station|direct/.test(low))               reply = GG_RESPONSES.radio;
+    else if (/débat|debat|discussion|avis|opinion|vote/.test(low))           reply = GG_RESPONSES.debat;
+    else if (/éco|eco|marché|bourse|crypto|bitcoin|finance/.test(low))      reply = GG_RESPONSES.eco;
+    else if (/monde|globe|pays|actualit|météo|meteo|séisme|seis/.test(low)) reply = GG_RESPONSES.monde;
+    else if (/légal|legal|rgpd|gdpr|source|copyright|droit/.test(low))      reply = GG_RESPONSES.legal;
     setTimeout(() => addGGMessage(reply, 'bot'), 300);
   }
 
