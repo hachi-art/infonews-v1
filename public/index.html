@@ -1833,6 +1833,22 @@
       </div>
     </div>
 
+    <!-- P4.3 Cinéma -->
+    <div class="slide" id="s-cinema" data-pole="4" data-sub="2">
+      <h2 class="section-title">🎬 Cinéma & Séries</h2>
+      <p class="section-sub">TMDB · Variety · Hollywood Reporter</p>
+      <div class="filters-row" id="cinemaFilters">
+        <button class="filter-chip active" onclick="loadCinemaTab('now-playing',this)">🎞️ En salle</button>
+        <button class="filter-chip" onclick="loadCinemaTab('trending',this)">🔥 Tendances</button>
+        <button class="filter-chip" onclick="loadCinemaTab('series',this)">📺 Séries</button>
+        <button class="filter-chip" onclick="loadCinemaTab('news',this)">📰 Actualités</button>
+      </div>
+      <div id="cinemaGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-top:0.8rem">
+        <div class="loading-msg">Chargement…</div>
+      </div>
+      <div id="cinemaNewsGrid" class="news-grid" style="margin-top:0.8rem;display:none"></div>
+    </div>
+
     <!-- P6.5 Musique -->
     <div class="slide" id="s-musique" data-pole="4" data-sub="4">
       <h2 class="section-title">🎵 Charts Musique</h2>
@@ -2549,7 +2565,7 @@
   async function loadNews() {
     const grid = document.getElementById('newsGrid');
     if (!grid) return;
-    grid.innerHTML = `<div class="loading-msg">Chargement…</div>`;
+    grid.innerHTML = skeletonCards(6);
     try {
       const src = document.getElementById('sourceSelect')?.value || '';
       const url = `/api/news?limit=80${src ? '&source=' + src : ''}`;
@@ -2614,7 +2630,7 @@
   async function loadNews2() {
     const grid = document.getElementById('newsGrid2');
     if (!grid) return;
-    grid.innerHTML = `<div class="loading-msg">Chargement…</div>`;
+    grid.innerHTML = skeletonCards(6);
     try {
       const src = document.getElementById('sourceSelect2')?.value || '';
       const url = `/api/news?limit=80${src ? '&source=' + src : ''}`;
@@ -2873,8 +2889,8 @@
     if (hWest) hWest.innerHTML = `${leftCfg.label} <span class="badge badge-blue" style="margin-left:auto">${leftCfg.badge}</span>`;
     if (hEast) hEast.innerHTML = `${rightCfg.label} <span class="badge badge-red" style="margin-left:auto">${rightCfg.badge}</span>`;
 
-    document.getElementById('cc-west').innerHTML = '<div class="loading-msg">Chargement…</div>';
-    document.getElementById('cc-east').innerHTML = '<div class="loading-msg">Chargement…</div>';
+    document.getElementById('cc-west').innerHTML = skeletonCards(3);
+    document.getElementById('cc-east').innerHTML = skeletonCards(3);
 
     const [leftR, rightR] = await Promise.allSettled([
       fetch(leftCfg.url).then(r => r.json()),
@@ -2907,6 +2923,7 @@
   async function loadIndep() {
     const grid = document.getElementById('indepGrid');
     if (!grid) return;
+    grid.innerHTML = skeletonCards(6);
     try {
       const r = await fetch('/api/news?source=independent&limit=30');
       const d = await r.json();
@@ -2928,7 +2945,7 @@
           <div style="font-weight:600">${a.title}</div>
           <div style="font-size:0.65rem;color:var(--muted)">${a.source} · ${timeAgo(a.publishedAt)}</div>
         </div>`).join('');
-    } catch(e) { tmToday.innerHTML = 'Chargement…'; }
+    } catch(e) { tmToday.innerHTML = '<div class="loading-msg">Indisponible</div>'; }
   }
 
   // ────────────────────────────────────────────────
@@ -2939,34 +2956,58 @@
   // ────────────────────────────────────────────────
   // CINEMA — TMDB + Variety + Hollywood Reporter
   // ────────────────────────────────────────────────
-  async function loadCinema() {
-    const posterGrid  = document.getElementById('cinemaGrid');
-    const newsGrid    = document.getElementById('cinemaNewsGrid');
-    if (!posterGrid || !newsGrid) return;
+  function loadCinema() {
+    loadCinemaTab('now-playing', document.querySelector('#cinemaFilters .filter-chip'));
+  }
+
+  async function loadCinemaTab(tab, btnEl) {
+    // Active chip
+    document.querySelectorAll('#cinemaFilters .filter-chip').forEach(b => b.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
+
+    const posterGrid = document.getElementById('cinemaGrid');
+    const newsGrid   = document.getElementById('cinemaNewsGrid');
+    if (!posterGrid) return;
+
+    const isNews = tab === 'news';
+    posterGrid.style.display = isNews ? 'none' : 'grid';
+    newsGrid.style.display   = isNews ? ''     : 'none';
+
+    if (isNews) {
+      newsGrid.innerHTML = skeletonCards(6);
+      try {
+        const data = await fetch('/api/cinema/news?limit=16').then(r => r.json());
+        const arts = data.articles || [];
+        newsGrid.innerHTML = arts.slice(0,16).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Aucun article cinéma.</div>';
+      } catch(e) { newsGrid.innerHTML = '<div class="loading-msg">Erreur ❌</div>'; }
+      return;
+    }
+
+    posterGrid.innerHTML = skeletonCards(8);
+    const endpoint = tab === 'series' ? '/api/cinema/series?limit=16' :
+                     tab === 'trending' ? '/api/cinema/trending?limit=16' :
+                     '/api/cinema/now-playing?limit=16';
+    const icon = tab === 'series' ? '📺' : '🎬';
+
     try {
-      const [tmdbR, newsR] = await Promise.allSettled([
-        fetch('/api/cinema/now-playing?limit=12').then(r => r.json()),
-        fetch('/api/cinema/news?limit=12').then(r => r.json()),
-      ]);
-      // Poster cards
-      if (tmdbR.status === 'fulfilled' && (tmdbR.value.data||[]).length > 0) {
-        posterGrid.innerHTML = (tmdbR.value.data||[]).map(m => `
-          <a class="card" href="${m.url}" target="_blank" rel="noopener" style="overflow:hidden;padding:0;display:flex;flex-direction:column">
-            ${m.poster ? `<img src="${m.poster}" alt="${m.title}" style="width:100%;height:260px;object-fit:cover" loading="lazy"/>` : `<div style="height:260px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:3rem">🎬</div>`}
-            <div style="padding:0.7rem">
-              <div style="font-size:0.85rem;font-weight:700;margin-bottom:0.2rem">${m.title}</div>
-              <div style="font-size:0.7rem;color:var(--muted)">⭐ ${m.rating} · ${m.releaseDate||''}</div>
-              ${m.overview ? `<div style="font-size:0.7rem;color:var(--muted);margin-top:0.3rem;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${m.overview}</div>` : ''}
+      const data = await fetch(endpoint).then(r => r.json());
+      const items = data.data || [];
+      if (items.length > 0) {
+        posterGrid.innerHTML = items.map(m => `
+          <a class="card" href="${m.url||'#'}" target="_blank" rel="noopener" style="overflow:hidden;padding:0;display:flex;flex-direction:column;text-decoration:none">
+            ${m.poster
+              ? `<img src="${m.poster}" alt="${m.title||''}" style="width:100%;height:240px;object-fit:cover" loading="lazy"/>`
+              : `<div style="height:240px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:3rem">${icon}</div>`}
+            <div style="padding:0.65rem">
+              <div style="font-size:0.82rem;font-weight:700;margin-bottom:0.2rem;line-height:1.3">${m.title||'—'}</div>
+              <div style="font-size:0.68rem;color:var(--muted)">⭐ ${m.rating||'—'} · ${m.releaseDate||m.firstAirDate||''}</div>
+              ${m.overview ? `<div style="font-size:0.68rem;color:var(--muted);margin-top:0.25rem;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${m.overview}</div>` : ''}
             </div>
           </a>`).join('');
       } else {
         posterGrid.innerHTML = `<div class="loading-msg" style="grid-column:1/-1">Ajoutez TMDB_API_KEY dans .env pour les affiches · <a href="https://www.themoviedb.org/settings/api" target="_blank" style="color:var(--primary)">Créer une clé gratuite →</a></div>`;
       }
-      // News
-      let arts = [];
-      if (newsR.status === 'fulfilled') arts.push(...(newsR.value.articles||[]));
-      newsGrid.innerHTML = arts.slice(0,12).map(a => newsCardHTML(a)).join('') || `<div class="loading-msg">Aucun article cinéma.</div>`;
-    } catch(e) { posterGrid.innerHTML = `<div class="loading-msg">Erreur ❌</div>`; }
+    } catch(e) { posterGrid.innerHTML = `<div class="loading-msg" style="grid-column:1/-1">Erreur ❌</div>`; }
   }
 
   // ────────────────────────────────────────────────
@@ -2978,8 +3019,8 @@
     const matchGrid = document.getElementById('sportMatchesGrid');
     const newsGrid  = document.getElementById('sportNewsGrid');
     if (!matchGrid) return;
-    matchGrid.innerHTML = '<div class="loading-msg">Chargement matchs…</div>';
-    if (newsGrid) newsGrid.innerHTML = '<div class="loading-msg">Chargement actualités sport…</div>';
+    matchGrid.innerHTML = skeletonCards(4);
+    if (newsGrid) newsGrid.innerHTML = skeletonCards(4);
     try {
       const [matchR, newsR] = await Promise.allSettled([
         fetch('/api/sport/matches').then(r => r.json()),
@@ -3035,7 +3076,7 @@
     }
     const grid = document.getElementById('musicGrid');
     if (!grid) return;
-    grid.innerHTML = '<div class="loading-msg">Chargement…</div>';
+    grid.innerHTML = skeletonCards(6);
     try {
       if (tab === 'tracks') {
         const r = await fetch('/api/music/tracks?limit=20').then(r => r.json());
@@ -3070,7 +3111,10 @@
           </div>`).join('') || '<div class="loading-msg">Beatport non disponible.</div>';
       } else if (tab === 'mnews') {
         const r = await fetch('/api/music/news?limit=12').then(r => r.json());
-        grid.innerHTML = `<div class="news-grid">` + (r.articles||[]).map(a => newsCardHTML(a)).join('') + `</div>` || '<div class="loading-msg">Aucune actualité musique.</div>';
+        const mArts = r.articles || [];
+        grid.innerHTML = mArts.length
+          ? `<div class="news-grid">${mArts.map(a => newsCardHTML(a)).join('')}</div>`
+          : '<div class="loading-msg">Aucune actualité musique.</div>';
       }
     } catch(e) { grid.innerHTML = `<div class="loading-msg">Erreur ❌</div>`; }
   }
@@ -3084,7 +3128,7 @@
     _currentTrendsGeo = geo || _currentTrendsGeo;
     const grid = document.getElementById('trendsGrid');
     if (!grid) return;
-    grid.innerHTML = '<div class="loading-msg">Chargement tendances…</div>';
+    grid.innerHTML = skeletonCards(6);
     try {
       const r = await fetch(`/api/trends?geo=${_currentTrendsGeo}&limit=24`).then(r => r.json());
       const items = r.trends || [];
@@ -3115,6 +3159,7 @@
   async function loadTechNews() {
     const grid = document.getElementById('techGrid');
     if (!grid) return;
+    grid.innerHTML = skeletonCards(6);
     try {
       const [r1, r2] = await Promise.allSettled([
         fetch('/api/news/techcrunch').then(r => r.json()),
@@ -3134,6 +3179,7 @@
   async function loadScienceNews() {
     const grid = document.getElementById('scienceGrid');
     if (!grid) return;
+    grid.innerHTML = skeletonCards(6);
     try {
       const [sciR, whoR, arxivR] = await Promise.allSettled([
         fetch('/api/news?category=science&limit=15').then(r => r.json()),
@@ -3157,6 +3203,7 @@
   async function loadIANews() {
     const grid = document.getElementById('iaGrid');
     if (!grid) return;
+    grid.innerHTML = skeletonCards(6);
     try {
       const [aiR, hnR, arxivR] = await Promise.allSettled([
         fetch('/api/news/ai').then(r => r.json()),
@@ -3239,6 +3286,7 @@
   async function loadSpaceNews() {
     const grid = document.getElementById('spaceNewsGrid');
     if (!grid) return;
+    grid.innerHTML = skeletonCards(6);
     try {
       const [esaR, arxivR] = await Promise.allSettled([
         fetch('/api/news/esa').then(r => r.json()),
@@ -3381,7 +3429,7 @@
         const el = document.getElementById(elId);
         if (!el) return;
         const arts = d.orgs?.[key] || [];
-        if (!arts.length) { el.innerHTML = '<div class="org-item" style="color:var(--muted)">Chargement…</div>'; return; }
+        if (!arts.length) { el.innerHTML = '<div class="org-item" style="color:var(--muted)">Indisponible</div>'; return; }
         el.innerHTML = arts.map(a => `
           <div class="org-item">
             <a href="${a.url}" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none">
@@ -3446,7 +3494,7 @@
     const totalEl = document.getElementById('sky2-total');
     const listEl  = document.getElementById('sky2Flights');
     if (!listEl) return;
-    listEl.innerHTML = '<div style="color:#8b949e">Chargement…</div>';
+    listEl.innerHTML = '<div style="color:#8b949e">Scanning…</div>';
 
     // Init map once
     if (!_skyMap && document.getElementById('skyMap2')) {
@@ -3555,7 +3603,7 @@
     }
     const grid = document.getElementById('youtubeGrid');
     if (!grid) return;
-    grid.innerHTML = '<div class="loading-msg">Chargement vidéos…</div>';
+    grid.innerHTML = skeletonCards(6);
     try {
       const url = category ? `/api/youtube?limit=5&category=${category}` : '/api/youtube?limit=4';
       const r = await fetch(url).then(r => r.json());
@@ -3587,7 +3635,7 @@
   async function loadReddit() {
     const grid = document.getElementById('redditGrid');
     if (!grid) return;
-    grid.innerHTML = '<div class="loading-msg">Chargement Reddit…</div>';
+    grid.innerHTML = skeletonCards(6);
     try {
       const r = await fetch('/api/reddit?sub=worldnews&limit=12');
       const d = await r.json();
@@ -4107,7 +4155,7 @@
   async function loadSanteNews() {
     const grid = document.getElementById('santeGrid');
     if (!grid) return;
-    grid.innerHTML = '<div class="loading-msg">Chargement OMS…</div>';
+    grid.innerHTML = skeletonCards(6);
     try {
       const r = await fetch('/api/society/health?limit=16');
       const d = await r.json();
@@ -4118,7 +4166,7 @@
   async function loadDroitsNews() {
     const grid = document.getElementById('droitsGrid');
     if (!grid) return;
-    grid.innerHTML = '<div class="loading-msg">Chargement droits humains…</div>';
+    grid.innerHTML = skeletonCards(6);
     try {
       const r = await fetch('/api/society/rights?limit=16');
       const d = await r.json();
@@ -4129,7 +4177,7 @@
   async function loadEnvironNews() {
     const grid = document.getElementById('environGrid');
     if (!grid) return;
-    grid.innerHTML = '<div class="loading-msg">Chargement environnement…</div>';
+    grid.innerHTML = skeletonCards(6);
     try {
       const r = await fetch('/api/society/environment?limit=16');
       const d = await r.json();
@@ -4144,7 +4192,7 @@
   async function loadCyberNews() {
     const grid = document.getElementById('cyberGrid');
     if (!grid) return;
-    grid.innerHTML = '<div class="loading-msg">Chargement cyber…</div>';
+    grid.innerHTML = skeletonCards(6);
     try {
       const r = await fetch('/api/tech/cyber?limit=18');
       const d = await r.json();
@@ -4163,7 +4211,7 @@
       document.querySelectorAll('#podcastCatFilters .filter-chip').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
     }
-    grid.innerHTML = '<div class="loading-msg">Chargement podcasts…</div>';
+    grid.innerHTML = skeletonCards(3);
     try {
       const url = cat ? `/api/podcasts?limit=3&cat=${encodeURIComponent(cat)}` : '/api/podcasts?limit=3';
       const r = await fetch(url);
