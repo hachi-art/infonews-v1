@@ -945,6 +945,69 @@
       header { padding: 0 0.8rem; gap: 0.5rem; }
       .clocks .clock-item:nth-child(n+4) { display: none; }
     }
+
+    /* ── DARK / LIGHT THEME ── */
+    body.light-mode {
+      --bg:      #f0f2f5;
+      --card:    #ffffff;
+      --border:  #d1d5db;
+      --text:    #111827;
+      --muted:   #6b7280;
+      --primary: #1a73e8;
+    }
+    .theme-toggle-btn, .search-toggle-btn {
+      background: none; border: 1px solid var(--border); color: var(--text);
+      border-radius: 8px; padding: 4px 8px; cursor: pointer; font-size: 0.85rem;
+      transition: border-color 0.2s;
+    }
+    .theme-toggle-btn:hover, .search-toggle-btn:hover { border-color: var(--primary); }
+    /* ── BARRE DE RECHERCHE GLOBALE ── */
+    .search-bar-wrap {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--header-h);
+      background: var(--card); border-bottom: 1px solid var(--border);
+      align-items: center; gap: 0.5rem; padding: 0 1rem; z-index: 600;
+    }
+    .global-search-input {
+      flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+      padding: 0.5rem 1rem; color: var(--text); font-size: 0.88rem; font-family: inherit;
+    }
+    .global-search-input:focus { outline: none; border-color: var(--primary); }
+    .global-search-btn {
+      background: var(--primary); color: #fff; border: none; border-radius: 10px;
+      padding: 0.5rem 0.9rem; cursor: pointer; font-size: 0.9rem;
+    }
+    .global-search-close {
+      background: none; border: 1px solid var(--border); color: var(--text);
+      border-radius: 8px; padding: 0.4rem 0.7rem; cursor: pointer; font-size: 0.82rem;
+    }
+    /* ── SKELETON LOADERS ── */
+    @keyframes skeleton-shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, var(--card) 25%, rgba(255,255,255,0.12) 50%, var(--card) 75%);
+      background-size: 800px 100%;
+      animation: skeleton-shimmer 1.4s infinite linear;
+      border-radius: 6px;
+    }
+    .skeleton-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;
+    }
+    .skeleton-line { height: 12px; border-radius: 4px; }
+    .skeleton-title { height: 16px; border-radius: 4px; width: 80%; }
+    /* ── SHARE BUTTON ── */
+    .share-btn {
+      background: none; border: 1px solid var(--border); color: var(--muted);
+      border-radius: 6px; padding: 2px 8px; font-size: 0.68rem; cursor: pointer;
+      transition: all 0.2s; line-height: 1.6;
+    }
+    .share-btn:hover { border-color: var(--primary); color: var(--primary); }
+    /* ── LANGUE FILTER TAG ── */
+    .lang-tag { display:inline-block; font-size:0.6rem; padding:1px 5px; border-radius:4px;
+      background:rgba(88,166,255,0.15); color:var(--primary); font-weight:700; margin-left:4px; vertical-align:middle; }
+
   </style>
 </head>
 <body>
@@ -959,12 +1022,29 @@
     </div>
     <div class="clocks" id="clocksRow"></div>
     <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+    <div class="search-bar-wrap" id="searchBarWrap" style="display:none">
+      <input type="text" id="globalSearchInput" class="global-search-input" placeholder="Rechercher dans toutes les sources…" onkeydown="if(event.key==='Enter')runGlobalSearch()" oninput="handleSearchInput(this.value)"/>
+      <button class="global-search-btn" onclick="runGlobalSearch()">🔍</button>
+      <button class="global-search-close" onclick="closeSearch()">✕</button>
+    </div>
     <div class="lang-sel">
+      <button class="search-toggle-btn" onclick="toggleSearch()" title="Recherche globale">🔍</button>
+      <button class="theme-toggle-btn" onclick="toggleTheme()" id="themeToggleBtn" title="Mode clair/sombre">🌙</button>
       <button class="lang-btn active" onclick="setLang('fr')">FR</button>
       <button class="lang-btn" onclick="setLang('en')">EN</button>
       <button class="lang-btn" onclick="setLang('es')">ES</button>
     </div>
   </header>
+  <!-- Résultats recherche globale -->
+  <div id="searchResults" style="display:none;position:fixed;top:calc(var(--header-h) + var(--pole-nav-h) + var(--sub-nav-h));left:0;right:0;bottom:0;background:var(--bg);z-index:900;overflow-y:auto;padding:1.2rem">
+    <div style="max-width:900px;margin:0 auto">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <h2 id="searchResultsTitle" style="font-size:1.1rem;font-weight:700">Résultats de recherche</h2>
+        <button onclick="closeSearch()" style="background:none;border:1px solid var(--border);color:var(--text);padding:4px 12px;border-radius:8px;cursor:pointer;font-size:0.82rem">Fermer ✕</button>
+      </div>
+      <div id="searchResultsGrid" class="news-grid"><div class="loading-msg">Tapez pour rechercher…</div></div>
+    </div>
+  </div>
 
   <!-- ═══════════════════════════════════════════
        POLE NAV (niveau 1)
@@ -1277,6 +1357,13 @@
         <button class="filter-chip" data-cat2="science">Science</button>
         <button class="filter-chip" data-cat2="culture">Culture</button>
         <button class="filter-chip" data-cat2="sport">Sport</button>
+      </div>
+      <div class="filters-row" id="langFilters" style="margin-top:0.3rem">
+        <button class="filter-chip active" data-lang="all" onclick="filterNewsByLang('all',this)">🌐 Toutes langues</button>
+        <button class="filter-chip" data-lang="fr" onclick="filterNewsByLang('fr',this)">🇫🇷 Français</button>
+        <button class="filter-chip" data-lang="en" onclick="filterNewsByLang('en',this)">🇬🇧 Anglais</button>
+        <button class="filter-chip" data-lang="ar" onclick="filterNewsByLang('ar',this)">🇸🇦 Arabe</button>
+        <button class="filter-chip" data-lang="es" onclick="filterNewsByLang('es',this)">🇪🇸 Espagnol</button>
         <select id="sourceSelect2" style="font-size:0.72rem;padding:4px 8px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-family:inherit;margin-left:0.5rem">
           <option value="">Toutes sources</option>
           <optgroup label="── Occident ──">
@@ -1385,24 +1472,18 @@
     <!-- P3.4 Time Machine -->
     <div class="slide" id="s-timemachine" data-pole="3" data-sub="4">
       <h2 class="section-title">⏳ Time Machine</h2>
-      <p class="section-sub">Comparez l'info d'hier, d'il y a un an, et d'aujourd'hui</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
-        <div class="card" style="padding:1.2rem">
-          <div style="font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.4rem">📅 Il y a 7 jours</div>
-          <div id="tm-week" style="font-size:0.82rem;color:var(--muted)">Fonctionnalité disponible avec l'archive backend — données en cours d'indexation.</div>
-        </div>
-        <div class="card" style="padding:1.2rem">
-          <div style="font-size:0.7rem;font-weight:700;color:var(--primary);text-transform:uppercase;margin-bottom:0.8rem">🔴 Aujourd'hui</div>
-          <div id="tm-today" class="loading-msg" style="padding:0">Chargement…</div>
-        </div>
-        <div class="card" style="padding:1.2rem">
-          <div style="font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.4rem">📅 Il y a 1 an</div>
-          <div id="tm-year" style="font-size:0.82rem;color:var(--muted)">Archives historiques via Chronicling America. Intégration en cours.</div>
-        </div>
+      <p class="section-sub">Wikipedia "En ce jour" · Ce qui s'est passé ce jour-là dans l'histoire</p>
+      <div style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center">
+        <label style="font-size:0.78rem;color:var(--muted)">Choisir une date :</label>
+        <input type="date" id="tmDateInput" style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0.4rem 0.8rem;color:var(--text);font-size:0.85rem;font-family:inherit" onchange="loadTimeMachine()"/>
+        <button onclick="loadTimeMachineTodayDate()" style="background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.78rem">Aujourd'hui</button>
       </div>
-      <div style="margin-top:1.4rem">
-        <h3 class="section-title" style="font-size:1.1rem">🗂️ Archives Chronicling America</h3>
-        <div id="historicGrid" class="news-grid"><div class="loading-msg">Archives historiques — intégration backend en cours.</div></div>
+      <div id="tmOnThisDay" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.8rem">
+        <div class="loading-msg">Chargement événements historiques…</div>
+      </div>
+      <div style="margin-top:1.2rem">
+        <h3 class="section-title" style="font-size:1rem">📅 Aujourd'hui dans les actualités</h3>
+        <div id="tm-today" class="news-grid"></div>
       </div>
     </div>
 
@@ -1410,73 +1491,16 @@
 
     <!-- P4.1 Événements -->
     <div class="slide" id="s-events" data-pole="4" data-sub="0">
-      <h2 class="section-title">🎵 Concerts & Festivals</h2>
-      <p class="section-sub">Événements musicaux et culturels mondiaux</p>
-      <div class="events-list" id="eventsList">
-        <div class="event-card">
-          <div class="event-date-box"><div class="event-date-day">12</div><div class="event-date-month">Avr</div></div>
-          <div class="event-info">
-            <div class="event-name">Coachella Valley Music & Arts Festival</div>
-            <div class="event-meta">🇺🇸 Indio, Californie · 3 jours · Rock / Pop / EDM</div>
-          </div>
-          <span class="badge badge-blue">Rock</span>
-        </div>
-        <div class="event-card">
-          <div class="event-date-box"><div class="event-date-day">18</div><div class="event-date-month">Avr</div></div>
-          <div class="event-info">
-            <div class="event-name">Ultra Music Festival Miami</div>
-            <div class="event-meta">🇺🇸 Miami, Floride · Electronic · Techno</div>
-          </div>
-          <span class="badge badge-green">EDM</span>
-        </div>
-        <div class="event-card">
-          <div class="event-date-box"><div class="event-date-day">25</div><div class="event-date-month">Avr</div></div>
-          <div class="event-info">
-            <div class="event-name">Primavera Sound Barcelona</div>
-            <div class="event-meta">🇪🇸 Barcelone · 5 jours · Alternative / Indie</div>
-          </div>
-          <span class="badge badge-warn">Indie</span>
-        </div>
-        <div class="event-card">
-          <div class="event-date-box"><div class="event-date-day">7</div><div class="event-date-month">Mai</div></div>
-          <div class="event-info">
-            <div class="event-name">Le Printemps de Bourges</div>
-            <div class="event-meta">🇫🇷 Bourges, France · Chanson / Variété / Rock</div>
-          </div>
-          <span class="badge badge-blue">FR</span>
-        </div>
-        <div class="event-card">
-          <div class="event-date-box"><div class="event-date-day">21</div><div class="event-date-month">Juin</div></div>
-          <div class="event-info">
-            <div class="event-name">Fête de la Musique (monde entier)</div>
-            <div class="event-meta">🌍 International · Musique gratuite · + de 120 pays</div>
-          </div>
-          <span class="badge badge-green">Mondial</span>
-        </div>
-        <div class="event-card">
-          <div class="event-date-box"><div class="event-date-day">25</div><div class="event-date-month">Jun</div></div>
-          <div class="event-info">
-            <div class="event-name">Glastonbury Festival</div>
-            <div class="event-meta">🇬🇧 Somerset, Angleterre · Pop / Rock / World</div>
-          </div>
-          <span class="badge badge-warn">Rock</span>
-        </div>
+      <h2 class="section-title">🎪 Agenda culturel</h2>
+      <p class="section-sub">Actualités culturelles · Ce qui s'est passé ce jour dans l'histoire</p>
+      <div class="filters-row" id="eventsFilters">
+        <button class="filter-chip active" onclick="loadEventsTab('culture',this)">🎭 Actu Culture</button>
+        <button class="filter-chip" onclick="loadEventsTab('onthisday',this)">📅 En ce jour</button>
+      </div>
+      <div id="eventsGrid" style="margin-top:0.8rem">
+        <div class="loading-msg">Chargement événements…</div>
       </div>
     </div>
-
-    <!-- P5.3 Cinéma & Séries -->
-    <div class="slide" id="s-cinema" data-pole="4" data-sub="2">
-      <h2 class="section-title">🎬 Cinéma & Séries</h2>
-      <p class="section-sub">Films en salle, sorties streaming, critiques</p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem" id="cinemaGrid">
-        <div class="loading-msg">Données cinéma — connexion TMDB en cours d'intégration.</div>
-      </div>
-      <div style="margin-top:1.4rem">
-        <h3 class="section-title" style="font-size:1.1rem">🎙️ Actualités cinéma</h3>
-        <div class="news-grid" id="cinemaNewsGrid"><div class="loading-msg">Chargement…</div></div>
-      </div>
-    </div>
-
     <!-- P4.4 Sport -->
     <div class="slide" id="s-sport" data-pole="4" data-sub="3">
       <h2 class="section-title">⚽ Sport en direct</h2>
@@ -1774,37 +1798,32 @@
     <!-- P6.3 Archives historiques -->
     <div class="slide" id="s-hist" data-pole="3" data-sub="3">
       <h2 class="section-title">🗂️ Archives historiques</h2>
-      <p class="section-sub">Chronicling America · Presse mondiale · Documents déclassifiés</p>
-      <div class="card" style="padding:1.5rem;text-align:center;margin-bottom:1.2rem">
-        <div style="font-size:2rem;margin-bottom:0.5rem">📰</div>
-        <h3 style="font-size:1rem;margin-bottom:0.5rem">Chronicling America — LOC</h3>
-        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem">Archives numérisées de la presse américaine 1770–1963 · Library of Congress</p>
-        <a href="https://chroniclingamerica.loc.gov" target="_blank" rel="noopener" style="background:var(--primary);color:#fff;padding:0.5rem 1.2rem;border-radius:8px;font-size:0.82rem;font-weight:600">Accéder aux archives →</a>
+      <p class="section-sub">Chronicling America · Library of Congress · Domaine public · 1770–1963</p>
+      <div style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap">
+        <input type="text" id="histSearchInput" placeholder="Chercher dans la presse historique… (ex: World War, revolution)" style="flex:1;min-width:200px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0.5rem 1rem;color:var(--text);font-size:0.85rem;font-family:inherit" onkeydown="if(event.key==='Enter')loadHist()"/>
+        <input type="number" id="histYearInput" placeholder="Année (1770–1963)" min="1770" max="1963" style="width:160px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0.5rem 0.8rem;color:var(--text);font-size:0.85rem;font-family:inherit"/>
+        <button onclick="loadHist()" style="background:var(--primary);color:#fff;border:none;border-radius:10px;padding:0.5rem 1.1rem;cursor:pointer;font-size:0.85rem;font-weight:600">🔍 Chercher</button>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem">
-        <div class="card" style="padding:1rem">
-          <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.5rem">📚 Europeana</div>
-          <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem">Patrimoine culturel européen numérisé</div>
-          <a href="https://www.europeana.eu/fr" target="_blank" rel="noopener" style="color:var(--primary);font-size:0.78rem;font-weight:600">Découvrir →</a>
-        </div>
-        <div class="card" style="padding:1rem">
-          <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.5rem">🗺️ Gallica — BNF</div>
-          <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem">Bibliothèque numérique nationale française</div>
-          <a href="https://gallica.bnf.fr" target="_blank" rel="noopener" style="color:var(--primary);font-size:0.78rem;font-weight:600">Explorer →</a>
-        </div>
-        <div class="card" style="padding:1rem">
-          <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.5rem">🌐 Internet Archive</div>
-          <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem">Wayback Machine · Web archivé depuis 1996</div>
-          <a href="https://archive.org" target="_blank" rel="noopener" style="color:var(--primary);font-size:0.78rem;font-weight:600">Accéder →</a>
-        </div>
-        <div class="card" style="padding:1rem">
-          <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.5rem">🎨 Met Museum</div>
-          <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem">470 000+ œuvres en open access</div>
-          <a href="https://www.metmuseum.org/art/collection" target="_blank" rel="noopener" style="color:var(--primary);font-size:0.78rem;font-weight:600">Collection →</a>
-        </div>
+      <div id="histGrid" class="news-grid"><div class="loading-msg">Cherchez un sujet dans la presse historique US (ex: "World War", "revolution", "election"…).</div></div>
+      <div style="margin-top:1.2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.8rem">
+        <a href="https://chroniclingamerica.loc.gov" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">📰 Chronicling America</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Presse US 1770–1963 · Library of Congress</div>
+        </a>
+        <a href="https://gallica.bnf.fr" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">🗺️ Gallica BNF</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Bibliothèque nationale française</div>
+        </a>
+        <a href="https://www.europeana.eu" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">📚 Europeana</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Patrimoine culturel européen</div>
+        </a>
+        <a href="https://archive.org" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">🌐 Internet Archive</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Wayback Machine · Web depuis 1996</div>
+        </a>
       </div>
     </div>
-
     <!-- P6.4 Art mondial -->
     <div class="slide" id="s-art" data-pole="4" data-sub="1">
       <h2 class="section-title">🎨 Art & Collections</h2>
@@ -2142,10 +2161,10 @@
       case 's-sources':    return loadNews2();
       case 's-crosscheck': return loadCrossCheck();
       case 's-indep':      return loadIndep();
-      case 's-hist':       break; // liens statiques
+      case 's-hist':       return; // recherche manuelle
       case 's-timemachine':return loadTimeMachine();
       // ── Pôle 4 : Culture ──
-      case 's-events':     break; // statique
+      case 's-events':     return loadEventsTab('culture', document.querySelector('#eventsFilters .filter-chip'));
       case 's-art':        return loadArt();
       case 's-cinema':     return loadCinema();
       case 's-sport':      return loadSport();
@@ -2555,19 +2574,26 @@
     const ago = timeAgo(a.publishedAt);
     const srcClass = `src-${(a.source||'').toLowerCase().replace(/\s+/g,'')}`;
     const isState = ['RT','CGTN','TASS','Xinhua'].includes(a.source);
+    const safeTitle = (a.title||'').replace(/"/g,'&quot;');
+    const safeUrl   = (a.url||'').replace(/"/g,'&quot;');
     return `
-      <a class="news-card" href="${a.url}" target="_blank" rel="noopener">
-        <div class="news-card-top">
-          <span class="source-badge ${srcClass}">${a.source || '?'}</span>
-          ${isState ? `<span class="state-warn">⚠️ État</span>` : ''}
-          <span class="news-meta">${ago}</span>
+      <div class="news-card" data-source="${(a.source||'').toLowerCase()}">
+        <a href="${safeUrl}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block">
+          <div class="news-card-top">
+            <span class="source-badge ${srcClass}">${a.source || '?'}</span>
+            ${isState ? `<span class="state-warn">⚠️ État</span>` : ''}
+            <span class="news-meta">${ago}</span>
+          </div>
+          <div class="news-title">${a.title}</div>
+          <div class="news-meta">
+            <span class="news-cat">${a.category || ''}</span>
+            ${(a.description||a.summary) ? `· ${(a.description||a.summary).slice(0,90)}…` : ''}
+          </div>
+        </a>
+        <div style="margin-top:0.4rem;display:flex;justify-content:flex-end">
+          <button class="share-btn" onclick="event.stopPropagation();shareArticle(\`${safeTitle}\`,\`${safeUrl}\`)">📤 Partager</button>
         </div>
-        <div class="news-title">${a.title}</div>
-        <div class="news-meta">
-          <span class="news-cat">${a.category || ''}</span>
-          ${(a.description||a.summary) ? `· ${(a.description||a.summary).slice(0,90)}…` : ''}
-        </div>
-      </a>`;
+      </div>`;
   }
 
   document.getElementById('newsFilters').addEventListener('click', e => {
@@ -3831,6 +3857,221 @@
   function prevSondage() {
     currentSondageIdx = (currentSondageIdx - 1 + SONDAGES.length) % SONDAGES.length;
     renderSondage(currentSondageIdx);
+  }
+
+  // ────────────────────────────────────────────────
+  // DARK / LIGHT MODE
+  // ────────────────────────────────────────────────
+  function toggleTheme() {
+    const isLight = document.body.classList.toggle('light-mode');
+    const btn = document.getElementById('themeToggleBtn');
+    if (btn) btn.textContent = isLight ? '☀️' : '🌙';
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+  // Restore saved theme
+  (function() {
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light-mode');
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) btn.textContent = '☀️';
+    }
+  })();
+
+  // ────────────────────────────────────────────────
+  // RECHERCHE GLOBALE
+  // ────────────────────────────────────────────────
+  let _searchTimeout = null;
+  function toggleSearch() {
+    const wrap = document.getElementById('searchBarWrap');
+    const results = document.getElementById('searchResults');
+    const isOpen = wrap.style.display !== 'none';
+    if (isOpen) { closeSearch(); return; }
+    wrap.style.display = 'flex';
+    document.getElementById('globalSearchInput')?.focus();
+  }
+  function closeSearch() {
+    document.getElementById('searchBarWrap').style.display = 'none';
+    document.getElementById('searchResults').style.display = 'none';
+  }
+  function handleSearchInput(val) {
+    clearTimeout(_searchTimeout);
+    if (val.length < 3) return;
+    _searchTimeout = setTimeout(() => runGlobalSearch(), 600);
+  }
+  async function runGlobalSearch() {
+    const q = document.getElementById('globalSearchInput')?.value?.trim();
+    if (!q || q.length < 2) return;
+    const resultsEl = document.getElementById('searchResults');
+    const gridEl    = document.getElementById('searchResultsGrid');
+    const titleEl   = document.getElementById('searchResultsTitle');
+    resultsEl.style.display = 'block';
+    gridEl.innerHTML = skeletonCards(6);
+    if (titleEl) titleEl.textContent = `Résultats pour "${q}"…`;
+    try {
+      const r = await fetch(`/api/search?q=${encodeURIComponent(q)}&limit=24`);
+      const d = await r.json();
+      if (titleEl) titleEl.textContent = `${d.total} résultat${d.total > 1 ? 's' : ''} pour "${q}"`;
+      gridEl.innerHTML = (d.articles || []).map(a => newsCardHTML(a)).join('') ||
+        `<div class="loading-msg">Aucun résultat pour "${q}".</div>`;
+    } catch(e) {
+      gridEl.innerHTML = '<div class="loading-msg">Erreur recherche ❌</div>';
+    }
+  }
+
+  // ────────────────────────────────────────────────
+  // SKELETON LOADERS
+  // ────────────────────────────────────────────────
+  function skeletonCards(n = 6) {
+    return Array.from({length: n}, () => `
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-badge" style="width:60px;height:18px"></div>
+        <div class="skeleton skeleton-title"></div>
+        <div class="skeleton skeleton-line" style="width:95%"></div>
+        <div class="skeleton skeleton-line" style="width:70%"></div>
+        <div class="skeleton skeleton-line" style="width:50%"></div>
+      </div>`).join('');
+  }
+
+  // ────────────────────────────────────────────────
+  // SHARE BUTTON (Web Share API)
+  // ────────────────────────────────────────────────
+  async function shareArticle(title, url) {
+    if (navigator.share) {
+      try { await navigator.share({ title, url }); } catch(e) {}
+    } else {
+      navigator.clipboard?.writeText(url);
+      alert('Lien copié dans le presse-papiers !');
+    }
+  }
+
+  // ────────────────────────────────────────────────
+  // ARCHIVES — Chronicling America (Library of Congress)
+  // ────────────────────────────────────────────────
+  async function loadHist() {
+    const q    = document.getElementById('histSearchInput')?.value?.trim() || 'world news';
+    const year = document.getElementById('histYearInput')?.value?.trim() || '';
+    const grid = document.getElementById('histGrid');
+    if (!grid) return;
+    grid.innerHTML = skeletonCards(6);
+    try {
+      const params = new URLSearchParams({ q, limit: 18 });
+      if (year) params.set('year', year);
+      const r = await fetch(`/api/hist/search?${params}`);
+      const d = await r.json();
+      if (!d.items?.length) {
+        grid.innerHTML = '<div class="loading-msg">Aucun résultat. Essayez un autre terme ou une autre période.</div>';
+        return;
+      }
+      grid.innerHTML = d.items.map(item => `
+        <a class="news-card" href="${item.url}" target="_blank" rel="noopener">
+          <div class="news-card-top">
+            <span class="source-badge" style="background:#7c3aed;color:#fff">📰 ${item.date?.slice(0,4) || 'Archive'}</span>
+            <span class="news-meta">${item.newspaper}</span>
+          </div>
+          <div class="news-title">${item.title}</div>
+          ${item.ocr ? `<div class="news-summary" style="font-size:0.71rem;color:var(--muted);margin-top:4px;line-height:1.4">${item.ocr}</div>` : ''}
+          <div class="news-meta">${item.state || ''}</div>
+        </a>`).join('');
+    } catch(e) { grid.innerHTML = '<div class="loading-msg">Erreur archives ❌</div>'; }
+  }
+
+  // ────────────────────────────────────────────────
+  // TIME MACHINE — Wikipedia On This Day
+  // ────────────────────────────────────────────────
+  async function loadTimeMachine() {
+    const dateInput = document.getElementById('tmDateInput');
+    const now = new Date();
+    if (dateInput && !dateInput.value) {
+      dateInput.value = now.toISOString().slice(0, 10);
+    }
+    const dateStr  = dateInput?.value || now.toISOString().slice(0, 10);
+    const [,, mm, dd] = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/) || [];
+    const month = mm || String(now.getMonth() + 1).padStart(2,'0');
+    const day   = dd || String(now.getDate()).padStart(2,'0');
+    const grid  = document.getElementById('tmOnThisDay');
+    const todayGrid = document.getElementById('tm-today');
+    if (!grid) return;
+    grid.innerHTML = skeletonCards(4);
+    try {
+      const [histR, newsR] = await Promise.allSettled([
+        fetch(`/api/hist/onthisday?month=${month}&day=${day}`).then(r => r.json()),
+        fetch('/api/news?limit=5').then(r => r.json()),
+      ]);
+      if (histR.status === 'fulfilled') {
+        const d = histR.value;
+        const allEvents = [...(d.selected||[]), ...(d.events||[])].slice(0, 16);
+        grid.innerHTML = allEvents.map(e => `
+          <div class="card" style="padding:0.9rem">
+            <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--primary);font-weight:700;margin-bottom:6px">📅 ${e.year}</div>
+            <div style="font-size:0.83rem;line-height:1.4">${e.text}</div>
+            ${e.pages?.[0]?.url ? `<a href="${e.pages[0].url}" target="_blank" rel="noopener" style="font-size:0.7rem;color:var(--primary);font-weight:600;margin-top:6px;display:inline-block">Wikipedia →</a>` : ''}
+          </div>`).join('') || '<div class="loading-msg">Aucun événement trouvé pour cette date.</div>';
+      }
+      if (todayGrid && newsR.status === 'fulfilled') {
+        const arts = newsR.value.articles || [];
+        todayGrid.innerHTML = arts.slice(0,5).map(a => newsCardHTML(a)).join('');
+      }
+    } catch(e) { grid.innerHTML = '<div class="loading-msg">Erreur Time Machine ❌</div>'; }
+  }
+  function loadTimeMachineTodayDate() {
+    const input = document.getElementById('tmDateInput');
+    if (input) { input.value = new Date().toISOString().slice(0, 10); }
+    loadTimeMachine();
+  }
+
+  // ────────────────────────────────────────────────
+  // EVENTS — Agenda culturel
+  // ────────────────────────────────────────────────
+  async function loadEventsTab(tab, btn) {
+    if (btn) {
+      document.querySelectorAll('#eventsFilters .filter-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    const grid = document.getElementById('eventsGrid');
+    if (!grid) return;
+    grid.innerHTML = skeletonCards(6);
+    try {
+      if (tab === 'onthisday') {
+        const now = new Date();
+        const month = String(now.getMonth()+1).padStart(2,'0');
+        const day   = String(now.getDate()).padStart(2,'0');
+        const r = await fetch(`/api/events/onthisday?month=${month}&day=${day}`);
+        const d = await r.json();
+        grid.innerHTML = (d.events||[]).slice(0,16).map(e => `
+          <div class="card" style="padding:0.9rem">
+            <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--primary);font-weight:700;margin-bottom:6px">📅 ${e.year}</div>
+            <div style="font-size:0.83rem;line-height:1.4">${e.text}</div>
+            ${e.url ? `<a href="${e.url}" target="_blank" rel="noopener" style="font-size:0.7rem;color:var(--primary);margin-top:6px;display:inline-block">En savoir plus →</a>` : ''}
+          </div>`).join('') || '<div class="loading-msg">Aucun événement pour aujourd'hui.</div>';
+      } else {
+        const r = await fetch('/api/events/culture?limit=20');
+        const d = await r.json();
+        grid.innerHTML = (d.articles||[]).map(a => newsCardHTML(a)).join('') ||
+          '<div class="loading-msg">Aucune actualité culturelle.</div>';
+      }
+    } catch(e) { grid.innerHTML = '<div class="loading-msg">Erreur agenda ❌</div>'; }
+  }
+
+  // ────────────────────────────────────────────────
+  // FILTRE LANGUE — Newsroom
+  // ────────────────────────────────────────────────
+  const LANG_SOURCES = {
+    fr: ['lemonde','liberation','lefigaro','rfi'],
+    en: ['bbc','guardian','reuters','aljazeera','trt','dw','euronews','techcrunch','espn','variety','independent','bleepingcomputer','esa'],
+    ar: ['aljazeera','trt'],
+    es: ['telesur'],
+  };
+  function filterNewsByLang(lang, btn) {
+    document.querySelectorAll('#langFilters .filter-chip').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    const cards = document.querySelectorAll('#newsGrid2 .news-card, #articlesGrid .news-card, .news-card[data-source]');
+    if (lang === 'all') { cards.forEach(c => c.style.display = ''); return; }
+    const allowed = LANG_SOURCES[lang] || [];
+    cards.forEach(card => {
+      const src = (card.dataset.source || card.querySelector('.source-badge')?.textContent || '').toLowerCase();
+      const match = allowed.some(s => src.includes(s));
+      card.style.display = match ? '' : 'none';
+    });
   }
 
   // ────────────────────────────────────────────────
