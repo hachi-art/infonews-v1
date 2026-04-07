@@ -1,7 +1,7 @@
 {
   "name": "infonews-v1",
-  "version": "1.0.0",
-  "description": "infonews.day — Agrégateur de news automatisé (BBC, Le Monde, NewsAPI)",
+  "version": "9.0.0",
+  "description": "infonews.day — Hub OSINT mondial · 7 pôles · 25 pages · Globe-Guide IA · Bloomberg Terminal",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

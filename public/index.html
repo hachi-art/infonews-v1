@@ -818,7 +818,7 @@
       font-size: 0.78rem;
     }
     .gg-msg { padding: 0.4rem 0.7rem; border-radius: 10px; line-height: 1.4; }
-    .gg-msg.bot { background: #e8f0fe; color: var(--text); align-self: flex-start; }
+    .gg-msg.bot { background: var(--panel); color: var(--text); align-self: flex-start; border: 1px solid var(--border); }
     .gg-msg.user { background: var(--primary); color: #fff; align-self: flex-end; }
     #gg-input-row { display: flex; gap: 0.4rem; }
     #gg-input {
@@ -4611,7 +4611,7 @@
   // ════════════════════════════════════════════════
 
   // ── Helper générique ──────────────────────────
-  function newsCardHTML(a) {
+  function newsCardSimpleHTML(a) {
     const src   = a.source || a.feed || '';
     const title = a.title  || '';
     const url   = a.url    || a.link || '#';
@@ -4643,7 +4643,7 @@
       const d = await r.json();
       const articles = d.articles || [];
       el.innerHTML = articles.length
-        ? `<div class="news-grid">${articles.map(a => newsCardHTML(a)).join('')}</div>`
+        ? `<div class="news-grid">${articles.map(a => newsCardSimpleHTML(a)).join('')}</div>`
         : '<div class="loading-msg">Pas d\'actualités disponibles actuellement — consultez les liens ci-dessous.</div>';
     } catch(e) { el.innerHTML = '<div class="loading-msg">Liens directs disponibles ci-dessous ↓</div>'; }
   }
@@ -4658,7 +4658,7 @@
       const d = await r.json();
       const articles = d.articles || [];
       el.innerHTML = articles.length
-        ? `<div class="news-grid">${articles.map(a => newsCardHTML(a)).join('')}</div>`
+        ? `<div class="news-grid">${articles.map(a => newsCardSimpleHTML(a)).join('')}</div>`
         : '<div class="loading-msg">Sources directes disponibles ci-dessous ↓</div>';
     } catch(e) { el.innerHTML = '<div class="loading-msg">Sources directes disponibles ci-dessous ↓</div>'; }
   }
@@ -4679,7 +4679,7 @@
         return (a.source||'').toLowerCase().includes(src);
       });
       el.innerHTML = articles.length
-        ? articles.map(a => newsCardHTML(a)).join('')
+        ? articles.map(a => newsCardSimpleHTML(a)).join('')
         : '<div class="loading-msg">Source non disponible dans les flux actuels.</div>';
     } catch(e) { el.innerHTML = '<div class="loading-msg">Erreur chargement ❌</div>'; }
   }
@@ -4697,7 +4697,7 @@
       const d = await r.json();
       const articles = (d.articles || []).filter(a => keys.some(k => (a.source||'').toLowerCase().includes(k)));
       el.innerHTML = articles.length
-        ? articles.map(a => newsCardHTML(a)).join('')
+        ? articles.map(a => newsCardSimpleHTML(a)).join('')
         : '<div class="loading-msg">Source non disponible — flux RSS en attente.</div>';
     } catch(e) { el.innerHTML = '<div class="loading-msg">Erreur chargement ❌</div>'; }
   }
@@ -4715,7 +4715,7 @@
       const d = await r.json();
       const articles = (d.articles || []).filter(a => keys.some(k => (a.source||'').toLowerCase().includes(k)));
       el.innerHTML = articles.length
-        ? articles.map(a => newsCardHTML(a)).join('')
+        ? articles.map(a => newsCardSimpleHTML(a)).join('')
         : '<div class="loading-msg">Flux Afrique/LatAm en chargement…</div>';
     } catch(e) { el.innerHTML = '<div class="loading-msg">Erreur chargement ❌</div>'; }
   }
@@ -4728,7 +4728,7 @@
     try {
       const r = await fetch('/api/news?source=guardian&limit=12');
       const d = await r.json();
-      el.innerHTML = (d.articles || []).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Utilisez les boutons ci-dessus pour une synthèse Globe-Guide.</div>';
+      el.innerHTML = (d.articles || []).map(a => newsCardSimpleHTML(a)).join('') || '<div class="loading-msg">Utilisez les boutons ci-dessus pour une synthèse Globe-Guide.</div>';
     } catch(e) { el.innerHTML = '<div class="loading-msg">Utilisez les boutons ci-dessus pour une synthèse Globe-Guide.</div>'; }
   }
 
@@ -4752,7 +4752,7 @@
       const r = await fetch(`/api/tech?q=${encodeURIComponent(query)}&limit=18`);
       const d = await r.json();
       const articles = d.articles || d.tech || [];
-      el.innerHTML = articles.length ? articles.map(a => newsCardHTML(a)).join('') : '<div class="loading-msg">Consultez les liens ci-dessous.</div>';
+      el.innerHTML = articles.length ? articles.map(a => newsCardSimpleHTML(a)).join('') : '<div class="loading-msg">Consultez les liens ci-dessous.</div>';
     } catch(e) { el.innerHTML = '<div class="loading-msg">Consultez les liens ci-dessous.</div>'; }
   }
 
@@ -4790,7 +4790,7 @@
       try {
         const r = await fetch('/api/music/news?limit=12');
         const d = await r.json();
-        el.innerHTML = (d.articles||[]).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Aucune actualité disponible.</div>';
+        el.innerHTML = (d.articles||[]).map(a => newsCardSimpleHTML(a)).join('') || '<div class="loading-msg">Aucune actualité disponible.</div>';
       } catch(e) { el.innerHTML = '<div class="loading-msg">Erreur ❌</div>'; }
     }
   }
@@ -4803,7 +4803,7 @@
     try {
       const r = await fetch('/api/music/news?limit=12');
       const d = await r.json();
-      el.innerHTML = (d.articles||[]).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Consultez les liens ci-dessous.</div>';
+      el.innerHTML = (d.articles||[]).map(a => newsCardSimpleHTML(a)).join('') || '<div class="loading-msg">Consultez les liens ci-dessous.</div>';
     } catch(e) { el.innerHTML = '<div class="loading-msg">Consultez les liens ci-dessous.</div>'; }
   }
 
@@ -4815,7 +4815,7 @@
     try {
       const r = await fetch('/api/tech?q=livre manga bande+dessin%C3%A9e&limit=8');
       const d = await r.json();
-      el.innerHTML = (d.articles||[]).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Consultez les liens ci-dessous.</div>';
+      el.innerHTML = (d.articles||[]).map(a => newsCardSimpleHTML(a)).join('') || '<div class="loading-msg">Consultez les liens ci-dessous.</div>';
     } catch(e) { el.innerHTML = '<div class="loading-msg">Consultez les liens ci-dessous.</div>'; }
   }
 
@@ -4857,6 +4857,36 @@
   // ════════════════════════════════════════════════
   let ggOpen = false;
   let ggMessages = []; // session only — jamais persisté
+
+  function toggleGG() {
+    ggOpen = !ggOpen;
+    const chat   = document.getElementById('gg-chat');
+    const bubble = document.getElementById('gg-bubble');
+    const btn    = document.getElementById('gg-toggle');
+    if (chat)   chat.classList.toggle('visible', ggOpen);
+    if (bubble) bubble.classList.toggle('visible', !ggOpen);
+    if (btn)    btn.textContent = ggOpen ? '✕' : '🌐';
+    if (ggOpen && ggMessages.length === 0) {
+      const lang = typeof currentLang !== 'undefined' ? currentLang : 'fr';
+      const greet = lang === 'en'
+        ? 'Hello! I\'m the Globe-Guide — your navigator for infonews.day (7 poles, 25 pages). Ask me about any topic and I\'ll point you to the right section.'
+        : lang === 'es'
+        ? '¡Hola! Soy el Globe-Guide — tu navegador en infonews.day (7 polos, 25 páginas). Pregúntame sobre cualquier tema.'
+        : 'Bonjour ! Je suis le Globe-Guide — votre navigateur sur infonews.day (7 pôles, 25 pages). Posez-moi une question sur n\'importe quel sujet.';
+      addGGMessage(greet, 'bot');
+    }
+    if (ggOpen) setTimeout(() => document.getElementById('gg-input')?.focus(), 100);
+  }
+
+  function addGGMessage(text, role) {
+    const msgs = document.getElementById('gg-messages');
+    if (!msgs) return;
+    const div = document.createElement('div');
+    div.className = 'gg-msg ' + (role === 'user' ? 'user' : 'bot');
+    div.textContent = text;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
 
   function getCurrentPageContext() {
     const poleEl = document.querySelector('.pole-btn.active');
