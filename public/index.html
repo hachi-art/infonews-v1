@@ -6,8 +6,8 @@
   <title>infonews.day — Invent the day</title>
 
   <!-- ── SEO ────────────────────────────────────────── -->
-  <meta name="description" content="Hub d'information mondial en temps réel — Actualités, Marchés, Météo, Espace, Culture, Cybersécurité. 22 sources, 8 pôles, 0 pub." />
-  <meta name="keywords" content="actualités, news, marchés financiers, crypto, météo, espace, culture, cybersécurité, OSINT, journalisme citoyen" />
+  <meta name="description" content="Hub OSINT mondial en temps réel — 7 pôles, 25 pages, 0 pub. Actualités, Marchés, Matières premières, Géopolitique, Cinéma, DJ Pro, Social Pulse. Globe-Guide IA intégré." />
+  <meta name="keywords" content="actualités mondiales, OSINT, marchés financiers, matières premières, géopolitique, CIA Factbook, ONU, DJ Pro, Beatport, musique, cinéma, cybersécurité, espace NASA, journalisme citoyen, Cross-Check, social pulse" />
   <meta name="author" content="infonews.day" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://infonews.day/" />
@@ -16,8 +16,8 @@
   <meta property="og:type"        content="website" />
   <meta property="og:site_name"   content="infonews.day" />
   <meta property="og:url"         content="https://infonews.day/" />
-  <meta property="og:title"       content="infonews.day — Invent the day" />
-  <meta property="og:description" content="Hub d'information mondial en temps réel — Actualités, Marchés, Météo, Espace, Culture, Cybersécurité. 22 sources, 8 pôles, 0 pub." />
+  <meta property="og:title"       content="infonews.day — Hub OSINT Mondial | 7 Pôles · 25 Pages · 0 Pub" />
+  <meta property="og:description" content="Dashboard d'info mondial en temps réel. Globe-Guide IA, Marchés, Géopolitique, Newsroom multipolaire, Music Pro DJ, Social Pulse. 0 cookie, 0 tracker." />
   <meta property="og:image"       content="https://infonews.day/og-cover.png" />
   <meta property="og:image:width"  content="1200" />
   <meta property="og:image:height" content="630" />
@@ -28,13 +28,13 @@
   <!-- ── Twitter Card ───────────────────────────────── -->
   <meta name="twitter:card"        content="summary_large_image" />
   <meta name="twitter:site"        content="@infonewsday" />
-  <meta name="twitter:title"       content="infonews.day — Invent the day" />
-  <meta name="twitter:description" content="Hub d'information mondial en temps réel — 22 sources, 8 pôles, 0 pub." />
+  <meta name="twitter:title"       content="infonews.day — Hub OSINT Mondial | 7 Pôles · 25 Pages" />
+  <meta name="twitter:description" content="Dashboard d'info mondial : Globe-Guide IA, Marchés, Géopolitique, Newsroom, Music Pro, Social Pulse. 0 cookie. 0 pub." />
   <meta name="twitter:image"       content="https://infonews.day/og-cover.png" />
 
   <!-- ── PWA ────────────────────────────────────────── -->
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#1a73e8" />
+  <meta name="theme-color" content="#080c18" id="themeColorMeta" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <!-- Fonts -->
@@ -48,27 +48,49 @@
 
   <style>
     /* ═══════════════════════════════════════════════════
-       VARIABLES & RESET
+       BLOOMBERG TERMINAL — DARK (défaut) / LIGHT (toggle)
+       V9.0 · infonews.day
     ═══════════════════════════════════════════════════ */
+
+    /* ── Tokens DARK par défaut ── */
     :root {
-      --primary:    #1a73e8;
-      --primary-d:  #1557b0;
+      --primary:     #00b4d8;
+      --primary-d:   #0096c7;
+      --green:       #00e676;
+      --red:         #ff3366;
+      --orange:      #ffb300;
+      --bg:          #080c18;
+      --card:        #0d1425;
+      --panel:       #111927;
+      --border:      #1a2535;
+      --text:        #cdd6f4;
+      --muted:       #4a6080;
+      --shadow:      0 2px 16px rgba(0,0,0,0.5);
+      --radius:      4px;
+      --header-h:    52px;
+      --pole-nav-h:  44px;
+      --sub-nav-h:   38px;
+      --nav-total:   calc(var(--header-h) + var(--pole-nav-h) + var(--sub-nav-h));
+      --legal-bar-h: 24px;
+      --font-mono:   'DM Mono', monospace;
+    }
+
+    /* ── Light mode override ── */
+    body.light-mode {
+      --bg:         #f0f4f8;
+      --card:       #ffffff;
+      --panel:      #f8f9fc;
+      --border:     #d1d9e0;
+      --primary:    #0096c7;
+      --primary-d:  #007ab3;
       --green:      #1a8a52;
       --red:        #d93025;
-      --orange:     #f29900;
-      --bg:         #f8f9fc;
-      --card:       #ffffff;
-      --border:     #e4e6ea;
-      --text:       #1a1a2e;
-      --muted:      #6b7280;
-      --shadow:     0 2px 12px rgba(0,0,0,0.07);
-      --radius:     14px;
-      --header-h:   58px;
-      --pole-nav-h: 46px;
-      --sub-nav-h:  40px;
-      --nav-total:  calc(var(--header-h) + var(--pole-nav-h) + var(--sub-nav-h));
-      --legal-bar-h: 26px;
+      --orange:     #b45309;
+      --text:       #0f172a;
+      --muted:      #64748b;
+      --shadow:     0 2px 12px rgba(0,0,0,0.08);
     }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       height: 100%;
@@ -76,6 +98,7 @@
       font-family: 'DM Sans', -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
+      transition: background 0.25s, color 0.25s;
     }
     a { color: inherit; text-decoration: none; }
     button { cursor: pointer; border: none; background: none; font-family: inherit; }
@@ -1020,15 +1043,7 @@
     body.dark-mode .global-search-input { background: #161b22; border-color: #30363d; color: #e6edf3; }
     body.dark-mode .search-results { background: #0d1117; border-color: #21262d; }
 
-    /* ── LIGHT MODE (ancien default amélioré) ── */
-    body.light-mode {
-      --bg:      #f6f8fa;
-      --card:    #ffffff;
-      --border:  #d0d7de;
-      --text:    #1f2328;
-      --muted:   #656d76;
-      --primary: #0969da;
-    }
+    /* ── LIGHT MODE — défini dans :root block ↑ ── */
     .theme-toggle-btn, .search-toggle-btn {
       background: none; border: 1px solid var(--border); color: var(--text);
       border-radius: 8px; padding: 4px 8px; cursor: pointer; font-size: 0.85rem;
@@ -1124,14 +1139,13 @@
        POLE NAV (niveau 1)
   ═══════════════════════════════════════════ -->
   <nav id="pole-nav">
-    <button class="pole-btn active" onclick="goToPole(0)">🌍 Monde</button>
-    <button class="pole-btn" onclick="goToPole(1)">🌐 Planète</button>
-    <button class="pole-btn" onclick="goToPole(2)">💹 Éco</button>
-    <button class="pole-btn" onclick="goToPole(3)">📡 Newsroom</button>
-    <button class="pole-btn" onclick="goToPole(4)">🎭 Culture</button>
-    <button class="pole-btn" onclick="goToPole(5)">🔬 Tech & IA</button>
-    <button class="pole-btn" onclick="goToPole(6)">🏥 Société</button>
-    <button class="pole-btn" onclick="goToPole(7)">🎙️ Média</button>
+    <button class="pole-btn active" onclick="goToPole(0)">🌍 World Pulse</button>
+    <button class="pole-btn" onclick="goToPole(1)">💹 Éco & Pouvoir</button>
+    <button class="pole-btn" onclick="goToPole(2)">📡 Newsroom</button>
+    <button class="pole-btn" onclick="goToPole(3)">🎭 Screen & Stream</button>
+    <button class="pole-btn" onclick="goToPole(4)">🔬 Tech & Terre</button>
+    <button class="pole-btn" onclick="goToPole(5)">🎵 Music Pro</button>
+    <button class="pole-btn" onclick="goToPole(6)">🌐 Social & Lab</button>
   </nav>
 
   <!-- ═══════════════════════════════════════════
@@ -2104,6 +2118,559 @@
       </div>
     </div>
 
+
+    <!-- ══════════════════════════════════════════════════════════
+         NOUVEAUX SLIDES V9.0
+    ══════════════════════════════════════════════════════════ -->
+
+    <!-- P04 · MATIÈRES PREMIÈRES -->
+    <div class="slide" id="s-commodites">
+      <h2 class="section-title">⚡ Matières Premières</h2>
+      <p class="section-sub">Or · Argent · Pétrole · Gaz · Lithium · Blé · Maïs · Café — TradingView temps réel</p>
+      <div class="finance-disclaimer">⚠️ Données informatives non-contractuelles — pas de conseil en investissement (Directive MIF II 2014/65/UE).</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.8rem;margin-bottom:1.4rem" id="commoditiesLive">
+        <div class="loading-msg">Chargement…</div>
+      </div>
+      <h3 class="section-title" style="font-size:1.05rem;margin-top:0.5rem">📊 Graphiques TradingView</h3>
+      <div class="tradingview-wrap" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0.8rem">
+        <div class="tv-widget-box">
+          <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"OANDA:XAUUSD","width":"100%","height":160,"locale":"fr","dateRange":"3M","colorTheme":"dark","isTransparent":true,"autosize":true}</script></div>
+          <div style="font-size:0.68rem;text-align:center;color:var(--muted);padding:4px">🥇 Or (XAU/USD)</div>
+        </div>
+        <div class="tv-widget-box">
+          <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"OANDA:XAGUSD","width":"100%","height":160,"locale":"fr","dateRange":"3M","colorTheme":"dark","isTransparent":true,"autosize":true}</script></div>
+          <div style="font-size:0.68rem;text-align:center;color:var(--muted);padding:4px">🥈 Argent (XAG/USD)</div>
+        </div>
+        <div class="tv-widget-box">
+          <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"NYMEX:CL1!","width":"100%","height":160,"locale":"fr","dateRange":"3M","colorTheme":"dark","isTransparent":true,"autosize":true}</script></div>
+          <div style="font-size:0.68rem;text-align:center;color:var(--muted);padding:4px">🛢️ Pétrole WTI</div>
+        </div>
+        <div class="tv-widget-box">
+          <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"NYMEX:NG1!","width":"100%","height":160,"locale":"fr","dateRange":"3M","colorTheme":"dark","isTransparent":true,"autosize":true}</script></div>
+          <div style="font-size:0.68rem;text-align:center;color:var(--muted);padding:4px">🔥 Gaz Naturel</div>
+        </div>
+        <div class="tv-widget-box">
+          <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"CBOT:ZW1!","width":"100%","height":160,"locale":"fr","dateRange":"3M","colorTheme":"dark","isTransparent":true,"autosize":true}</script></div>
+          <div style="font-size:0.68rem;text-align:center;color:var(--muted);padding:4px">🌾 Blé CBOT</div>
+        </div>
+        <div class="tv-widget-box">
+          <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"ICE:KC1!","width":"100%","height":160,"locale":"fr","dateRange":"3M","colorTheme":"dark","isTransparent":true,"autosize":true}</script></div>
+          <div style="font-size:0.68rem;text-align:center;color:var(--muted);padding:4px">☕ Café Arabica</div>
+        </div>
+        <div class="tv-widget-box">
+          <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"CBOT:ZC1!","width":"100%","height":160,"locale":"fr","dateRange":"3M","colorTheme":"dark","isTransparent":true,"autosize":true}</script></div>
+          <div style="font-size:0.68rem;text-align:center;color:var(--muted);padding:4px">🌽 Maïs CBOT</div>
+        </div>
+        <div class="tv-widget-box">
+          <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"COMEX:HG1!","width":"100%","height":160,"locale":"fr","dateRange":"3M","colorTheme":"dark","isTransparent":true,"autosize":true}</script></div>
+          <div style="font-size:0.68rem;text-align:center;color:var(--muted);padding:4px">🔩 Cuivre (proxy Lithium)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P05 · INSTITUTIONS & BANQUES -->
+    <div class="slide" id="s-institutions">
+      <h2 class="section-title">🏦 Institutions & Banques Centrales</h2>
+      <p class="section-sub">Rapports officiels — FED · BCE · FMI · Banque Mondiale · BRICS NDB · BAD</p>
+      <div id="institutionsNewsGrid" class="news-grid" style="margin-bottom:1.2rem">
+        <div class="loading-msg">Chargement des rapports officiels…</div>
+      </div>
+      <h3 class="section-title" style="font-size:1.05rem">🔗 Sources officielles</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:0.7rem">
+        <a href="https://www.federalreserve.gov/releases/" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🏛️</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">FED — Réserve Fédérale US</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Taux directeurs · FOMC Minutes · Beige Book · Stress tests</div>
+        </a>
+        <a href="https://www.ecb.europa.eu/press/govcdec/html/index.en.html" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🇪🇺</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">BCE — Banque Centrale Européenne</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Décisions de politique monétaire · Taux refi · Rapports stabilité financière</div>
+        </a>
+        <a href="https://www.imf.org/en/Publications/WEO" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">📊</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">FMI — World Economic Outlook</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Prévisions croissance mondiale · Article IV · DSA (debt sustainability)</div>
+        </a>
+        <a href="https://www.worldbank.org/en/research" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🌍</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">Banque Mondiale — Research</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Global Economic Prospects · Indicateurs développement · Rapports pays</div>
+        </a>
+        <a href="https://www.ndb.int/news/" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🧱</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">BRICS NDB — New Development Bank</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Prêts infrastructure · Monnaie BRICS · Projets Afrique/Asie/LatAm</div>
+        </a>
+        <a href="https://www.afdb.org/en/news-and-events" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🌿</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">BAD — Banque Africaine de Développement</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Financement Afrique · African Economic Outlook · Projets</div>
+        </a>
+        <a href="https://www.bis.org/statistics/index.htm" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">📐</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">BIS — Banque des Règlements Internationaux</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Statistiques bancaires mondiales · Rapport trimestriel</div>
+        </a>
+        <a href="https://www.oecd.org/economic-outlook/" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">📈</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">OCDE — Economic Outlook</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Perspectives économiques · Indicateurs OCDE · Going for Growth</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- P06 · GÉOPOLITIQUE -->
+    <div class="slide" id="s-geopolitique">
+      <h2 class="section-title">🕵️ Rapports Géopolitiques</h2>
+      <p class="section-sub">Documents officiels & déclassifiés — CIA · ONU · OMS · UNESCO · FOIA</p>
+      <div id="geopolitiqueGrid" class="news-grid" style="margin-bottom:1.2rem">
+        <div class="loading-msg">Chargement des rapports géopolitiques…</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:0.7rem">
+        <a href="https://www.cia.gov/the-world-factbook/" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🕵️</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">CIA World Factbook</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Profils pays complets · Économie · Armée · Géographie · Gouvernements</div>
+        </a>
+        <a href="https://documents.un.org" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🌐</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">ONU — Documents officiels</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Résolutions CS/AG · Rapports Secrétaire Général · Traités</div>
+        </a>
+        <a href="https://www.who.int/publications" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🏥</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">OMS — Publications officielles</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Rapports épidémiologiques · Urgences sanitaires · IHR</div>
+        </a>
+        <a href="https://en.unesco.org/themes" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">📚</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">UNESCO — Rapports thématiques</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Éducation · Culture · Science · Liberté de la presse (RSF)</div>
+        </a>
+        <a href="https://efts.un.org/MAIN?page=1&per-page=10&sm=un&languages=F&sortField=_score&sortOrder=desc" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">📋</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">ONU Digital Library</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Accès libre à 1M+ documents officiels multilingues</div>
+        </a>
+        <a href="https://www.foia.gov" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">📂</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">FOIA.gov — Déclassifiés US</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Demandes Freedom of Information Act · Documents gouvernementaux US</div>
+        </a>
+        <a href="https://wikileaks.org" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">📡</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">WikiLeaks — Archives</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Câbles diplomatiques · Documents militaires · PlusD database</div>
+        </a>
+        <a href="https://www.sipri.org/yearbook" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">⚔️</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">SIPRI Yearbook</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Armements mondiaux · Dépenses militaires · Armes nucléaires</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- P08 · ORIENT & ASIE -->
+    <div class="slide" id="s-orient">
+      <h2 class="section-title">🀄 Agences Orient & Asie</h2>
+      <p class="section-sub">
+        <span style="background:rgba(255,51,102,0.12);color:#ff3366;padding:2px 6px;border-radius:4px;font-size:0.68rem;font-weight:700">⚠️ MÉDIAS D'ÉTAT</span>
+        Xinhua (Chine) · TASS (Russie) signalés conformément aux pratiques journalistiques · NHK · Yonhap · Antara
+      </p>
+      <div class="filters-row" id="orientFilters" style="margin-bottom:0.8rem">
+        <button class="filter-chip active" onclick="loadOrientNews('all',this)">Tous</button>
+        <button class="filter-chip" onclick="loadOrientNews('xinhua',this)">🇨🇳 Xinhua ⚠️</button>
+        <button class="filter-chip" onclick="loadOrientNews('tass',this)">🇷🇺 TASS ⚠️</button>
+        <button class="filter-chip" onclick="loadOrientNews('nhk',this)">🇯🇵 NHK</button>
+        <button class="filter-chip" onclick="loadOrientNews('yonhap',this)">🇰🇷 Yonhap</button>
+      </div>
+      <div style="background:rgba(255,179,0,0.08);border:1px solid rgba(255,179,0,0.3);border-radius:8px;padding:0.75rem;margin-bottom:1rem;font-size:0.75rem;color:var(--amber)">
+        ⚖️ <strong>Avertissement éditorial :</strong> Xinhua et TASS sont des agences contrôlées par leurs gouvernements respectifs (Chine / Russie). Leurs contenus reflètent la ligne officielle de ces États. Consultez toujours une source occidentale pour Cross-Check.
+      </div>
+      <div id="orientGrid" class="news-grid">
+        <div class="loading-msg">Chargement sources orient…</div>
+      </div>
+    </div>
+
+    <!-- P09 · MOYEN-ORIENT & TURQUIE -->
+    <div class="slide" id="s-moyen-orient-media">
+      <h2 class="section-title">🌙 Moyen-Orient & Turquie</h2>
+      <p class="section-sub">Al Jazeera · TRT World · Anadolu Agency — Perspective moyen-orientale et turque</p>
+      <div class="filters-row" id="moyenOrientFilters" style="margin-bottom:0.8rem">
+        <button class="filter-chip active" onclick="loadMoyenOrientNews('all',this)">Tous</button>
+        <button class="filter-chip" onclick="loadMoyenOrientNews('aljazeera',this)">🇶🇦 Al Jazeera</button>
+        <button class="filter-chip" onclick="loadMoyenOrientNews('trtworld',this)">🇹🇷 TRT World</button>
+        <button class="filter-chip" onclick="loadMoyenOrientNews('anadolu',this)">📡 Anadolu</button>
+      </div>
+      <div id="moyenOrientGrid" class="news-grid">
+        <div class="loading-msg">Chargement sources Moyen-Orient…</div>
+      </div>
+    </div>
+
+    <!-- P10 · AFRIQUE, OCÉANIE & AM. LATINE -->
+    <div class="slide" id="s-afrique-media">
+      <h2 class="section-title">🌍 Afrique, Océanie & Amérique Latine</h2>
+      <p class="section-sub">Africanews · AllAfrica · ABC News (AU) · TeleSUR · MercoPress</p>
+      <div class="filters-row" id="afriqueFilters" style="margin-bottom:0.8rem">
+        <button class="filter-chip active" onclick="loadAfriqueSudNews('all',this)">Tous</button>
+        <button class="filter-chip" onclick="loadAfriqueSudNews('africanews',this)">📡 Africanews</button>
+        <button class="filter-chip" onclick="loadAfriqueSudNews('allafrica',this)">🌍 AllAfrica</button>
+        <button class="filter-chip" onclick="loadAfriqueSudNews('telesur',this)">🌎 TeleSUR</button>
+      </div>
+      <div id="afriqueGrid" class="news-grid" style="margin-bottom:1.2rem">
+        <div class="loading-msg">Chargement sources Afrique & LatAm…</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.7rem">
+        <a href="https://www.allafrica.com" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">🌍 AllAfrica.com</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Agrégateur panafricain · 125+ pays · EN/FR</div>
+        </a>
+        <a href="https://mercopress.com" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">🌎 MercoPress</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Mercosur & Amérique du Sud · Uruguay · Argentine</div>
+        </a>
+        <a href="https://www.abc.net.au/news/world" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">🇦🇺 ABC News (Australie)</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Pacifique & Océanie · Indo-Pacifique</div>
+        </a>
+        <a href="https://theafricareport.com" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">📊 The Africa Report</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Business & politique africaine · Élites du continent</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- P11 · ÉDITORIAL & SYNTHÈSE IA -->
+    <div class="slide" id="s-editorial">
+      <h2 class="section-title">✍️ Éditorial & Synthèse IA</h2>
+      <p class="section-sub">Analyses de journaliste citoyen + Résumés Globe-Guide IA avec sources citées</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem">
+        <div class="card" style="padding:1.2rem">
+          <h3 style="font-size:0.88rem;font-weight:700;margin-bottom:0.8rem;color:var(--primary)">🤖 Synthèse IA du jour</h3>
+          <p style="font-size:0.78rem;color:var(--muted);margin-bottom:0.8rem">Posez une question au Globe-Guide pour obtenir une synthèse éditoriale :</p>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+            <button class="filter-chip" onclick="editorialPrompt('Synthèse de l\'actualité mondiale de la semaine en 5 points clés')">📰 Actu hebdo</button>
+            <button class="filter-chip" onclick="editorialPrompt('Analyse Cross-Check : Ukraine — perspective occidentale vs perspective russe')">⚖️ Cross-Check Ukraine</button>
+            <button class="filter-chip" onclick="editorialPrompt('Quels sont les grands enjeux géopolitiques de 2026 ?')">🌐 Géopolitic 2026</button>
+            <button class="filter-chip" onclick="editorialPrompt('Résumé du dernier rapport FMI World Economic Outlook en 5 points')">🏦 FMI WEO</button>
+            <button class="filter-chip" onclick="editorialPrompt('Bilan des tensions commerciales US-Chine : état actuel et perspectives')">🔄 US-Chine Trade</button>
+          </div>
+        </div>
+        <div class="card" style="padding:1.2rem">
+          <h3 style="font-size:0.88rem;font-weight:700;margin-bottom:0.8rem">📰 Sources éditoriales & Think tanks</h3>
+          <div style="display:flex;flex-direction:column;gap:0.5rem">
+            <a href="https://www.foreignaffairs.com" target="_blank" rel="noopener" style="font-size:0.78rem;color:var(--primary);font-weight:600">Foreign Affairs — Géopolitique élite</a>
+            <a href="https://www.foreignpolicy.com" target="_blank" rel="noopener" style="font-size:0.78rem;color:var(--primary);font-weight:600">Foreign Policy</a>
+            <a href="https://www.economist.com" target="_blank" rel="noopener" style="font-size:0.78rem;color:var(--primary);font-weight:600">The Economist</a>
+            <a href="https://www.icij.org" target="_blank" rel="noopener" style="font-size:0.78rem;color:var(--primary);font-weight:600">ICIJ — Investigations journalistiques</a>
+            <a href="https://theintercept.com" target="_blank" rel="noopener" style="font-size:0.78rem;color:var(--primary);font-weight:600">The Intercept</a>
+            <a href="https://www.bellingcat.com" target="_blank" rel="noopener" style="font-size:0.78rem;color:var(--primary);font-weight:600">Bellingcat — OSINT</a>
+            <a href="https://www.mediapart.fr" target="_blank" rel="noopener" style="font-size:0.78rem;color:var(--primary);font-weight:600">Mediapart (FR)</a>
+          </div>
+        </div>
+      </div>
+      <div id="editorialNewsGrid" class="news-grid">
+        <div class="loading-msg">Chargement contenu éditorial…</div>
+      </div>
+    </div>
+
+    <!-- P18 · GEEK & GAMING -->
+    <div class="slide" id="s-gaming">
+      <h2 class="section-title">🎮 Geek & Gaming</h2>
+      <p class="section-sub">Actu hardware, jeux vidéo, culture web & e-sport</p>
+      <div class="filters-row" id="gamingFilters" style="margin-bottom:0.8rem">
+        <button class="filter-chip active" onclick="loadGamingNews('all',this)">Tout</button>
+        <button class="filter-chip" onclick="loadGamingNews('gaming',this)">🎮 Gaming</button>
+        <button class="filter-chip" onclick="loadGamingNews('hardware',this)">🖥️ Hardware</button>
+        <button class="filter-chip" onclick="loadGamingNews('esport',this)">🏆 E-sport</button>
+      </div>
+      <div id="gamingGrid" class="news-grid" style="margin-bottom:1.2rem">
+        <div class="loading-msg">Chargement actu gaming…</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.7rem">
+        <a href="https://www.ign.com" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">🎮 IGN</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Reviews · News jeux · Trailers</div>
+        </a>
+        <a href="https://kotaku.com" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">🕹️ Kotaku</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Jeux & culture gaming</div>
+        </a>
+        <a href="https://www.eurogamer.net" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">🕹️ Eurogamer</div>
+          <div style="font-size:0.72rem;color:var(--muted)">News jeux EU · reviews</div>
+        </a>
+        <a href="https://www.tomshardware.com" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">💻 Tom's Hardware</div>
+          <div style="font-size:0.72rem;color:var(--muted)">GPU · CPU · Benchmarks · IA hardware</div>
+        </a>
+        <a href="https://www.pcgamer.com" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">🖥️ PC Gamer</div>
+          <div style="font-size:0.72rem;color:var(--muted)">PC gaming · mods · builds</div>
+        </a>
+        <a href="https://news.ycombinator.com" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">🔶 Hacker News</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Tech · culture dev · startups</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- P20 · ESPACE DJ PRO -->
+    <div class="slide" id="s-music-dj">
+      <h2 class="section-title">🎛️ Espace DJ Pro</h2>
+      <p class="section-sub">Beatport · Traxsource · Junodownload — Charts électronique professionnel</p>
+      <div class="filters-row" id="djProFilters" style="margin-bottom:0.8rem">
+        <button class="filter-chip active" onclick="loadDJProTab('beatport',this)">🎧 Beatport Charts</button>
+        <button class="filter-chip" onclick="loadDJProTab('traxsource',this)">🎵 Traxsource</button>
+        <button class="filter-chip" onclick="loadDJProTab('news',this)">📰 Actu DJ/Prod</button>
+      </div>
+      <div id="djProGrid" style="margin-top:0.8rem">
+        <div class="loading-msg">Chargement charts DJ Pro…</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.7rem;margin-top:1.2rem">
+        <a href="https://www.beatport.com/top-100" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🎧</div>
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">Beatport Top 100</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Electronic · Techno · House · Trance</div>
+        </a>
+        <a href="https://www.traxsource.com/genre/1/afro-house" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🎵</div>
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">Traxsource</div>
+          <div style="font-size:0.72rem;color:var(--muted)">House · Afro House · Deep House · Soul</div>
+        </a>
+        <a href="https://www.junodownload.com/charts/" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">📀</div>
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">Junodownload Charts</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Drum & Bass · UK Dance · Jungle</div>
+        </a>
+        <a href="https://www.residentadvisor.net/charts" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">📊</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">Resident Advisor Charts</div>
+          <div style="font-size:0.72rem;color:var(--muted)">DJ charts · Club culture · Reviews</div>
+        </a>
+        <a href="https://www.dnbdojo.com" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🥁</div>
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">DnB Dojo</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Drum & Bass culture</div>
+        </a>
+        <a href="https://tidal.com/browse/my-collection/playlists" target="_blank" rel="noopener" class="card" style="padding:0.8rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🎚️</div>
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">Tidal Hi-Fi</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Qualité lossless · Masters · DJ sets</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- P22 · DROITS & INDUSTRIE MUSICALE -->
+    <div class="slide" id="s-music-droits">
+      <h2 class="section-title">📜 Droits & Industrie Musicale</h2>
+      <p class="section-sub">SACEM · BMI · ASCAP · IFPI — Droits d'auteur, streaming économie, business de la musique</p>
+      <div id="musicDroitsGrid" class="news-grid" style="margin-bottom:1.2rem">
+        <div class="loading-msg">Chargement actu industrie musicale…</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.7rem">
+        <a href="https://www.sacem.fr/actualites" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🇫🇷</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">SACEM</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Société Auteurs Compositeurs Éditeurs Musique — France</div>
+        </a>
+        <a href="https://www.bmi.com/news" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🇺🇸</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">BMI</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Broadcast Music Inc — USA · 1M+ créateurs</div>
+        </a>
+        <a href="https://www.ascap.com/music-career-center" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🎹</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">ASCAP</div>
+          <div style="font-size:0.72rem;color:var(--muted)">American Society of Composers Authors Publishers</div>
+        </a>
+        <a href="https://www.ifpi.org/our-industry/global-music-report/" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">📊</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">IFPI Global Music Report</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Rapport annuel industrie · Chiffres streaming mondial</div>
+        </a>
+        <a href="https://www.musicbusinessworldwide.com" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🌐</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">Music Business Worldwide</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Business de la musique · Deals · Acquisitions</div>
+        </a>
+        <a href="https://www.nme.com/music-news" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🎸</div>
+          <div style="font-weight:700;font-size:0.88rem;margin-bottom:4px">NME</div>
+          <div style="font-size:0.72rem;color:var(--muted)">News · Interviews · Culture musicale UK/Global</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- P23 · LITTÉRATURE & MANGA -->
+    <div class="slide" id="s-litterature">
+      <h2 class="section-title">📚 Littérature & Manga</h2>
+      <p class="section-sub">Recommandations de lecture · Sorties · BD · Comics · Manga</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:0.8rem;margin-bottom:1.2rem">
+        <a href="https://www.glenat.com/actualites" target="_blank" rel="noopener" class="card" style="padding:1rem;text-decoration:none">
+          <div style="font-size:1.6rem;margin-bottom:6px">📖</div>
+          <div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">Glénat — Manga & BD</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Éditeur FR · Manga One Piece · BD historique</div>
+        </a>
+        <a href="https://www.marvel.com/comics/new-releases" target="_blank" rel="noopener" class="card" style="padding:1rem;text-decoration:none">
+          <div style="font-size:1.6rem;margin-bottom:6px">🦸</div>
+          <div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">Marvel Comics</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Nouvelles sorties · Séries en cours · Events</div>
+        </a>
+        <a href="https://www.arte.tv/fr/magazines/livres-et-idees/" target="_blank" rel="noopener" class="card" style="padding:1rem;text-decoration:none">
+          <div style="font-size:1.6rem;margin-bottom:6px">🎭</div>
+          <div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">Arte — Livres & Idées</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Recommandations culturelles · Émissions littéraires</div>
+        </a>
+        <a href="https://www.goodreads.com/list/tag/popular" target="_blank" rel="noopener" class="card" style="padding:1rem;text-decoration:none">
+          <div style="font-size:1.6rem;margin-bottom:6px">⭐</div>
+          <div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">Goodreads — Bestsellers</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Listes populaires · Reviews communauté</div>
+        </a>
+        <a href="https://www.animenewsnetwork.com" target="_blank" rel="noopener" class="card" style="padding:1rem;text-decoration:none">
+          <div style="font-size:1.6rem;margin-bottom:6px">🀄</div>
+          <div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">Anime News Network</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Manga · Anime · Light novels · Actualités japon</div>
+        </a>
+        <a href="https://www.litterama.com" target="_blank" rel="noopener" class="card" style="padding:1rem;text-decoration:none">
+          <div style="font-size:1.6rem;margin-bottom:6px">🇫🇷</div>
+          <div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">Librairie du Monde Entier</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Littérature mondiale en traduction française</div>
+        </a>
+      </div>
+      <div id="litNewsGrid" class="news-grid">
+        <div class="loading-msg">Chargement actualités littérature…</div>
+      </div>
+    </div>
+
+    <!-- P24 · SOCIAL PULSE -->
+    <div class="slide" id="s-social">
+      <h2 class="section-title">📡 Social Pulse</h2>
+      <p class="section-sub">Tendances mondiales X (Twitter) · Reddit · Instagram · TikTok · Telegram</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.2rem">
+        <div class="card" style="padding:1rem">
+          <h3 style="font-size:0.88rem;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem">📊 Reddit Trends <span style="font-size:0.62rem;background:rgba(255,86,0,0.12);color:#ff5600;padding:2px 6px;border-radius:4px">LIVE</span></h3>
+          <div id="socialRedditGrid">
+            <div class="loading-msg">Chargement…</div>
+          </div>
+        </div>
+        <div class="card" style="padding:1rem">
+          <h3 style="font-size:0.88rem;font-weight:700;margin-bottom:0.8rem">🔥 Google Trends</h3>
+          <div id="socialTrendsGrid">
+            <div class="loading-msg">Chargement…</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.7rem">
+        <a href="https://trends.google.com/trending" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">📈</div>
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">Google Trends</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Ce dont le monde cherche en ce moment</div>
+        </a>
+        <a href="https://www.reddit.com/r/worldnews/hot/" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🔶</div>
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">Reddit r/worldnews</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Top posts mondiaux · Discussion citoyenne</div>
+        </a>
+        <a href="https://twitter.com/explore/tabs/trending" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">𝕏</div>
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">X (Twitter) Trending</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Tendances mondiales · Hashtags · Breaking</div>
+        </a>
+        <a href="https://www.tiktok.com/trending" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">🎵</div>
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">TikTok Trending</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Vidéos virales · Challenges · Culture</div>
+        </a>
+        <a href="https://www.instagram.com/explore/tags/" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">📸</div>
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">Instagram Explore</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Contenus populaires · Reels · Stories</div>
+        </a>
+        <a href="https://t.me/s/bbcrussian" target="_blank" rel="noopener" class="card" style="padding:0.9rem;text-decoration:none">
+          <div style="font-size:1.4rem;margin-bottom:4px">📨</div>
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px">Telegram — Flux terrain</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Canaux d'info bruts · Correspondants terrain</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- P25 · TRANSPARENCE & CONTACT -->
+    <div class="slide" id="s-transparence">
+      <h2 class="section-title">🔍 Transparence & Contact</h2>
+      <p class="section-sub">100+ sources · Manifeste éthique · Contact anonyme · Tipeee</p>
+
+      <!-- Manifeste -->
+      <div class="card" style="padding:1.4rem;margin-bottom:1.2rem;border-left:3px solid var(--primary)">
+        <h3 style="font-family:'DM Serif Display',serif;font-size:1.15rem;margin-bottom:0.8rem">📜 Manifeste Éthique</h3>
+        <p style="font-size:0.82rem;line-height:1.7;color:var(--muted)"><strong style="color:var(--text)">infonews.day</strong> est un projet de journalisme citoyen indépendant. Nous agrégeons des sources publiques, libres et légales. Nos engagements :</p>
+        <ul style="font-size:0.8rem;line-height:1.9;color:var(--muted);margin-top:0.6rem;padding-left:1.2rem">
+          <li><strong>Zéro cookie · Zéro tracker</strong> — RGPD Art.5 · Privacy by design</li>
+          <li><strong>Multilatéralisme</strong> — Toutes les perspectives, clairement étiquetées (médias d'État signalés ⚠️)</li>
+          <li><strong>Transparence des sources</strong> — 100% de nos sources sont publiques et accessibles</li>
+          <li><strong>Open source</strong> — Code disponible sur <a href="https://github.com/hachi-art/infonews-v1" target="_blank" rel="noopener" style="color:var(--primary)">GitHub hachi-art/infonews-v1</a></li>
+          <li><strong>Pas de conseil financier</strong> — Marchés à titre informatif (Directive MIF II)</li>
+          <li><strong>Anonymat garanti</strong> — Aucun compte, aucun profil, aucune donnée collectée</li>
+        </ul>
+      </div>
+
+      <!-- 100+ Sources -->
+      <h3 class="section-title" style="font-size:1.05rem">🌐 Index des 100+ sources</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.6rem;margin-bottom:1.2rem;font-size:0.75rem">
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">📰 Agences Occident</div>Reuters · AP · AFP · BBC · Guardian · Le Monde · DW · Euronews · The Independent</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--amber);margin-bottom:4px">⚠️ Médias d'État</div>Xinhua ⚠️ (Chine) · TASS ⚠️ (Russie) — signalés · RT supprimé (UE 2022/350)</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">🌙 Moyen-Orient</div>Al Jazeera · TRT World · Anadolu Agency · Middle East Eye</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">🌍 Afrique & LatAm</div>Africanews · AllAfrica · TeleSUR · MercoPress · The Africa Report</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">🇯🇵 Asie</div>NHK · Yonhap (KR) · Antara (ID) · The Hindu (IN)</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">💹 Finance</div>Yahoo Finance · TradingView · Open Exchange Rates · CoinGecko · GDACS</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">🏛️ Institutions</div>FED · BCE · FMI · Banque Mondiale · BRICS NDB · BAD · BIS · OCDE</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">🕵️ Géopolitique</div>CIA World Factbook · ONU · OMS · UNESCO · FOIA · WikiLeaks Archives · SIPRI</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">🔬 Science & Tech</div>ArXiv · NASA APOD · ESA · LaunchLibrary · TechCrunch · HackerNews · OpenAI Blog</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">🛡️ Cyber</div>BleepingComputer · CISA Alerts · CVE Database · Krebs on Security</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">🌤️ Météo & Alertes</div>Open-Meteo · Windy · USGS Earthquakes · GDACS ONU · NOAA</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">🎬 Culture</div>TMDB · Variety · Hollywood Reporter · Box Office Mojo · ESPN · TheSportsDB</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">🎵 Musique</div>Deezer · Beatport · Billboard · Pitchfork · Radio-Browser API · SACEM · BMI</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">📡 Social OSINT</div>Reddit API · Google Trends · YouTube RSS · Met Museum Open Access</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">📚 Archives</div>Chronicling America · Gallica BNF · Europeana · Internet Archive · Library of Congress</div>
+        <div class="card" style="padding:0.8rem"><div style="font-weight:700;color:var(--primary);margin-bottom:4px">🏥 Santé & Droits</div>WHO RSS · Amnesty International · Human Rights Watch · UNHCR · UNEP</div>
+      </div>
+
+      <!-- Contact & Soutien -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="card" style="padding:1.2rem">
+          <h3 style="font-size:0.88rem;font-weight:700;margin-bottom:0.8rem">📬 Contact anonyme</h3>
+          <p style="font-size:0.78rem;color:var(--muted);margin-bottom:0.8rem">Signalement, correction, collaboration — aucune donnée personnelle requise.</p>
+          <a href="https://github.com/hachi-art/infonews-v1/issues" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;padding:0.5rem 1rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none">
+            ⭐ GitHub Issues
+          </a>
+        </div>
+        <div class="card" style="padding:1.2rem;text-align:center">
+          <h3 style="font-size:0.88rem;font-weight:700;margin-bottom:0.5rem">☕ Soutenir le projet</h3>
+          <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.8rem">0 pub · 0 paywall · Open source. Si ce projet t'apporte de la valeur :</p>
+          <a href="https://fr.tipeee.com/infonews" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:#ff6d00;color:#fff;padding:0.5rem 1rem;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none">
+            ☕ Tipeee — Un café
+          </a>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /slides-wrap -->
 
   <!-- ═══════════════════════════════════════════
@@ -2171,15 +2738,35 @@
   // ────────────────────────────────────────────────
   // POLES CONFIGURATION
   // ────────────────────────────────────────────────
+  // ── 7 PÔLES / 25 PAGES — Architecture finale v9.0 ──────────────
   const POLES = [
-    { id: 'monde',   label: '🌍 Monde',     slides: ['s-globe','s-news','s-orgs'],                                                              subLabels: ['🌐 Globe','📰 Actualités','🏛️ Organisations'] },
-    { id: 'planete', label: '🌐 Planète',   slides: ['s-meteo','s-espace','s-sky','s-ocean'],                                                   subLabels: ['🌤️ Météo & Air','🚀 Espace','✈️ Vue du ciel','🌊 Vue des océans'] },
-    { id: 'eco',     label: '💹 Éco',       slides: ['s-marches','s-crypto','s-donnees'],                                                       subLabels: ['📈 Marchés','🪙 Crypto','📊 Données'] },
-    { id: 'newsroom',label: '📡 Newsroom',  slides: ['s-sources','s-crosscheck','s-indep','s-hist','s-timemachine'],                           subLabels: ['🗞️ Sources','⚖️ Cross-Check','🔍 Indépendants','🗂️ Archives','⏳ Time Machine'] },
-    { id: 'culture', label: '🎭 Culture',   slides: ['s-events','s-art','s-cinema','s-sport','s-musique'],                                     subLabels: ['🎪 Agenda','🎨 Art','🎬 Cinéma','⚽ Sport','🎵 Musique'] },
-    { id: 'tech',    label: '🔬 Tech & IA', slides: ['s-tech','s-science','s-ia','s-cyber'],                                                   subLabels: ['💻 Tech','🔬 Science','🤖 IA','🛡️ Cyber'] },
-    { id: 'societe', label: '🏥 Société',   slides: ['s-alertes','s-sante','s-droits','s-environnement'],                                     subLabels: ['🚨 Alertes','🏥 Santé','⚖️ Droits','🌿 Environnement'] },
-    { id: 'media',   label: '🎙️ Média',     slides: ['s-radio','s-youtube','s-debat','s-worldmood','s-trends','s-podcasts','s-soutenir'],     subLabels: ['📻 Radio','📺 YouTube','💬 Débat','🌡️ WorldMood','📊 Tendances','🎙️ Podcasts','💰 Soutenir'] },
+    { id: 'world',   label: '🌍 World Pulse',
+      slides:    ['s-globe','s-news','s-alertes','s-orgs'],
+      subLabels: ['🌐 P01 · Globe & Home','📰 P02 · Breaking News','🚨 Alertes Mondiales','🏛️ Organisations'] },
+
+    { id: 'eco',     label: '💹 Éco & Pouvoir',
+      slides:    ['s-marches','s-commodites','s-crypto','s-donnees','s-institutions','s-geopolitique'],
+      subLabels: ['📈 P03 · Marchés Mondiaux','⚡ P04 · Matières Premières','🪙 Crypto','📊 Banque Mondiale','🏦 P05 · Institutions','🕵️ P06 · Géopolitique'] },
+
+    { id: 'newsroom',label: '📡 Newsroom',
+      slides:    ['s-sources','s-orient','s-moyen-orient-media','s-afrique-media','s-editorial','s-crosscheck','s-indep','s-hist','s-timemachine'],
+      subLabels: ['🗞️ P07 · Occident','🀄 P08 · Orient & Asie','🌙 P09 · Moyen-Orient','🌍 P10 · Afrique & LatAm','✍️ P11 · Éditorial IA','⚖️ Cross-Check','🔍 Indépendants','🗂️ Archives','⏳ Time Machine'] },
+
+    { id: 'screen',  label: '🎭 Screen & Stream',
+      slides:    ['s-cinema','s-sport','s-events','s-gaming','s-art'],
+      subLabels: ['🎬 P12 · Cinéma & Séries','⚽ P13 · Sports','🎪 P14 · Culture & Agenda','🎮 P18 · Geek & Gaming','🎨 Art & Collections'] },
+
+    { id: 'tech',    label: '🔬 Tech & Terre',
+      slides:    ['s-tech','s-ia','s-cyber','s-science','s-espace','s-sky','s-ocean','s-meteo','s-sante','s-droits','s-environnement'],
+      subLabels: ['💻 P15 · GAFAM & Tech','🤖 IA & DeepMind','🛡️ P16 · Cybersécurité','🔬 Science & ArXiv','🚀 P17 · Espace & Océans','✈️ Vue du Ciel','🌊 Radars Marins','🌤️ Météo','🏥 Santé & OMS','⚖️ Droits Humains','🌿 Environnement'] },
+
+    { id: 'music',   label: '🎵 Music Pro',
+      slides:    ['s-musique','s-music-dj','s-radio','s-music-droits','s-litterature'],
+      subLabels: ['🎵 P19 · Streaming Public','🎛️ P20 · Espace DJ Pro','📻 P21 · Radios du Monde','📜 P22 · Droits & Industrie','📚 P23 · Litté & Manga'] },
+
+    { id: 'social',  label: '🌐 Social & Lab',
+      slides:    ['s-social','s-debat','s-worldmood','s-trends','s-podcasts','s-youtube','s-soutenir','s-transparence'],
+      subLabels: ['📡 P24 · Social Pulse','💬 Hub Débat','🌡️ WorldMood','📊 Tendances Google','🎙️ Podcasts','📺 YouTube','💰 Soutenir','🔍 P25 · Transparence'] },
   ];
 
   let activePole = 0;
@@ -2304,6 +2891,20 @@
       case 's-worldmood':  { initWorldMood(); loadReddit(); return; }
       case 's-trends':     return loadTrends('FR');
       case 's-soutenir':   break;
+      // ── V9.0 — Nouveaux slides ──
+      case 's-commodites':        return; // TradingView widgets auto
+      case 's-institutions':      return loadInstitutionsNews();
+      case 's-geopolitique':      return loadGeopolitiqueNews();
+      case 's-orient':            return loadOrientNews('all', null);
+      case 's-moyen-orient-media':return loadMoyenOrientNews('all', null);
+      case 's-afrique-media':     return loadAfriqueSudNews('all', null);
+      case 's-editorial':         return loadEditorialNews();
+      case 's-gaming':            return loadGamingNews('all', null);
+      case 's-music-dj':          return loadDJProTab('beatport', null);
+      case 's-music-droits':      return loadMusicDroitsNews();
+      case 's-litterature':       return loadLitNews();
+      case 's-social':            { loadSocialReddit(); loadSocialTrends(); return; }
+      case 's-transparence':      return; // statique
     }
   }
 
@@ -2323,48 +2924,45 @@
   // Traductions des labels UI
   const I18N = {
     fr: {
-      poles: ['🌍 Monde','🌐 Planète','💹 Éco','📡 Newsroom','🎭 Culture','🔬 Tech & IA','🏥 Société','🎙️ Média'],
+      poles: ['🌍 World Pulse','💹 Éco & Pouvoir','📡 Newsroom','🎭 Screen & Stream','🔬 Tech & Terre','🎵 Music Pro','🌐 Social & Lab'],
       subLabels: [
-        ['🌐 Globe','📰 Actualités','🏛️ Organisations'],
-        ['🌤️ Météo & Air','🚀 Espace','✈️ Vue du ciel','🌊 Vue des océans'],
-        ['📈 Marchés','🪙 Crypto','📊 Données'],
-        ['🗞️ Sources','⚖️ Cross-Check','🔍 Indépendants','🗂️ Archives','⏳ Time Machine'],
-        ['🎪 Agenda','🎨 Art','🎬 Cinéma','⚽ Sport','🎵 Musique'],
-        ['💻 Tech','🔬 Science','🤖 IA','🛡️ Cyber'],
-        ['🚨 Alertes','🏥 Santé','⚖️ Droits','🌿 Environnement'],
-        ['📻 Radio','📺 YouTube','💬 Débat','🌡️ WorldMood','📊 Tendances','🎙️ Podcasts','💰 Soutenir'],
+        ['🌐 Globe & Home','📰 Breaking News','🚨 Alertes','🏛️ Organisations'],
+        ['📈 Marchés','⚡ Matières','🪙 Crypto','📊 Banque Mondiale','🏦 Institutions','🕵️ Géopolitique'],
+        ['🗞️ Occident','🀄 Orient & Asie','🌙 Moyen-Orient','🌍 Afrique & LatAm','✍️ Éditorial IA','⚖️ Cross-Check','🔍 Indépendants','🗂️ Archives','⏳ Time Machine'],
+        ['🎬 Cinéma','⚽ Sport','🎪 Culture','🎮 Gaming','🎨 Art'],
+        ['💻 GAFAM & Tech','🤖 IA','🛡️ Cyber','🔬 Science','🚀 Espace','✈️ Ciel','🌊 Océans','🌤️ Météo','🏥 Santé','⚖️ Droits','🌿 Enviro'],
+        ['🎵 Streaming','🎛️ DJ Pro','📻 Radios','📜 Droits','📚 Litté'],
+        ['📡 Social Pulse','💬 Débat','🌡️ WorldMood','📊 Tendances','🎙️ Podcasts','📺 YouTube','💰 Soutenir','🔍 Transparence'],
       ],
       ggPlaceholder: 'Posez votre question…',
     },
     en: {
-      poles: ['🌍 World','🌐 Planet','💹 Economy','📡 Newsroom','🎭 Culture','🔬 Tech & AI','🏥 Society','🎙️ Media'],
+      poles: ['🌍 World Pulse','💹 Eco & Power','📡 Newsroom','🎭 Screen & Stream','🔬 Tech & Earth','🎵 Music Pro','🌐 Social & Lab'],
       subLabels: [
-        ['🌐 Globe','📰 News','🏛️ Organizations'],
-        ['🌤️ Weather & Air','🚀 Space','✈️ Sky view','🌊 Ocean view'],
-        ['📈 Markets','🪙 Crypto','📊 Data'],
-        ['🗞️ Sources','⚖️ Cross-Check','🔍 Independents','🗂️ Archives','⏳ Time Machine'],
-        ['🎪 Agenda','🎨 Art','🎬 Cinema','⚽ Sport','🎵 Music'],
-        ['💻 Tech','🔬 Science','🤖 AI','🛡️ Cyber'],
-        ['🚨 Alerts','🏥 Health','⚖️ Rights','🌿 Environment'],
-        ['📻 Radio','📺 YouTube','💬 Debate','🌡️ WorldMood','📊 Trends','🎙️ Podcasts','💰 Support'],
+        ['🌐 Globe & Home','📰 Breaking News','🚨 Alerts','🏛️ Organizations'],
+        ['📈 Markets','⚡ Commodities','🪙 Crypto','📊 World Bank','🏦 Institutions','🕵️ Geopolitics'],
+        ['🗞️ West','🀄 Orient & Asia','🌙 Middle East','🌍 Africa & LatAm','✍️ Editorial AI','⚖️ Cross-Check','🔍 Independents','🗂️ Archives','⏳ Time Machine'],
+        ['🎬 Cinema','⚽ Sport','🎪 Culture','🎮 Gaming','🎨 Art'],
+        ['💻 GAFAM & Tech','🤖 AI','🛡️ Cyber','🔬 Science','🚀 Space','✈️ Sky','🌊 Oceans','🌤️ Weather','🏥 Health','⚖️ Rights','🌿 Enviro'],
+        ['🎵 Streaming','🎛️ DJ Pro','📻 Radios','📜 Rights','📚 Literature'],
+        ['📡 Social Pulse','💬 Debate','🌡️ WorldMood','📊 Trends','🎙️ Podcasts','📺 YouTube','💰 Support','🔍 Transparency'],
       ],
       ggPlaceholder: 'Ask a question…',
     },
     es: {
-      poles: ['🌍 Mundo','🌐 Planeta','💹 Economía','📡 Newsroom','🎭 Cultura','🔬 Tech & IA','🏥 Sociedad','🎙️ Medios'],
+      poles: ['🌍 World Pulse','💹 Eco & Poder','📡 Newsroom','🎭 Screen & Stream','🔬 Tech & Tierra','🎵 Music Pro','🌐 Social & Lab'],
       subLabels: [
-        ['🌐 Globo','📰 Noticias','🏛️ Organizaciones'],
-        ['🌤️ Clima & Aire','🚀 Espacio','✈️ Vista del cielo','🌊 Vista del océano'],
-        ['📈 Mercados','🪙 Cripto','📊 Datos'],
-        ['🗞️ Fuentes','⚖️ Cross-Check','🔍 Independientes','🗂️ Archivos','⏳ Máquina del tiempo'],
-        ['🎪 Agenda','🎨 Arte','🎬 Cine','⚽ Deporte','🎵 Música'],
-        ['💻 Tech','🔬 Ciencia','🤖 IA','🛡️ Ciberseguridad'],
-        ['🚨 Alertas','🏥 Salud','⚖️ Derechos','🌿 Medioambiente'],
-        ['📻 Radio','📺 YouTube','💬 Debate','🌡️ WorldMood','📊 Tendencias','🎙️ Podcasts','💰 Apoyar'],
+        ['🌐 Globo & Home','📰 Breaking News','🚨 Alertas','🏛️ Organizaciones'],
+        ['📈 Mercados','⚡ Materias','🪙 Cripto','📊 Banco Mundial','🏦 Instituciones','🕵️ Geopolítica'],
+        ['🗞️ Occidente','🀄 Oriente & Asia','🌙 Oriente Medio','🌍 África & LatAm','✍️ Editorial IA','⚖️ Cross-Check','🔍 Independientes','🗂️ Archivos','⏳ Máquina del tiempo'],
+        ['🎬 Cine','⚽ Deporte','🎪 Cultura','🎮 Gaming','🎨 Arte'],
+        ['💻 GAFAM & Tech','🤖 IA','🛡️ Cyber','🔬 Ciencia','🚀 Espacio','✈️ Cielo','🌊 Océanos','🌤️ Clima','🏥 Salud','⚖️ Derechos','🌿 Enviro'],
+        ['🎵 Streaming','🎛️ DJ Pro','📻 Radios','📜 Derechos','📚 Litté'],
+        ['📡 Social Pulse','💬 Debate','🌡️ WorldMood','📊 Tendencias','🎙️ Podcasts','📺 YouTube','💰 Apoyar','🔍 Transparencia'],
       ],
       ggPlaceholder: 'Haz tu pregunta…',
     },
-  };;
+  };
 
   function setLang(lang) {
     currentLang = lang;
@@ -4008,6 +4606,342 @@
     renderSondage(currentSondageIdx);
   }
 
+  // ════════════════════════════════════════════════
+  // V9.0 — FONCTIONS NOUVEAUX SLIDES
+  // ════════════════════════════════════════════════
+
+  // ── Helper générique ──────────────────────────
+  function newsCardHTML(a) {
+    const src   = a.source || a.feed || '';
+    const title = a.title  || '';
+    const url   = a.url    || a.link || '#';
+    const time  = a.publishedAt || a.date || '';
+    const ago   = time ? timeSince(new Date(time)) : '';
+    return `<div class="news-card" onclick="window.open('${url}','_blank')">
+      <div class="news-meta">
+        <span class="news-source">${src}</span>
+        ${ago ? `<span>· ${ago}</span>` : ''}
+      </div>
+      <div class="news-title">${title}</div>
+      ${a.description ? `<div style="font-size:0.74rem;color:var(--muted);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${a.description}</div>` : ''}
+    </div>`;
+  }
+  function timeSince(d) {
+    const s = Math.floor((Date.now() - d) / 1000);
+    if (s < 3600) return Math.floor(s/60) + 'min';
+    if (s < 86400) return Math.floor(s/3600) + 'h';
+    return Math.floor(s/86400) + 'j';
+  }
+
+  // ── P05 INSTITUTIONS ─────────────────────────
+  async function loadInstitutionsNews() {
+    const el = document.getElementById('institutionsNewsGrid');
+    if (!el) return;
+    el.innerHTML = skeletonCards(6);
+    try {
+      const r = await fetch('/api/society?source=imf&limit=8');
+      const d = await r.json();
+      const articles = d.articles || [];
+      el.innerHTML = articles.length
+        ? `<div class="news-grid">${articles.map(a => newsCardHTML(a)).join('')}</div>`
+        : '<div class="loading-msg">Pas d\'actualités disponibles actuellement — consultez les liens ci-dessous.</div>';
+    } catch(e) { el.innerHTML = '<div class="loading-msg">Liens directs disponibles ci-dessous ↓</div>'; }
+  }
+
+  // ── P06 GÉOPOLITIQUE ──────────────────────────
+  async function loadGeopolitiqueNews() {
+    const el = document.getElementById('geopolitiqueGrid');
+    if (!el) return;
+    el.innerHTML = skeletonCards(6);
+    try {
+      const r = await fetch('/api/society?source=onu&limit=8');
+      const d = await r.json();
+      const articles = d.articles || [];
+      el.innerHTML = articles.length
+        ? `<div class="news-grid">${articles.map(a => newsCardHTML(a)).join('')}</div>`
+        : '<div class="loading-msg">Sources directes disponibles ci-dessous ↓</div>';
+    } catch(e) { el.innerHTML = '<div class="loading-msg">Sources directes disponibles ci-dessous ↓</div>'; }
+  }
+
+  // ── P08 ORIENT & ASIE ─────────────────────────
+  async function loadOrientNews(filter, btn) {
+    if (btn) { document.querySelectorAll('#orientFilters .filter-chip').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+    const el = document.getElementById('orientGrid');
+    if (!el) return;
+    el.innerHTML = skeletonCards(6);
+    const sources = { all: '', xinhua: 'xinhua', tass: 'tass', nhk: 'nhk', yonhap: 'yonhap' };
+    const src = sources[filter] || '';
+    try {
+      const r = await fetch(`/api/news?source=${src}&limit=18`);
+      const d = await r.json();
+      const articles = (d.articles || []).filter(a => {
+        if (!src) return ['xinhua','tass','nhk','yonhap'].some(s => (a.source||'').toLowerCase().includes(s));
+        return (a.source||'').toLowerCase().includes(src);
+      });
+      el.innerHTML = articles.length
+        ? articles.map(a => newsCardHTML(a)).join('')
+        : '<div class="loading-msg">Source non disponible dans les flux actuels.</div>';
+    } catch(e) { el.innerHTML = '<div class="loading-msg">Erreur chargement ❌</div>'; }
+  }
+
+  // ── P09 MOYEN-ORIENT ──────────────────────────
+  async function loadMoyenOrientNews(filter, btn) {
+    if (btn) { document.querySelectorAll('#moyenOrientFilters .filter-chip').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+    const el = document.getElementById('moyenOrientGrid');
+    if (!el) return;
+    el.innerHTML = skeletonCards(6);
+    const srcMap = { all: ['aljazeera','trtworld'], aljazeera: ['aljazeera'], trtworld: ['trtworld'], anadolu: ['anadolu'] };
+    const keys = srcMap[filter] || srcMap.all;
+    try {
+      const r = await fetch(`/api/news?source=${keys[0]}&limit=20`);
+      const d = await r.json();
+      const articles = (d.articles || []).filter(a => keys.some(k => (a.source||'').toLowerCase().includes(k)));
+      el.innerHTML = articles.length
+        ? articles.map(a => newsCardHTML(a)).join('')
+        : '<div class="loading-msg">Source non disponible — flux RSS en attente.</div>';
+    } catch(e) { el.innerHTML = '<div class="loading-msg">Erreur chargement ❌</div>'; }
+  }
+
+  // ── P10 AFRIQUE & LATAM ───────────────────────
+  async function loadAfriqueSudNews(filter, btn) {
+    if (btn) { document.querySelectorAll('#afriqueFilters .filter-chip').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+    const el = document.getElementById('afriqueGrid');
+    if (!el) return;
+    el.innerHTML = skeletonCards(6);
+    const srcMap = { all: ['africanews','allafrica','telesur'], africanews: ['africanews'], allafrica: ['allafrica'], telesur: ['telesur'] };
+    const keys = srcMap[filter] || srcMap.all;
+    try {
+      const r = await fetch(`/api/news?source=${keys[0]}&limit=20`);
+      const d = await r.json();
+      const articles = (d.articles || []).filter(a => keys.some(k => (a.source||'').toLowerCase().includes(k)));
+      el.innerHTML = articles.length
+        ? articles.map(a => newsCardHTML(a)).join('')
+        : '<div class="loading-msg">Flux Afrique/LatAm en chargement…</div>';
+    } catch(e) { el.innerHTML = '<div class="loading-msg">Erreur chargement ❌</div>'; }
+  }
+
+  // ── P11 ÉDITORIAL ─────────────────────────────
+  async function loadEditorialNews() {
+    const el = document.getElementById('editorialNewsGrid');
+    if (!el) return;
+    el.innerHTML = skeletonCards(4);
+    try {
+      const r = await fetch('/api/news?source=guardian&limit=12');
+      const d = await r.json();
+      el.innerHTML = (d.articles || []).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Utilisez les boutons ci-dessus pour une synthèse Globe-Guide.</div>';
+    } catch(e) { el.innerHTML = '<div class="loading-msg">Utilisez les boutons ci-dessus pour une synthèse Globe-Guide.</div>'; }
+  }
+
+  // Ouvre le Globe-Guide avec un prompt pré-rempli
+  function editorialPrompt(text) {
+    const input = document.getElementById('gg-input');
+    if (!input) return;
+    input.value = text;
+    if (!ggOpen) toggleGG();
+    ggSend();
+  }
+
+  // ── P18 GAMING ────────────────────────────────
+  async function loadGamingNews(filter, btn) {
+    if (btn) { document.querySelectorAll('#gamingFilters .filter-chip').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+    const el = document.getElementById('gamingGrid');
+    if (!el) return;
+    el.innerHTML = skeletonCards(6);
+    const query = { all: 'gaming OR hardware OR jeux vidéo', gaming: 'jeux vidéo gaming', hardware: 'GPU CPU hardware', esport: 'esport tournament' }[filter] || 'gaming';
+    try {
+      const r = await fetch(`/api/tech?q=${encodeURIComponent(query)}&limit=18`);
+      const d = await r.json();
+      const articles = d.articles || d.tech || [];
+      el.innerHTML = articles.length ? articles.map(a => newsCardHTML(a)).join('') : '<div class="loading-msg">Consultez les liens ci-dessous.</div>';
+    } catch(e) { el.innerHTML = '<div class="loading-msg">Consultez les liens ci-dessous.</div>'; }
+  }
+
+  // ── P20 DJ PRO ────────────────────────────────
+  async function loadDJProTab(tab, btn) {
+    if (btn) { document.querySelectorAll('#djProFilters .filter-chip').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+    const el = document.getElementById('djProGrid');
+    if (!el) return;
+    el.innerHTML = '<div class="loading-msg">Chargement…</div>';
+    if (tab === 'beatport') {
+      try {
+        const r = await fetch('/api/music/beatport?limit=5');
+        const d = await r.json();
+        const tracks = d.tracks || [];
+        el.innerHTML = tracks.length
+          ? `<div style="display:flex;flex-direction:column;gap:0.5rem">${tracks.map(t => `
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.75rem;display:flex;align-items:center;gap:0.75rem;cursor:pointer" onclick="window.open('${t.link||'https://beatport.com'}','_blank')">
+              <div style="font-size:1.1rem">${t.genre?.includes('Techno')?'⚡':t.genre?.includes('House')?'🏠':t.genre?.includes('Trance')?'🌀':'🎵'}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:0.82rem;font-weight:600;color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${t.title||t.name||'—'}</div>
+                <div style="font-size:0.68rem;color:var(--muted)">${t.genre||'Electronic'} · Beatport</div>
+              </div>
+              <div style="font-size:0.62rem;color:var(--primary);font-weight:700;font-family:var(--font-mono)">${t.bpm||'—'} BPM</div>
+            </div>`).join('')}</div>`
+          : '<div class="loading-msg">Charts Beatport — <a href="https://beatport.com/top-100" target="_blank" rel="noopener" style="color:var(--primary)">ouvrir Beatport</a></div>';
+      } catch(e) { el.innerHTML = '<div class="loading-msg"><a href="https://beatport.com/top-100" target="_blank" rel="noopener" style="color:var(--primary)">Beatport Top 100 →</a></div>'; }
+    } else if (tab === 'traxsource') {
+      el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:0.7rem">
+        <a href="https://traxsource.com/genre/1/afro-house" target="_blank" rel="noopener" class="card" style="padding:0.85rem;text-decoration:none">🌍 Afro House Charts</a>
+        <a href="https://traxsource.com/genre/7/deep-house" target="_blank" rel="noopener" class="card" style="padding:0.85rem;text-decoration:none">🌊 Deep House Charts</a>
+        <a href="https://traxsource.com/genre/3/house" target="_blank" rel="noopener" class="card" style="padding:0.85rem;text-decoration:none">🏠 House Charts</a>
+        <a href="https://traxsource.com/genre/16/soul-funk-r-b" target="_blank" rel="noopener" class="card" style="padding:0.85rem;text-decoration:none">🎷 Soul / Funk / R&B</a>
+      </div>`;
+    } else {
+      try {
+        const r = await fetch('/api/music/news?limit=12');
+        const d = await r.json();
+        el.innerHTML = (d.articles||[]).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Aucune actualité disponible.</div>';
+      } catch(e) { el.innerHTML = '<div class="loading-msg">Erreur ❌</div>'; }
+    }
+  }
+
+  // ── P22 DROITS MUSIQUE ────────────────────────
+  async function loadMusicDroitsNews() {
+    const el = document.getElementById('musicDroitsGrid');
+    if (!el) return;
+    el.innerHTML = skeletonCards(4);
+    try {
+      const r = await fetch('/api/music/news?limit=12');
+      const d = await r.json();
+      el.innerHTML = (d.articles||[]).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Consultez les liens ci-dessous.</div>';
+    } catch(e) { el.innerHTML = '<div class="loading-msg">Consultez les liens ci-dessous.</div>'; }
+  }
+
+  // ── P23 LITTÉRATURE ──────────────────────────
+  async function loadLitNews() {
+    const el = document.getElementById('litNewsGrid');
+    if (!el) return;
+    el.innerHTML = skeletonCards(4);
+    try {
+      const r = await fetch('/api/tech?q=livre manga bande+dessin%C3%A9e&limit=8');
+      const d = await r.json();
+      el.innerHTML = (d.articles||[]).map(a => newsCardHTML(a)).join('') || '<div class="loading-msg">Consultez les liens ci-dessous.</div>';
+    } catch(e) { el.innerHTML = '<div class="loading-msg">Consultez les liens ci-dessous.</div>'; }
+  }
+
+  // ── P24 SOCIAL PULSE ─────────────────────────
+  async function loadSocialReddit() {
+    const el = document.getElementById('socialRedditGrid');
+    if (!el) return;
+    el.innerHTML = '<div class="loading-msg">Chargement…</div>';
+    try {
+      const r = await fetch('/api/reddit?sub=worldnews&limit=6');
+      const d = await r.json();
+      const posts = d.posts || d.articles || [];
+      el.innerHTML = posts.slice(0,6).map(p => `
+        <div style="padding:0.5rem 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="window.open('${p.url||p.link||'#'}','_blank')">
+          <div style="font-size:0.8rem;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:2px">${p.title||''}</div>
+          <div style="font-size:0.65rem;color:var(--muted)">⬆️ ${p.score||0} · r/${p.subreddit||'worldnews'}</div>
+        </div>`).join('') || '<div class="loading-msg">Voir Reddit directement →</div>';
+    } catch(e) { el.innerHTML = '<a href="https://reddit.com/r/worldnews" target="_blank" rel="noopener" style="color:var(--primary);font-size:0.8rem">r/worldnews →</a>'; }
+  }
+
+  async function loadSocialTrends() {
+    const el = document.getElementById('socialTrendsGrid');
+    if (!el) return;
+    el.innerHTML = '<div class="loading-msg">Chargement…</div>';
+    try {
+      const r = await fetch('/api/trends?geo=FR&limit=6');
+      const d = await r.json();
+      const trends = d.trends || d.articles || [];
+      el.innerHTML = trends.slice(0,6).map((t,i) => `
+        <div style="padding:0.5rem 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.5rem">
+          <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);min-width:20px">${i+1}.</span>
+          <span style="font-size:0.8rem;font-weight:600;color:var(--text)">${t.query||t.title||t}</span>
+        </div>`).join('') || '<div class="loading-msg">Trends non disponibles.</div>';
+    } catch(e) { el.innerHTML = '<a href="https://trends.google.com" target="_blank" rel="noopener" style="color:var(--primary);font-size:0.8rem">Google Trends →</a>'; }
+  }
+
+  // ════════════════════════════════════════════════
+  // GLOBE-GUIDE IA — Vercel AI SDK compatible (SSE streaming)
+  // ════════════════════════════════════════════════
+  let ggOpen = false;
+  let ggMessages = []; // session only — jamais persisté
+
+  function getCurrentPageContext() {
+    const poleEl = document.querySelector('.pole-btn.active');
+    const subEl  = document.querySelector('.sub-btn.active');
+    return [poleEl?.textContent?.trim(), subEl?.textContent?.trim()].filter(Boolean).join(' › ') || 'infonews.day';
+  }
+
+  async function ggSend() {
+    const input   = document.getElementById('gg-input');
+    const text    = input?.value?.trim();
+    if (!text) return;
+
+    addGGMessage(text, 'user');
+    ggMessages.push({ role: 'user', content: text });
+    input.value = '';
+
+    // Afficher l'indicateur de frappe
+    const typingId = 'gg-typing-' + Date.now();
+    const msgs = document.getElementById('gg-messages');
+    const typingDiv = document.createElement('div');
+    typingDiv.id = typingId;
+    typingDiv.className = 'gg-msg bot';
+    typingDiv.innerHTML = '<span style="opacity:0.5;font-size:0.75rem">⏳ Globe-Guide réfléchit…</span>';
+    msgs?.appendChild(typingDiv);
+    msgs && (msgs.scrollTop = msgs.scrollHeight);
+
+    try {
+      const resp = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages:    ggMessages.slice(-10),
+          currentPage: getCurrentPageContext(),
+          lang:        currentLang || 'fr',
+        }),
+      });
+
+      if (!resp.ok) throw new Error('API non disponible');
+
+      // Lecture SSE streaming
+      const reader = resp.body.getReader();
+      const dec    = new TextDecoder();
+      let   full   = '';
+      typingDiv.innerHTML = '';
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        const chunk = dec.decode(value, { stream: true });
+        chunk.split('\n').forEach(line => {
+          if (!line.startsWith('data: ')) return;
+          const payload = line.slice(6);
+          if (payload === '[DONE]') return;
+          try {
+            const { text: t, error } = JSON.parse(payload);
+            if (error) { full = '❌ Erreur Globe-Guide : ' + error; typingDiv.textContent = full; return; }
+            if (t) { full += t; typingDiv.textContent = full; msgs && (msgs.scrollTop = msgs.scrollHeight); }
+          } catch {}
+        });
+      }
+
+      // Fallback si clé non configurée
+      if (!full) full = '⚠️ Globe-Guide IA non configuré — ajoutez ANTHROPIC_API_KEY dans .env. En attendant : utilisez les filtres de chaque pôle pour explorer le contenu.';
+      typingDiv.textContent = full;
+      ggMessages.push({ role: 'assistant', content: full });
+
+    } catch (err) {
+      // Fallback local si backend pas disponible
+      typingDiv.textContent = ggFallback(text);
+    }
+    msgs && (msgs.scrollTop = msgs.scrollHeight);
+  }
+
+  // Fallback local (pas de clé API)
+  function ggFallback(text) {
+    const low = text.toLowerCase();
+    if (/marché|bourse|crypto|or|pétrole|matière/i.test(low)) return '💹 Rendez-vous dans Pôle 2 "Éco & Pouvoir" — Marchés Mondiaux ou Matières Premières. (Globe-Guide IA non configuré — ajoutez ANTHROPIC_API_KEY dans .env)';
+    if (/xinhua|tass|chine|russie|asie|japon|corée/i.test(low)) return '🀄 Pôle 3 Newsroom → "Orient & Asie" — Xinhua, TASS (⚠️ médias d\'État), NHK, Yonhap. (IA non configurée)';
+    if (/al jazeera|turquie|moyen.orient|gaza|israel/i.test(low)) return '🌙 Pôle 3 Newsroom → "Moyen-Orient" — Al Jazeera, TRT World, Anadolu. (IA non configurée)';
+    if (/dj|beatport|traxsource|musique pro|tekno|house|trance/i.test(low)) return '🎛️ Pôle 6 Music Pro → "Espace DJ Pro" — Beatport, Traxsource, Junodownload. (IA non configurée)';
+    if (/gaming|jeux|hardware|gpu|cpu/i.test(low)) return '🎮 Pôle 4 Screen & Stream → "Geek & Gaming". (IA non configurée)';
+    if (/transparent|source|éthique|contact|rgpd/i.test(low)) return '🔍 Pôle 7 Social & Lab → "Transparence & Contact" — 100+ sources indexées. (IA non configurée)';
+    return '🌐 Globe-Guide IA non configuré (ANTHROPIC_API_KEY manquante dans .env). Je suis le Globe-Guide d\'infonews.day — 7 pôles, 25 pages. Parcourez la navigation pour explorer les contenus.';
+  }
+
   // ────────────────────────────────────────────────
   // DARK / LIGHT / TERMINAL MODE
   // Cycle : light → dark (terminal) → light
@@ -4397,116 +5331,6 @@
     if (totalEl) totalEl.textContent = `${total} vote${total>1?'s':''} · Données locales`;
   }
 
-  // ────────────────────────────────────────────────
-  // GLOBE-GUIDE (agent flottant)
-  // ────────────────────────────────────────────────
-  let ggOpen = false;
-
-  const GG_CONTEXT = {
-    0: { pole: 'Monde',     hint: '🌍 Globe 3D + 22 compteurs · 22 sources d\'actualités · Organisations (ONU, UNESCO, WHO, MSF)' },
-    1: { pole: 'Planète',   hint: '🌐 Météo + qualité de l\'air · Espace (ISS live, NASA APOD, prochains lancements) · Vue du ciel (OpenSky) · Vue des océans (NOAA + OpenSeaMap)' },
-    2: { pole: 'Éco',       hint: '💹 Marchés Yahoo Finance + taux de change · Crypto CoinGecko + Fear & Greed Index · Données Banque Mondiale' },
-    3: { pole: 'Newsroom',  hint: '📡 22 sources mondiales · Cross-Check 6 combinaisons · Indépendants · Archives BNF/Gallica · Time Machine' },
-    4: { pole: 'Culture',   hint: '🎭 Agenda · Art Met Museum · Cinéma & Séries TMDB · Sport live TheSportsDB+ESPN · Musique Deezer+Beatport' },
-    5: { pole: 'Tech & IA', hint: '🔬 Tech (TechCrunch+HackerNews) · Science (ArXiv) · IA (OpenAI+DeepMind+ArXiv cs.AI) · Cyber (BleepingComputer+CISA)' },
-    6: { pole: 'Société',   hint: '🏥 Alertes (USGS séismes + GDACS catastrophes) · Santé mondiale (WHO) · Droits humains (Amnesty+HRW+UNHCR) · Environnement (Greenpeace+UNEP)' },
-    7: { pole: 'Média',     hint: '🎙️ Radio 12 stations · YouTube 12 chaînes · Débat + Sondages · WorldMood · Tendances Google 5 pays · 8 Podcasts' },
-  };
-
-  const GG_RESPONSES = {
-    aide:      'Je suis le Globe-Guide 🌐 ! 8 pôles disponibles : 🌍 Monde · 🌐 Planète · 💹 Éco · 📡 Newsroom · 🎭 Culture · 🔬 Tech & IA · 🏥 Société · 🎙️ Média. Posez votre question !',
-    monde:     'Pôle Monde 🌍 : Globe interactif 3D, 22 compteurs mondiaux temps réel, Actualités (22 sources), Organisations (ONU, UNESCO, WHO, MSF, G20).',
-    planete:   'Pôle Planète 🌐 : Météo & qualité de l\'air (Open-Meteo), Espace (ISS live, NASA APOD, prochains lancements), Vue du ciel (OpenSky — vols en direct), Vue des océans (NOAA bouées + OpenSeaMap).',
-    eco:       'Pôle Éco 💹 : Marchés financiers (Yahoo Finance, cours CAC40/SP500/NASDAQ), Crypto top 50 CoinGecko + Fear & Greed Index, Données TradingView.',
-    newsroom:  'Pôle Newsroom 📡 : 22 sources mondiales (Occident, Orient, Afrique, Latam), Cross-Check Occident vs Orient (6 combinaisons), Médias indépendants, Archives BNF/Gallica, Time Machine.',
-    crosscheck:'Cross-Check ⚖️ : compare BBC/Guardian/Reuters vs Al Jazeera/Xinhua/TASS. 6 combinaisons : Occident vs Orient, vs Latam, vs Afrique, Reuters vs TASS, Guardian vs Xinhua, Al Jazeera vs BBC.',
-    culture:   'Pôle Culture 🎭 : Agenda (festivals, expos), Art Met Museum Open Access, Cinéma & Séries (TMDB + Variety), Sport live (TheSportsDB, BBC Sport, ESPN), Musique (Deezer + Beatport).',
-    cinema:    'Cinéma 🎬 : Films en salle et séries tendances via TMDB. Critiques Variety + Hollywood Reporter. Disponible dans Pôle Culture → Cinéma.',
-    sport:     'Sport ⚽ : Matchs TheSportsDB (Premier League, La Liga, Ligue 1, Champions League), scores live, actualités BBC Sport + ESPN. Pôle Culture → Sport.',
-    musique:   'Musique 🎵 : Top 20 Deezer avec prévisualisations 30s, Charts Beatport (Techno, House, D&B, Afro House…), Actualités Billboard + Pitchfork + NME. Pôle Culture → Musique.',
-    tendances: 'Tendances 📊 : Google Trends RSS officiel pour France, Espagne, UK, USA, Allemagne — ce dont les gens parlent en temps réel. Pôle Média → Tendances.',
-    iss:       'ISS 🛸 : Position live de la Station Spatiale Internationale (orbit ~420 km), NASA APOD, prochains lancements (Launch Library 2). Pôle Planète → Espace.',
-    debat:     'Hub Débat 💬 : Pseudonyme anonyme, réactions (🔥💡🌍), sondages thématiques. Aucun compte requis, données localStorage uniquement. Pôle Média → Débat.',
-    radio:     'Radio mondiale 📻 : 12 stations en direct (BBC World, France Inter, Al Jazeera English, RFI, NHK World…). Pôle Média → Radio.',
-    youtube:   'YouTube 📺 : 12 chaînes filtrées par catégorie (Monde, Éco, Science, Tech). Pôle Média → YouTube.',
-    ocean:     'Vue des océans 🌊 : Bouées NOAA temps réel (température, vagues, vents), carte OpenSeaMap. Pôle Planète → Vue des océans.',
-    societe:   'Pôle Société 🏥 : Alertes (USGS séismes + GDACS catastrophes) · Santé mondiale (WHO) · Droits humains (Amnesty International + HRW + UNHCR) · Environnement (Greenpeace + UNEP).',
-    alertes:   'Alertes 🚨 : Séismes USGS (magnitude, profondeur) + Catastrophes GDACS (cyclones, inondations, tsunamis) en temps réel. Pôle Société → Alertes.',
-    droits:    'Droits humains ⚖️ : Actualités Amnesty International, Human Rights Watch et UNHCR sur les violations des droits dans le monde. Pôle Société → Droits.',
-    environnement: 'Environnement 🌿 : Actualités Greenpeace et PNUE sur le climat, la biodiversité, la pollution et les espèces menacées. Pôle Société → Environnement.',
-    podcasts:  'Podcasts 🎙️ : 8 podcasts (BBC Global, RFI, FT News, Radiolab, 99% Invisible, Freakonomics, Darknet Diaries, Huberman Lab). Pôle Média → Podcasts.',
-    cyber:     'Cybersécurité 🛡️ : BleepingComputer + CISA — failles critiques, ransomwares, alertes gouvernementales. Pôle Tech & IA → Cyber.',
-    worldbank: 'Données Banque Mondiale 📊 : Top 15 PIB mondial, taux de change EUR en temps réel, indicateurs macro. Pôle Éco → Données.',
-    legal:     'Sources légales 📋 : Toutes nos sources sont libres et légales. RT supprimé (banni UE, Règlement 2022/350). TASS/Xinhua marqués ⚠️ médias d\'État. Aucun cookie ni tracker. Page : /sources-legales',
-    default:   'Bonne question ! Naviguez via les 8 pôles en haut. Chaque pôle a des sous-pages. Tapez "aide" pour la liste complète des fonctionnalités. 🌐'
-  };
-
-  function updateGGContext() {
-    const ctx = GG_CONTEXT[activePole];
-    if (!ctx || !ggOpen) return;
-    addGGMessage(`[Pôle actif : ${ctx.pole}]\n${ctx.hint}`, 'bot');
-  }
-
-  function toggleGG() {
-    ggOpen = !ggOpen;
-    const chat = document.getElementById('gg-chat');
-    const bubble = document.getElementById('gg-bubble');
-    if (ggOpen) {
-      chat.classList.add('visible');
-      bubble.classList.remove('visible');
-      if (!document.querySelector('.gg-msg')) {
-        addGGMessage('Bonjour ! Je suis le Globe-Guide 🌐 Tapez votre question ou explorez les pôles.', 'bot');
-      }
-    } else {
-      chat.classList.remove('visible');
-    }
-  }
-
-  function ggSend() {
-    const input = document.getElementById('gg-input');
-    const text = input?.value?.trim();
-    if (!text) return;
-    addGGMessage(text, 'user');
-    input.value = '';
-    // Intent detection — ordre du plus spécifique au plus général
-    const low = text.toLowerCase();
-    let reply = GG_RESPONSES.default;
-    if      (/aide|help|comment|quoi faire|que fait|fonctionnalit/.test(low)) reply = GG_RESPONSES.aide;
-    else if (/cross.?check|comparer|biais|occident|orient/.test(low))        reply = GG_RESPONSES.crosscheck;
-    else if (/newsroom|source|médias|media|journali/.test(low))               reply = GG_RESPONSES.newsroom;
-    else if (/cinéma|cinema|film|série|serie|tmdb|streaming/.test(low))      reply = GG_RESPONSES.cinema;
-    else if (/sport|match|foot|football|liga|ligue|scores?.live/.test(low))  reply = GG_RESPONSES.sport;
-    else if (/musique|music|deezer|beatport|billboard|charts/.test(low))     reply = GG_RESPONSES.musique;
-    else if (/tendance|trend|google trend|viral|buzz/.test(low))             reply = GG_RESPONSES.tendances;
-    else if (/iss|station spatiale|espace|nasa|apod|satellite|lancement/.test(low)) reply = GG_RESPONSES.iss;
-    else if (/océan|ocean|bouée|buoy|noaa|mer|marin/.test(low))             reply = GG_RESPONSES.ocean;
-    else if (/youtube|chaîne|chaine|vidéo|video/.test(low))                 reply = GG_RESPONSES.youtube;
-    else if (/radio|écouter|écoute|station|direct/.test(low))               reply = GG_RESPONSES.radio;
-    else if (/débat|debat|sondage|discussion|avis|opinion|vote/.test(low))   reply = GG_RESPONSES.debat;
-    else if (/éco|eco|marché|bourse|crypto|bitcoin|finance/.test(low))      reply = GG_RESPONSES.eco;
-    else if (/planète|planete|météo|meteo|vol|avion|ciel/.test(low))        reply = GG_RESPONSES.planete;
-    else if (/monde|globe|pays|actualit|séisme|seis/.test(low))             reply = GG_RESPONSES.monde;
-    else if (/culture|cinéma|cinema|sport|musique|art|agenda/.test(low))    reply = GG_RESPONSES.culture;
-    else if (/société|societe|alerte|séisme|seisme|gdacs|usgs|catastrophe/.test(low)) reply = GG_RESPONSES.societe;
-    else if (/alerte|séisme|seisme|tremblement|tsunami|cyclone/.test(low))   reply = GG_RESPONSES.alertes;
-    else if (/droits|amnesty|hrw|réfugié|refugie|human rights/.test(low))   reply = GG_RESPONSES.droits;
-    else if (/environnement|greenpeace|climat|biodiversité|pnue/.test(low)  ) reply = GG_RESPONSES.environnement;
-    else if (/podcast|épisode|episode|écouter|huberman|darknet/.test(low))   reply = GG_RESPONSES.podcasts;
-    else if (/cyber|sécurité|securite|hack|faille|cisa|bleeping/.test(low)) reply = GG_RESPONSES.cyber;
-    else if (/banque mondiale|worldbank|pib|gdp|indicateur/.test(low))      reply = GG_RESPONSES.worldbank;
-    else if (/légal|legal|rgpd|gdpr|copyright/.test(low))                   reply = GG_RESPONSES.legal;
-    setTimeout(() => addGGMessage(reply, 'bot'), 300);
-  }
-
-  function addGGMessage(text, type) {
-    const msgs = document.getElementById('gg-messages');
-    if (!msgs) return;
-    const div = document.createElement('div');
-    div.className = `gg-msg ${type}`;
-    div.textContent = text;
-    msgs.appendChild(div);
-    msgs.scrollTop = msgs.scrollHeight;
-  }
 
   // ────────────────────────────────────────────────
   // INIT
