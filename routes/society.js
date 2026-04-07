@@ -17,6 +17,40 @@ const {
 const { fetchEarthquakes } = require('../services/earthquakeService');
 const { fetchGDACS }       = require('../services/gdacsService');
 
+// Route racine : /api/society?source=imf|onu|wb|un|unicef...
+router.get('/', async (req, res) => {
+  const source = req.query.source || 'un';
+  const limit  = parseInt(req.query.limit) || 8;
+  const SOURCE_MAP = {
+    imf:    'https://www.imf.org/en/News/rss?language=eng',
+    fmi:    'https://www.imf.org/en/News/rss?language=eng',
+    onu:    'https://news.un.org/feed/subscribe/en/news/all/rss.xml',
+    un:     'https://news.un.org/feed/subscribe/en/news/all/rss.xml',
+    wb:     'https://blogs.worldbank.org/en/rss.xml',
+    unicef: 'https://www.unicef.org/press-releases/rss',
+    fed:    'https://www.federalreserve.gov/feeds/press_all.xml',
+    bce:    'https://www.ecb.europa.eu/rss/press.html',
+    ocde:   'https://www.oecd.org/newsroom/rss.xml',
+  };
+  const url = SOURCE_MAP[source] || SOURCE_MAP['un'];
+  try {
+    const Parser = require('rss-parser');
+    const p = new Parser({ timeout: 10000, headers: { 'User-Agent': 'infonews.day/1.0' } });
+    const feed = await p.parseURL(url);
+    const articles = feed.items.slice(0, limit).map(item => ({
+      title:       item.title || '',
+      url:         item.link  || '',
+      description: item.contentSnippet || item.summary || '',
+      publishedAt: item.pubDate || item.isoDate || '',
+      source:      source.toUpperCase(),
+      feed:        feed.title || source,
+    }));
+    res.json({ total: articles.length, source, articles });
+  } catch(e) {
+    res.status(500).json({ error: e.message, source });
+  }
+});
+
 router.get('/rights', async (req, res) => {
   try {
     const limit    = parseInt(req.query.limit) || 16;
