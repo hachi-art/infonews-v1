@@ -4,12 +4,39 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>infonews.day — Invent the day</title>
-  <!-- PWA -->
+
+  <!-- ── SEO ────────────────────────────────────────── -->
+  <meta name="description" content="Hub d'information mondial en temps réel — Actualités, Marchés, Météo, Espace, Culture, Cybersécurité. 22 sources, 8 pôles, 0 pub." />
+  <meta name="keywords" content="actualités, news, marchés financiers, crypto, météo, espace, culture, cybersécurité, OSINT, journalisme citoyen" />
+  <meta name="author" content="infonews.day" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://infonews.day/" />
+
+  <!-- ── OpenGraph ──────────────────────────────────── -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:site_name"   content="infonews.day" />
+  <meta property="og:url"         content="https://infonews.day/" />
+  <meta property="og:title"       content="infonews.day — Invent the day" />
+  <meta property="og:description" content="Hub d'information mondial en temps réel — Actualités, Marchés, Météo, Espace, Culture, Cybersécurité. 22 sources, 8 pôles, 0 pub." />
+  <meta property="og:image"       content="https://infonews.day/og-cover.png" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale"      content="fr_FR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="es_ES" />
+
+  <!-- ── Twitter Card ───────────────────────────────── -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:site"        content="@infonewsday" />
+  <meta name="twitter:title"       content="infonews.day — Invent the day" />
+  <meta name="twitter:description" content="Hub d'information mondial en temps réel — 22 sources, 8 pôles, 0 pub." />
+  <meta name="twitter:image"       content="https://infonews.day/og-cover.png" />
+
+  <!-- ── PWA ────────────────────────────────────────── -->
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#1a73e8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="description" content="Hub OSINT Mondial — Journalisme Citoyen, Actualités, Marchés, Météo, Espace, Culture, Débat" />
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -934,6 +961,19 @@
       background: #e8f0fe; border-radius: 8px; padding: 0.7rem 1rem; text-align: left;
     }
 
+    /* ── BLOOMBERG / TERMINAL — améliorations données ─────────── */
+    .clock-time, table td, .news-meta, .badge, .source-badge {
+      font-variant-numeric: tabular-nums;
+    }
+    .news-card {
+      border-left: 3px solid transparent;
+      transition: border-left-color 0.15s, box-shadow 0.15s;
+    }
+    .news-card:hover { border-left-color: var(--primary); }
+    table tr:hover td { background: rgba(26,115,232,0.04); }
+    body.dark-mode table tr:hover td { background: rgba(88,166,255,0.06); }
+    #pole-nav { border-bottom: 1px solid rgba(255,255,255,0.05); }
+
     /* ═══════════════════════════════════════════════════
        RESPONSIVE
     ═══════════════════════════════════════════════════ */
@@ -946,14 +986,48 @@
       .clocks .clock-item:nth-child(n+4) { display: none; }
     }
 
-    /* ── DARK / LIGHT THEME ── */
+    /* ── DARK MODE — Terminal / Bloomberg ── */
+    body.dark-mode {
+      --bg:       #0d1117;
+      --card:     #161b22;
+      --border:   #21262d;
+      --text:     #e6edf3;
+      --muted:    #8b949e;
+      --primary:  #58a6ff;
+      --primary-d:#1f6feb;
+      --green:    #3fb950;
+      --red:      #f85149;
+      --orange:   #d29922;
+      --shadow:   0 2px 12px rgba(0,0,0,0.4);
+    }
+    body.dark-mode header          { background: #010409; border-bottom-color: #21262d; }
+    body.dark-mode #pole-nav       { background: #010409; }
+    body.dark-mode #sub-nav        { background: #0d1117; border-bottom-color: #21262d; }
+    body.dark-mode .news-card      { background: #161b22; border-color: #21262d; }
+    body.dark-mode .news-card:hover{ border-color: var(--primary); }
+    body.dark-mode .card           { background: #161b22; border-color: #21262d; }
+    body.dark-mode .filter-chip    { background: #161b22; border-color: #21262d; color: #8b949e; }
+    body.dark-mode .filter-chip.active { background: #1f6feb22; border-color: #58a6ff; color: #58a6ff; }
+    body.dark-mode #pole-nav       { background: #010409; }
+    body.dark-mode .pole-btn       { color: rgba(230,237,243,0.5); }
+    body.dark-mode .pole-btn.active{ color: #e6edf3; background: rgba(88,166,255,0.12); }
+    body.dark-mode .sub-btn        { color: #8b949e; }
+    body.dark-mode .sub-btn.active { color: #58a6ff; }
+    body.dark-mode select, body.dark-mode input { background: #161b22; border-color: #21262d; color: #e6edf3; }
+    body.dark-mode .source-badge   { filter: brightness(0.85); }
+    body.dark-mode .ticker-bar     { background: #1f6feb; }
+    body.dark-mode .search-bar-wrap{ background: #010409; border-bottom-color: #21262d; }
+    body.dark-mode .global-search-input { background: #161b22; border-color: #30363d; color: #e6edf3; }
+    body.dark-mode .search-results { background: #0d1117; border-color: #21262d; }
+
+    /* ── LIGHT MODE (ancien default amélioré) ── */
     body.light-mode {
-      --bg:      #f0f2f5;
+      --bg:      #f6f8fa;
       --card:    #ffffff;
-      --border:  #d1d5db;
-      --text:    #111827;
-      --muted:   #6b7280;
-      --primary: #1a73e8;
+      --border:  #d0d7de;
+      --text:    #1f2328;
+      --muted:   #656d76;
+      --primary: #0969da;
     }
     .theme-toggle-btn, .search-toggle-btn {
       background: none; border: 1px solid var(--border); color: var(--text);
@@ -2116,6 +2190,31 @@
   // ────────────────────────────────────────────────
   // TWO-TIER NAVIGATION
   // ────────────────────────────────────────────────
+  // Descriptions SEO par pôle pour les metas dynamiques
+  const POLE_META = [
+    { title: 'Monde',     desc: 'Globe 3D interactif, 22 compteurs mondiaux temps réel, actualités de 22 sources internationales et organisations (ONU, UNESCO, WHO, MSF).' },
+    { title: 'Planète',   desc: 'Météo 25 villes, ISS en direct, NASA APOD, prochains lancements spatiaux, trafic aérien OpenSky, océans NOAA.' },
+    { title: 'Économie',  desc: 'Marchés financiers Yahoo Finance, crypto CoinGecko + Fear & Greed Index, taux de change, données Banque Mondiale.' },
+    { title: 'Newsroom',  desc: '22 sources mondiales, cross-check Occident vs Orient, médias indépendants, archives presse historique, Time Machine.' },
+    { title: 'Culture',   desc: 'Agenda culturel, Art Met Museum, Cinéma & Séries TMDB, sport live TheSportsDB + ESPN, musique Deezer + Beatport.' },
+    { title: 'Tech & IA', desc: 'Tech TechCrunch + HackerNews, Science ArXiv, Intelligence Artificielle OpenAI + DeepMind, Cybersécurité BleepingComputer + CISA.' },
+    { title: 'Société',   desc: 'Alertes séismes USGS + catastrophes GDACS, santé mondiale WHO, droits humains Amnesty + HRW + UNHCR, environnement Greenpeace + UNEP.' },
+    { title: 'Médias',    desc: '12 stations radio mondiales, YouTube 12 chaînes, Hub Débat citoyen, WorldMood, tendances Google 5 pays, 8 podcasts.' },
+  ];
+
+  function updatePageMeta(poleIdx) {
+    const m = POLE_META[poleIdx];
+    if (!m) return;
+    const t = `infonews.day — ${m.title}`;
+    document.title = t;
+    const setMeta = (sel, val) => { const el = document.querySelector(sel); if (el) el.setAttribute('content', val); };
+    setMeta('meta[name="description"]',         m.desc);
+    setMeta('meta[property="og:title"]',         t);
+    setMeta('meta[property="og:description"]',   m.desc);
+    setMeta('meta[name="twitter:title"]',        t);
+    setMeta('meta[name="twitter:description"]',  m.desc);
+  }
+
   function goToPole(poleIdx) {
     activePole = poleIdx;
     activeSubPage = 0;
@@ -2127,6 +2226,8 @@
     showSlide(POLES[poleIdx].slides[0]);
     // Update Globe-Guide context
     updateGGContext();
+    // Update SEO meta
+    updatePageMeta(poleIdx);
   }
 
   function goToSub(poleIdx, subIdx) {
@@ -3908,21 +4009,43 @@
   }
 
   // ────────────────────────────────────────────────
-  // DARK / LIGHT MODE
+  // DARK / LIGHT / TERMINAL MODE
+  // Cycle : light → dark (terminal) → light
   // ────────────────────────────────────────────────
   function toggleTheme() {
-    const isLight = document.body.classList.toggle('light-mode');
-    const btn = document.getElementById('themeToggleBtn');
-    if (btn) btn.textContent = isLight ? '☀️' : '🌙';
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    const body = document.body;
+    const btn  = document.getElementById('themeToggleBtn');
+    if (body.classList.contains('light-mode')) {
+      // light → dark terminal
+      body.classList.remove('light-mode');
+      body.classList.add('dark-mode');
+      if (btn) btn.textContent = '💻';
+      localStorage.setItem('theme', 'dark');
+    } else if (body.classList.contains('dark-mode')) {
+      // dark → light
+      body.classList.remove('dark-mode');
+      body.classList.add('light-mode');
+      if (btn) btn.textContent = '☀️';
+      localStorage.setItem('theme', 'light');
+    } else {
+      // default → light
+      body.classList.add('light-mode');
+      if (btn) btn.textContent = '☀️';
+      localStorage.setItem('theme', 'light');
+    }
   }
   // Restore saved theme
   (function() {
-    if (localStorage.getItem('theme') === 'light') {
+    const saved = localStorage.getItem('theme');
+    const btn   = document.getElementById('themeToggleBtn');
+    if (saved === 'dark') {
+      document.body.classList.add('dark-mode');
+      if (btn) btn.textContent = '💻';
+    } else if (saved === 'light') {
       document.body.classList.add('light-mode');
-      const btn = document.getElementById('themeToggleBtn');
       if (btn) btn.textContent = '☀️';
     }
+    // default (no saved) = système clair actuel
   })();
 
   // ────────────────────────────────────────────────

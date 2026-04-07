@@ -74,7 +74,7 @@ app.get('/health', (req, res) => {
   res.json({
     status:    'ok',
     project:   'infonews.day',
-    version:   '8.1.0',
+    version:   '8.3.0',
     timestamp: new Date().toISOString(),
     poles: 8,
     features: ['cache','rate-limiting','gzip','PWA','i18n-FR-EN-ES','globe-guide'],
@@ -102,6 +102,50 @@ app.get('/sources-legales', (req, res) => {
   });
 });
 
+// ── Sitemap dynamique ──────────────────────────────────────────
+app.get('/sitemap.xml', (req, res) => {
+  const base = 'https://infonews.day';
+  const now  = new Date().toISOString().slice(0, 10);
+
+  const poles = [
+    { slug: '#monde',    label: 'Monde' },
+    { slug: '#planete',  label: 'Planète' },
+    { slug: '#eco',      label: 'Économie' },
+    { slug: '#newsroom', label: 'Newsroom' },
+    { slug: '#culture',  label: 'Culture' },
+    { slug: '#tech',     label: 'Tech & IA' },
+    { slug: '#societe',  label: 'Société' },
+    { slug: '#media',    label: 'Médias' },
+  ];
+
+  const urls = [
+    `<url><loc>${base}/</loc><lastmod>${now}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>`,
+    ...poles.map(p =>
+      `<url><loc>${base}/${p.slug}</loc><lastmod>${now}</lastmod><changefreq>hourly</changefreq><priority>0.8</priority></url>`
+    ),
+    `<url><loc>${base}/health</loc><lastmod>${now}</lastmod><changefreq>daily</changefreq><priority>0.3</priority></url>`,
+    `<url><loc>${base}/sources-legales</loc><lastmod>${now}</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>`,
+  ];
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+${urls.join('\n')}
+</urlset>`;
+
+  res.setHeader('Content-Type', 'application/xml');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.send(xml);
+});
+
+// ── robots.txt ─────────────────────────────────────────────────
+app.get('/robots.txt', (req, res) => {
+  res.setHeader('Content-Type', 'text/plain');
+  res.send(`User-agent: *\nAllow: /\nSitemap: https://infonews.day/sitemap.xml\n`);
+});
+
 // ── Racine → index.html ────────────────────────────────────────
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -120,7 +164,7 @@ app.use((err, req, res, next) => {
 
 // ── Démarrage ─────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`[infonews.day v8.1] Port ${PORT} | Cache ✅ | Rate limit ✅ | Gzip ✅`);
+  console.log(`[infonews.day v8.3] Port ${PORT} | Cache ✅ | Rate limit ✅ | Gzip ✅ | SEO ✅`);
   console.log(`[Pôles] 8 pôles actifs | [TMDB] ${process.env.TMDB_API_KEY ? '✅' : '⚠️'}`);
 });
 
