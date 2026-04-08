@@ -3730,20 +3730,6 @@
   // ────────────────────────────────────────────────
   // TIME MACHINE
   // ────────────────────────────────────────────────
-  async function loadTimeMachine() {
-    const tmToday = document.getElementById('tm-today');
-    if (!tmToday) return;
-    try {
-      const r = await fetch('/api/news?limit=5');
-      const d = await r.json();
-      tmToday.innerHTML = (d.articles||[]).slice(0,5).map(a => `
-        <div style="padding:0.4rem 0;border-bottom:1px solid var(--border);font-size:0.78rem">
-          <div style="font-weight:600">${a.title}</div>
-          <div style="font-size:0.65rem;color:var(--muted)">${a.source} · ${timeAgo(a.publishedAt)}</div>
-        </div>`).join('');
-    } catch(e) { tmToday.innerHTML = '<div class="loading-msg">Indisponible</div>'; }
-  }
-
   // ────────────────────────────────────────────────
   // CULTURE
   // ────────────────────────────────────────────────
@@ -3926,41 +3912,34 @@
     if (!grid) return;
     grid.innerHTML = skeletonCards(6);
     try {
-      const r = await fetch(`/api/trends?geo=${_currentTrendsGeo}&limit=24`).then(r => r.json());
+      const r = await fetch(`/api/trends?geo=${_currentTrendsGeo}&limit=25`).then(r => r.json());
       const items = r.trends || [];
       if (items.length) {
-        grid.innerHTML = items.map((t, i) => `
-          <div class="card" style="padding:0.8rem">
+        const dateLabel = r.date ? new Date(r.date).toLocaleDateString('fr-FR', { day:'numeric', month:'long' }) : '';
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;margin-bottom:0.2rem;padding:0 0.2rem">
+            <span style="font-size:0.72rem;color:var(--muted)">📖 Pages Wikipedia les + vues · ${dateLabel}</span>
+            <span style="font-size:0.68rem;color:var(--muted)">Source : Wikimedia API</span>
+          </div>` +
+          items.map((t, i) => `
+          <div class="card" style="padding:0.75rem">
             <div style="display:flex;align-items:flex-start;gap:0.6rem">
-              <span style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--primary);min-width:28px">${i+1}</span>
+              <span style="font-family:'DM Mono',monospace;font-size:1rem;font-weight:700;color:var(--primary);min-width:26px;text-align:right">${t.rank||i+1}</span>
               <div style="flex:1;min-width:0">
-                <div style="font-size:0.85rem;font-weight:600">${t.title||t.query}</div>
-                ${t.trafficVolume ? `<div style="font-size:0.68rem;color:var(--green);margin-top:0.2rem">📈 ${t.trafficVolume} recherches</div>` : ''}
-                ${t.articles && t.articles.length ? `<div style="font-size:0.68rem;color:var(--muted);margin-top:0.2rem">📰 ${t.articles.length} article${t.articles.length>1?'s':''} liés</div>` : ''}
+                <div style="font-size:0.83rem;font-weight:600;line-height:1.3">${t.title}</div>
+                <div style="font-size:0.66rem;color:var(--green);margin-top:0.2rem;font-variant-numeric:tabular-nums">👁 ${t.viewsLabel||''}</div>
               </div>
             </div>
-            ${t.newsUrl ? `<a href="${t.newsUrl}" target="_blank" rel="noopener" style="display:block;margin-top:0.5rem;font-size:0.68rem;color:var(--primary)">Voir les actualités →</a>` : ''}
+            <a href="${t.newsUrl}" target="_blank" rel="noopener"
+               style="display:block;margin-top:0.45rem;font-size:0.67rem;color:var(--primary);font-weight:500">
+              Wikipedia →
+            </a>
           </div>`).join('');
       } else {
-        // Fallback visuel : liens directs Google Trends
-        const geo = _currentTrendsGeo;
-        grid.innerHTML = `
-          <div style="grid-column:1/-1;text-align:center;padding:1.5rem 1rem">
-            <div style="font-size:2rem;margin-bottom:0.5rem">📊</div>
-            <div style="font-size:0.88rem;color:var(--muted);margin-bottom:1rem">Google Trends RSS indisponible actuellement.<br>Accédez directement aux tendances :</div>
-            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center">
-              <a href="https://trends.google.com/trends/trendingsearches/daily?geo=${geo}" target="_blank" rel="noopener" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.5rem 1rem;color:var(--primary);text-decoration:none;font-size:0.8rem">🔥 Tendances ${geo} →</a>
-              <a href="https://trends.google.com/trends/trendingsearches/realtime?geo=${geo}&category=all" target="_blank" rel="noopener" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.5rem 1rem;color:var(--primary);text-decoration:none;font-size:0.8rem">⚡ Temps réel →</a>
-              <a href="https://trends.google.com/trends/explore?geo=${geo}" target="_blank" rel="noopener" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.5rem 1rem;color:var(--primary);text-decoration:none;font-size:0.8rem">🔍 Explorer →</a>
-            </div>
-          </div>`;
+        grid.innerHTML = `<div class="loading-msg" style="grid-column:1/-1">Aucune tendance disponible.</div>`;
       }
     } catch(e) {
-      const geo = _currentTrendsGeo;
-      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:1rem">
-        <div style="color:var(--muted);font-size:0.82rem;margin-bottom:0.8rem">Trends indisponible — accès direct :</div>
-        <a href="https://trends.google.com/trends/trendingsearches/daily?geo=${geo}" target="_blank" rel="noopener" style="color:var(--primary);font-size:0.82rem">Google Trends ${geo} →</a>
-      </div>`;
+      grid.innerHTML = `<div class="loading-msg" style="grid-column:1/-1">Erreur tendances ❌</div>`;
     }
   }
 
