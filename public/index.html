@@ -32,11 +32,14 @@
   <meta name="twitter:description" content="Dashboard d'info mondial : Globe-Guide IA, Marchés, Géopolitique, Newsroom, Music Pro, Social Pulse. 0 cookie. 0 pub." />
   <meta name="twitter:image"       content="https://infonews.day/og-cover.png" />
 
-  <!-- ── PWA ────────────────────────────────────────── -->
+  <!-- ── Favicon & PWA Icons ──────────────────────── -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#080c18" id="themeColorMeta" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1287,6 +1290,22 @@
         </div>
       </div>
       <p class="section-sub">70+ villes mondiales · cliquez pour les prévisions 5 jours</p>
+
+      <!-- Barre de recherche + filtres région -->
+      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;margin-bottom:0.8rem">
+        <input type="text" id="weatherSearch" placeholder="🔍 Rechercher une ville…"
+          oninput="filterWeather()"
+          style="flex:1;min-width:180px;padding:0.45rem 0.75rem;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:0.82rem;outline:none" />
+        <div style="display:flex;gap:0.35rem;flex-wrap:wrap">
+          <button class="filter-chip active" onclick="setWeatherRegion('all',this)">🌍 Tout</button>
+          <button class="filter-chip" onclick="setWeatherRegion('Europe',this)">🇪🇺 Europe</button>
+          <button class="filter-chip" onclick="setWeatherRegion('Amériques',this)">🌎 Amériques</button>
+          <button class="filter-chip" onclick="setWeatherRegion('Asie',this)">🌏 Asie</button>
+          <button class="filter-chip" onclick="setWeatherRegion('Moyen-Orient',this)">🕌 M-Orient</button>
+          <button class="filter-chip" onclick="setWeatherRegion('Afrique',this)">🌍 Afrique</button>
+        </div>
+      </div>
+
       <div class="city-grid" id="cityGrid">
         <div class="loading-msg">Chargement météo…</div>
       </div>
@@ -3370,6 +3389,20 @@
   // WEATHER
   // ────────────────────────────────────────────────
   let weatherData = [];
+  let weatherRegion = 'all';
+
+  function setWeatherRegion(region, btn) {
+    weatherRegion = region;
+    document.querySelectorAll('#s-meteo .filter-chip').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    document.getElementById('weatherSearch').value = '';
+    renderCities();
+  }
+
+  function filterWeather() {
+    const q = (document.getElementById('weatherSearch')?.value || '').toLowerCase().trim();
+    renderCities(q);
+  }
 
   async function loadWeather() {
     const grid = document.getElementById('cityGrid');
@@ -3384,18 +3417,43 @@
     }
   }
 
-  function renderCities() {
+  function renderCities(searchQ) {
     const grid = document.getElementById('cityGrid');
     if (!grid || !weatherData.length) return;
-    grid.innerHTML = weatherData.map((c, i) => `
-      <div class="city-card" onclick="openWeatherModal(${i})">
-        <div class="city-flag">${c.flag || '🌍'}</div>
-        <div class="city-name">${c.city}</div>
-        <div class="city-icon">${c.current?.icon || '🌡️'}</div>
-        <div class="city-temp">${c.current?.temp ?? '—'}°C</div>
-        <div class="city-desc">${c.current?.label || ''}</div>
-      </div>
-    `).join('');
+    const q = (searchQ || '').toLowerCase();
+    let filtered = weatherData.map((c, i) => ({ ...c, _idx: i }));
+    if (weatherRegion !== 'all') filtered = filtered.filter(c => c.region === weatherRegion);
+    if (q) filtered = filtered.filter(c => (c.city || '').toLowerCase().includes(q));
+    if (!filtered.length) {
+      grid.innerHTML = '<div class="loading-msg">Aucune ville trouvée.</div>';
+      return;
+    }
+    // Grouper par région si "tout"
+    if (weatherRegion === 'all' && !q) {
+      const regions = ['Europe','Amériques','Asie','Moyen-Orient','Afrique'];
+      grid.innerHTML = regions.map(r => {
+        const cities = filtered.filter(c => c.region === r);
+        if (!cities.length) return '';
+        return `<div style="grid-column:1/-1;margin-top:0.6rem">
+          <div style="font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem">${r}</div>
+          <div class="city-grid" style="padding:0">
+            ${cities.map(c => cityCardHTML(c, c._idx)).join('')}
+          </div>
+        </div>`;
+      }).join('');
+    } else {
+      grid.innerHTML = filtered.map(c => cityCardHTML(c, c._idx)).join('');
+    }
+  }
+
+  function cityCardHTML(c, i) {
+    return `<div class="city-card" onclick="openWeatherModal(${i})">
+      <div class="city-flag">${c.flag || '🌍'}</div>
+      <div class="city-name">${c.city}</div>
+      <div class="city-icon">${c.current?.icon || '🌡️'}</div>
+      <div class="city-temp">${c.current?.temp ?? '—'}°C</div>
+      <div class="city-desc">${c.current?.label || ''}</div>
+    </div>`;
   }
 
   function openWeatherModal(idx) {
@@ -3832,19 +3890,40 @@
     try {
       const r = await fetch(`/api/trends?geo=${_currentTrendsGeo}&limit=24`).then(r => r.json());
       const items = r.trends || [];
-      grid.innerHTML = items.map((t, i) => `
-        <div class="card" style="padding:0.8rem">
-          <div style="display:flex;align-items:flex-start;gap:0.6rem">
-            <span style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--primary);min-width:28px">${i+1}</span>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:0.85rem;font-weight:600">${t.title||t.query}</div>
-              ${t.trafficVolume ? `<div style="font-size:0.68rem;color:var(--green);margin-top:0.2rem">📈 ${t.trafficVolume} recherches</div>` : ''}
-              ${t.articles && t.articles.length ? `<div style="font-size:0.68rem;color:var(--muted);margin-top:0.2rem">📰 ${t.articles.length} article${t.articles.length>1?'s':''} liés</div>` : ''}
+      if (items.length) {
+        grid.innerHTML = items.map((t, i) => `
+          <div class="card" style="padding:0.8rem">
+            <div style="display:flex;align-items:flex-start;gap:0.6rem">
+              <span style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--primary);min-width:28px">${i+1}</span>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:0.85rem;font-weight:600">${t.title||t.query}</div>
+                ${t.trafficVolume ? `<div style="font-size:0.68rem;color:var(--green);margin-top:0.2rem">📈 ${t.trafficVolume} recherches</div>` : ''}
+                ${t.articles && t.articles.length ? `<div style="font-size:0.68rem;color:var(--muted);margin-top:0.2rem">📰 ${t.articles.length} article${t.articles.length>1?'s':''} liés</div>` : ''}
+              </div>
             </div>
-          </div>
-          ${t.newsUrl ? `<a href="${t.newsUrl}" target="_blank" rel="noopener" style="display:block;margin-top:0.5rem;font-size:0.68rem;color:var(--primary)">Voir les actualités →</a>` : ''}
-        </div>`).join('') || '<div class="loading-msg">Tendances non disponibles (Google Trends RSS indisponible).</div>';
-    } catch(e) { grid.innerHTML = `<div class="loading-msg">Erreur ❌</div>`; }
+            ${t.newsUrl ? `<a href="${t.newsUrl}" target="_blank" rel="noopener" style="display:block;margin-top:0.5rem;font-size:0.68rem;color:var(--primary)">Voir les actualités →</a>` : ''}
+          </div>`).join('');
+      } else {
+        // Fallback visuel : liens directs Google Trends
+        const geo = _currentTrendsGeo;
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:1.5rem 1rem">
+            <div style="font-size:2rem;margin-bottom:0.5rem">📊</div>
+            <div style="font-size:0.88rem;color:var(--muted);margin-bottom:1rem">Google Trends RSS indisponible actuellement.<br>Accédez directement aux tendances :</div>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center">
+              <a href="https://trends.google.com/trends/trendingsearches/daily?geo=${geo}" target="_blank" rel="noopener" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.5rem 1rem;color:var(--primary);text-decoration:none;font-size:0.8rem">🔥 Tendances ${geo} →</a>
+              <a href="https://trends.google.com/trends/trendingsearches/realtime?geo=${geo}&category=all" target="_blank" rel="noopener" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.5rem 1rem;color:var(--primary);text-decoration:none;font-size:0.8rem">⚡ Temps réel →</a>
+              <a href="https://trends.google.com/trends/explore?geo=${geo}" target="_blank" rel="noopener" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.5rem 1rem;color:var(--primary);text-decoration:none;font-size:0.8rem">🔍 Explorer →</a>
+            </div>
+          </div>`;
+      }
+    } catch(e) {
+      const geo = _currentTrendsGeo;
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:1rem">
+        <div style="color:var(--muted);font-size:0.82rem;margin-bottom:0.8rem">Trends indisponible — accès direct :</div>
+        <a href="https://trends.google.com/trends/trendingsearches/daily?geo=${geo}" target="_blank" rel="noopener" style="color:var(--primary);font-size:0.82rem">Google Trends ${geo} →</a>
+      </div>`;
+    }
   }
 
   function loadTrendsGeo(geo, btn) {
@@ -4857,6 +4936,7 @@
   // GLOBE-GUIDE IA — Vercel AI SDK compatible (SSE streaming)
   // ════════════════════════════════════════════════
   let ggOpen = false;
+  let ggGreeted = false;
   let ggMessages = []; // session only — jamais persisté
 
   function toggleGG() {
@@ -4867,7 +4947,8 @@
     if (chat)   chat.classList.toggle('visible', ggOpen);
     if (bubble) bubble.classList.toggle('visible', !ggOpen);
     if (btn)    btn.textContent = ggOpen ? '✕' : '🌐';
-    if (ggOpen && ggMessages.length === 0) {
+    if (ggOpen && !ggGreeted) {
+      ggGreeted = true;
       const lang = typeof currentLang !== 'undefined' ? currentLang : 'fr';
       const greet = lang === 'en'
         ? 'Hello! I\'m the Globe-Guide — your navigator for infonews.day (7 poles, 25 pages). Ask me about any topic and I\'ll point you to the right section.'
@@ -5009,8 +5090,14 @@
     } else if (saved === 'light') {
       document.body.classList.add('light-mode');
       if (btn) btn.textContent = '☀️';
+    } else {
+      // Aucune préférence sauvegardée → mode nuit auto entre 21h et 7h
+      const hour = new Date().getHours();
+      if (hour >= 21 || hour < 7) {
+        document.body.classList.add('dark-mode');
+        if (btn) btn.textContent = '💻';
+      }
     }
-    // default (no saved) = système clair actuel
   })();
 
   // ────────────────────────────────────────────────
