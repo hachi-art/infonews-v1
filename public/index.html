@@ -5289,7 +5289,7 @@
             <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--primary);font-weight:700;margin-bottom:6px">📅 ${e.year}</div>
             <div style="font-size:0.83rem;line-height:1.4">${e.text}</div>
             ${e.url ? `<a href="${e.url}" target="_blank" rel="noopener" style="font-size:0.7rem;color:var(--primary);margin-top:6px;display:inline-block">En savoir plus →</a>` : ''}
-          </div>`).join('') || '<div class="loading-msg">Aucun événement pour aujourd'hui.</div>';
+          </div>`).join('') || '<div class="loading-msg">Aucun \u00e9v\u00e9nement pour aujourd\u2019hui.</div>';
       } else {
         const r = await fetch('/api/events/culture?limit=20');
         const d = await r.json();
