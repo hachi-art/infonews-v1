@@ -508,6 +508,7 @@
       cursor: pointer; transition: box-shadow 0.2s, transform 0.2s; text-align: center;
     }
     .city-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); transform: translateY(-2px); }
+    .city-card-geo { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0,180,216,0.25); }
     .city-flag { font-size: 1.5rem; margin-bottom: 3px; }
     .city-name { font-size: 0.76rem; font-weight: 600; margin-bottom: 5px; }
     .city-icon { font-size: 1.3rem; margin-bottom: 2px; }
@@ -3404,6 +3405,8 @@
     renderCities(q);
   }
 
+  let userGeoCity = null; // ville détectée par géolocalisation
+
   async function loadWeather() {
     const grid = document.getElementById('cityGrid');
     if (!grid) return;
@@ -3411,6 +3414,19 @@
       const r = await fetch('/api/weather');
       const d = await r.json();
       weatherData = d.cities || d || [];
+      // Géolocalisation : détecter la ville la plus proche
+      if (!userGeoCity && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const { latitude: lat, longitude: lon } = pos.coords;
+          let closest = null, minDist = Infinity;
+          weatherData.forEach(c => {
+            const dist = Math.hypot(c.lat - lat, c.lon - lon);
+            if (dist < minDist) { minDist = dist; closest = c.city; }
+          });
+          userGeoCity = closest;
+          renderCities();
+        }, () => {}); // ignore si refus
+      }
       renderCities();
     } catch(e) {
       grid.innerHTML = `<div class="loading-msg">Erreur météo ❌</div>`;
@@ -3427,6 +3443,28 @@
     if (!filtered.length) {
       grid.innerHTML = '<div class="loading-msg">Aucune ville trouvée.</div>';
       return;
+    }
+    // Ville géolocalisée en premier (mode "tout", sans recherche)
+    if (userGeoCity && weatherRegion === 'all' && !q) {
+      const geoIdx = filtered.findIndex(c => c.city === userGeoCity);
+      if (geoIdx > 0) {
+        const [geoCity] = filtered.splice(geoIdx, 1);
+        grid.innerHTML = `<div style="grid-column:1/-1;margin-bottom:0.2rem">
+          <div style="font-size:0.7rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem">📍 Votre position</div>
+          <div class="city-grid" style="padding:0">${cityCardHTML(geoCity, geoCity._idx, true)}</div>
+        </div>`;
+        // Continuer avec le reste groupé par région
+        const regions = ['Europe','Amériques','Asie','Moyen-Orient','Afrique'];
+        grid.innerHTML += regions.map(r => {
+          const cities = filtered.filter(c => c.region === r);
+          if (!cities.length) return '';
+          return `<div style="grid-column:1/-1;margin-top:0.6rem">
+            <div style="font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem">${r}</div>
+            <div class="city-grid" style="padding:0">${cities.map(c => cityCardHTML(c, c._idx)).join('')}</div>
+          </div>`;
+        }).join('');
+        return;
+      }
     }
     // Grouper par région si "tout"
     if (weatherRegion === 'all' && !q) {
@@ -3446,8 +3484,8 @@
     }
   }
 
-  function cityCardHTML(c, i) {
-    return `<div class="city-card" onclick="openWeatherModal(${i})">
+  function cityCardHTML(c, i, highlighted = false) {
+    return `<div class="city-card${highlighted ? ' city-card-geo' : ''}" onclick="openWeatherModal(${i})">
       <div class="city-flag">${c.flag || '🌍'}</div>
       <div class="city-name">${c.city}</div>
       <div class="city-icon">${c.current?.icon || '🌡️'}</div>
@@ -4697,10 +4735,13 @@
     const url   = a.url    || a.link || '#';
     const time  = a.publishedAt || a.date || '';
     const ago   = time ? timeSince(new Date(time)) : '';
-    return `<div class="news-card" onclick="window.open('${url}','_blank')">
+    const safeUrl = url.replace(/'/g, "\\'");
+    const safeTitle = title.replace(/'/g, "\\'");
+    return `<div class="news-card" onclick="window.open('${safeUrl}','_blank')">
       <div class="news-meta">
         <span class="news-source">${src}</span>
         ${ago ? `<span>· ${ago}</span>` : ''}
+        <button class="share-btn" onclick="event.stopPropagation();shareArticle('${safeTitle}','${safeUrl}')" title="Partager">↗</button>
       </div>
       <div class="news-title">${title}</div>
       ${a.description ? `<div style="font-size:0.74rem;color:var(--muted);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${a.description}</div>` : ''}
@@ -4749,13 +4790,14 @@
     const el = document.getElementById('orientGrid');
     if (!el) return;
     el.innerHTML = skeletonCards(6);
-    const sources = { all: '', xinhua: 'xinhua', tass: 'tass', nhk: 'nhk', yonhap: 'yonhap' };
-    const src = sources[filter] || '';
+    const sources = { all: null, xinhua: 'xinhua', tass: 'tass', nhk: 'nhk', yonhap: 'yonhap' };
+    const src = sources[filter];
     try {
-      const r = await fetch(`/api/news?source=${src}&limit=18`);
+      const url = src ? `/api/news?source=${src}&limit=18` : `/api/news?group=east&limit=24`;
+      const r = await fetch(url);
       const d = await r.json();
       const articles = (d.articles || []).filter(a => {
-        if (!src) return ['xinhua','tass','nhk','yonhap'].some(s => (a.source||'').toLowerCase().includes(s));
+        if (!src) return ['xinhua','tass','nhk','yonhap','anadolu','nhk world','yonhap','trt'].some(s => (a.source||'').toLowerCase().includes(s));
         return (a.source||'').toLowerCase().includes(src);
       });
       el.innerHTML = articles.length
@@ -4770,10 +4812,13 @@
     const el = document.getElementById('moyenOrientGrid');
     if (!el) return;
     el.innerHTML = skeletonCards(6);
-    const srcMap = { all: ['aljazeera','trtworld'], aljazeera: ['aljazeera'], trtworld: ['trtworld'], anadolu: ['anadolu'] };
+    const srcMap = { all: ['aljazeera','trtworld','anadolu'], aljazeera: ['aljazeera'], trtworld: ['trtworld'], anadolu: ['anadolu'] };
     const keys = srcMap[filter] || srcMap.all;
     try {
-      const r = await fetch(`/api/news?source=${keys[0]}&limit=20`);
+      const fetchUrl = filter === 'all'
+        ? `/api/news?group=east&limit=30`
+        : `/api/news?source=${keys[0]}&limit=20`;
+      const r = await fetch(fetchUrl);
       const d = await r.json();
       const articles = (d.articles || []).filter(a => keys.some(k => (a.source||'').toLowerCase().includes(k)));
       el.innerHTML = articles.length
@@ -5484,6 +5529,23 @@
 
     // Init WorldMood
     initWorldMood();
+
+    // ── Auto-refresh slides actifs toutes les 10 min ──────────
+    const AUTO_REFRESH_SLIDES = new Set([
+      's-breaking','s-alertes','s-meteo','s-marches','s-crypto',
+      's-occident','s-orient','s-moyen-orient-media','s-afrique-media',
+      's-social','s-trends'
+    ]);
+    setInterval(() => {
+      // Invalider le cache de tous les slides refresh
+      AUTO_REFRESH_SLIDES.forEach(id => { if (slideLoaded[id]) slideLoaded[id] = false; });
+      // Refresh immédiat du slide actuellement affiché
+      const activeEl = document.querySelector('.slide.active');
+      if (activeEl && AUTO_REFRESH_SLIDES.has(activeEl.id)) {
+        slideLoaded[activeEl.id] = true;
+        onSlideLoad(activeEl.id);
+      }
+    }, 10 * 60 * 1000);
   });
   </script>
   <script>

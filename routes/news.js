@@ -24,6 +24,9 @@ router.get('/aljazeera',   ctrl.getAlJazeeraNews);
 router.get('/xinhua',      ctrl.getXinhuaNews);
 router.get('/tass',        ctrl.getTASSNews);
 router.get('/trtworld',    ctrl.getTRTWorldNews);
+router.get('/nhk',         ctrl.getNHKNews);
+router.get('/yonhap',      ctrl.getYonhapNews);
+router.get('/anadolu',     ctrl.getAnadoluNews);
 
 // Sources Afrique & Latam
 router.get('/africanews',  ctrl.getAfricanewsNews);

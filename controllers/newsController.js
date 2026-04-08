@@ -29,6 +29,9 @@ const esaService             = require('../services/esaRss');
 const aiService              = require('../services/openAiBlogRss');
 const whoService             = require('../services/whoRss');
 const varietyService         = require('../services/varietyRss');
+const nhkService             = require('../services/nhkRss');
+const yonhapService          = require('../services/yonhapRss');
+const anadoluService         = require('../services/anadoluRss');
 
 const VALID_CATEGORIES = ['monde', 'techno', 'eco', 'science', 'sport', 'culture', 'independent'];
 const VALID_SOURCES    = [
@@ -36,6 +39,7 @@ const VALID_SOURCES    = [
   'independent', 'dw', 'euronews',
   'reuters', 'xinhua', 'tass', 'trtworld', 'africanews', 'allafrica', 'telesur',
   'bleeping', 'esa', 'ai', 'who', 'variety',
+  'nhk', 'yonhap', 'anadolu',
 ];
 
 // ── Mapping catégories brutes → catégories normalisées ──────
@@ -138,6 +142,9 @@ const ALL_FETCHERS = {
   ai:          () => aiService.fetchAIBlogNews(6),
   who:         () => whoService.fetchWHONews(6),
   variety:     () => varietyService.fetchVarietyNews(8),
+  nhk:         () => nhkService.fetchNHKNews(10),
+  yonhap:      () => yonhapService.fetchYonhapNews(10),
+  anadolu:     () => anadoluService.fetchAnadoluNews(10),
 };
 
 /**
@@ -157,7 +164,7 @@ exports.getAllNews = async (req, res) => {
   if (group) {
     const GROUPS = {
       west:    ['bbc', 'lemonde', 'guardian', 'euronews', 'dw', 'reuters'],
-      east:    ['aljazeera', 'xinhua', 'tass', 'trtworld'],
+      east:    ['aljazeera', 'xinhua', 'tass', 'trtworld', 'nhk', 'yonhap', 'anadolu'],
       africa:  ['africanews', 'allafrica'],
       latam:   ['telesur'],
       tech:    ['techcrunch', 'hackernews', 'bleeping', 'ai'],
@@ -243,3 +250,6 @@ exports.getESANews          = makeHandler(() => esaService.fetchESANews(),      
 exports.getAIBlogNews       = makeHandler(() => aiService.fetchAIBlogNews(),            'AI Blogs');
 exports.getWHONews          = makeHandler(() => whoService.fetchWHONews(),              'OMS/WHO');
 exports.getVarietyNews      = makeHandler(() => varietyService.fetchVarietyNews(),      'Variety');
+exports.getNHKNews          = makeHandler(() => nhkService.fetchNHKNews(),               'NHK World');
+exports.getYonhapNews       = makeHandler(() => yonhapService.fetchYonhapNews(),         'Yonhap');
+exports.getAnadoluNews      = makeHandler(() => anadoluService.fetchAnadoluNews(),        'Anadolu Agency');
