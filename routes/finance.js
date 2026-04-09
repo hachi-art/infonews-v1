@@ -4,12 +4,16 @@ const { fetchCrypto, fetchMarkets } = require('../services/financeService');
 
 // GET /api/finance — tout
 router.get('/', async (req, res) => {
-  const [crypto, markets] = await Promise.allSettled([fetchCrypto(), fetchMarkets()]);
-  res.json({
-    fetchedAt: new Date().toISOString(),
-    crypto:  crypto.status  === 'fulfilled' ? crypto.value  : [],
-    markets: markets.status === 'fulfilled' ? markets.value : []
-  });
+  try {
+    const [crypto, markets] = await Promise.allSettled([fetchCrypto(), fetchMarkets()]);
+    res.json({
+      fetchedAt: new Date().toISOString(),
+      crypto:  crypto.status  === 'fulfilled' ? crypto.value  : [],
+      markets: markets.status === 'fulfilled' ? markets.value : []
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // GET /api/finance/crypto — CoinGecko native format

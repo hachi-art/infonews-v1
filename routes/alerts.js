@@ -35,16 +35,20 @@ router.get('/gdacs', async (req, res) => {
 
 // GET /api/alerts/all — USGS + GDACS
 router.get('/all', async (req, res) => {
-  const limit = parseInt(req.query.limit) || 10;
-  const [quakesR, gdacsR] = await Promise.allSettled([
-    fetchEarthquakes(limit),
-    fetchGDACS(limit),
-  ]);
-  res.json({
-    fetchedAt:  new Date().toISOString(),
-    earthquakes: quakesR.status === 'fulfilled' ? quakesR.value : [],
-    disasters:   gdacsR.status === 'fulfilled'  ? gdacsR.value  : [],
-  });
+  try {
+    const limit = parseInt(req.query.limit) || 10;
+    const [quakesR, gdacsR] = await Promise.allSettled([
+      fetchEarthquakes(limit),
+      fetchGDACS(limit),
+    ]);
+    res.json({
+      fetchedAt:  new Date().toISOString(),
+      earthquakes: quakesR.status === 'fulfilled' ? quakesR.value : [],
+      disasters:   gdacsR.status === 'fulfilled'  ? gdacsR.value  : [],
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 module.exports = router;

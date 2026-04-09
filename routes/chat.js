@@ -130,7 +130,8 @@ router.post('/', async (req, res) => {
       return res.status(503).json({ error: '@anthropic-ai/sdk non installé' });
     }
 
-    const client = new Anthropic.default({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const AnthropicClass = Anthropic.default || Anthropic;
+    const client = new AnthropicClass({ apiKey: process.env.ANTHROPIC_API_KEY });
 
     const systemWithContext = `${GLOBE_GUIDE_SYSTEM}
 

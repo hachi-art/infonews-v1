@@ -134,7 +134,7 @@ app.use((err, req, res, next) => {
 
 // ── Démarrage ─────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`[infonews.day v8.3] Port ${PORT} | Cache ✅ | Rate limit ✅ | Gzip ✅ | SEO ✅`);
+  console.log(`[infonews.day v9.0] Port ${PORT} | Cache ✅ | Rate limit ✅ | Gzip ✅ | SEO ✅`);
   console.log(`[Pôles] 8 pôles actifs | [TMDB] ${process.env.TMDB_API_KEY ? '✅' : '⚠️'}`);
 });
 

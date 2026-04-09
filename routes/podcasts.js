@@ -37,7 +37,7 @@ function mapEpisode(item, podcast) {
     podcastId:   podcast.id,
     lang:        podcast.lang,
     cat:         podcast.cat,
-    image:       item.image?.$ ? item.image.$['href'] : null,
+    image:       item.image?.$ ? item.image.$['href'] : (item.image?.url || item.image || null),
   };
 }
 
